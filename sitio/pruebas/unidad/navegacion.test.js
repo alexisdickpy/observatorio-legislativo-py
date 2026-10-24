@@ -43,6 +43,7 @@ test("la entrada actual es la de ruta más larga que contiene la dirección", ()
   assert.equal(entradaActual(menu, rutas.rankings()).texto, "Rankings");
   assert.equal(entradaActual(menu, rutas.votaciones()).texto, "Votaciones");
   assert.equal(entradaActual(menu, rutas.votaciones("2025")).texto, "Votaciones");
+  assert.equal(entradaActual(menu, rutas.votacion(109395)).texto, "Votaciones");
   assert.equal(entradaActual(menu, rutas.inicio()), undefined);
 });
 

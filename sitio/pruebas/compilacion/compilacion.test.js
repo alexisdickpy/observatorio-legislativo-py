@@ -18,6 +18,7 @@ import { masAjustadas, votacionesDelAnio, votacionesDelPeriodo } from "../../src
 import { MINIMO_VOTACIONES_AUSENCIAS, masAusentes } from "../../src/lib/rankings.js";
 import { votosDistintosAlPartido } from "../../src/lib/votosDistintos.js";
 import { votosPorTema } from "../../src/lib/votosPorTema.js";
+import { compartirVotacion } from "../../src/lib/compartir.js";
 
 const dist = resolve(process.cwd(), "dist");
 const pagina = (url) => join(dist, decodeURIComponent(url), "index.html");
@@ -301,17 +302,19 @@ test("las direcciones que cambiaron redirigen con una redirección permanente", 
 
 /** Página principal de votaciones y la de cada año. */
 const paginasDeTemas = () => [rutas.votosPorTema(), ...votosPorTema(periodos().find((p) => p.vigente).id).map((t) => t.url)];
+/** Páginas propias de algunas votaciones (#45): las de la portada. */
+const algunasVotaciones = () => votacionesDelPeriodo(periodos().find((p) => p.vigente).id).votaciones.slice(0, 20).map((v) => v.pagina);
 const paginasDeVotaciones = () => [rutas.votaciones(), ...votacionesDelPeriodo(periodos().find((p) => p.vigente).id).anios.map((a) => a.url)];
 
 /** Escapa un texto como lo escribe Astro en un atributo o en el contenido. */
 const escapar = (t) => String(t).replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 
 /** Elemento de la lista de votaciones de una votación, o "". */
-const itemVotacion = (html, id) => html.match(new RegExp(`<li data-votacion="${id}"[^]*?</ul>(?:<p class="chico"><a [^>]*>Votación en SILpy</a></p>)?</li>`))?.[0] ?? "";
+const itemVotacion = (html, id) => html.match(new RegExp(`<li data-votacion="${id}"[^]*?</ul><p class="chico"><a [^>]*>Ver votación</a></p></li>`))?.[0] ?? "";
 
 /** Si el elemento tiene el proyecto enlazado con su título oficial completo, los totales con su denominador y una etiqueta por partido con su sigla y posición. */
 function votacionCompleta(item, v) {
-  const enlaces = v.leyes.length ? v.leyes.map((l) => l.url) : [v.proyecto.url, v.url];
+  const enlaces = [...(v.leyes.length ? v.leyes.map((l) => l.url) : [v.proyecto.url]), v.pagina];
   const titulos = (v.leyes.length ? v.leyes.map((l) => l.titulo) : [v.proyecto.titulo]).filter(Boolean);
   const comoTexto = (t) => escapar(t).replaceAll("'", "&#39;");
   return (
@@ -439,7 +442,7 @@ test("ningún texto propio presenta AUSENTE como asistencia, faltas o inasistenc
   // pueden tratar de asistencia social y se muestran sin cambios). La firma dice «con asistencia de
   // IA», el único uso permitido de la palabra.
   const prohibidas = /inasistencia|asistencia(?! de IA)|\bfalta|\bfaltó|días ausente/i;
-  const urls = [rutas.inicio(), rutas.metodologia(), rutas.legisladores(), rutas.votacionesNominales(), rutas.coincidencia(), rutas.rankings(), ...paginasDeVotaciones(), ...legisladores().map((p) => p.url)];
+  const urls = [rutas.inicio(), rutas.metodologia(), rutas.legisladores(), rutas.votacionesNominales(), rutas.coincidencia(), rutas.rankings(), ...paginasDeVotaciones(), ...algunasVotaciones(), ...legisladores().map((p) => p.url)];
   for (const url of urls) {
     const visible = leer(url)
       .replace(/<(script|style)[\s\S]*?<\/\1>/g, " ")
@@ -654,7 +657,7 @@ test("el menú y la portada enlazan a cada vista de análisis", () => {
     assert.ok(menu(url).includes(`href="${rutas.rankings()}" aria-current="page"`), `${url} no marca «Rankings» en el menú`);
   }
   assert.ok(!menu(rutas.inicio()).includes(rutas.votacionesNominales()), "La tabla comparativa sigue en el menú");
-  for (const url of paginasDeVotaciones()) {
+  for (const url of [...paginasDeVotaciones(), ...algunasVotaciones()]) {
     assert.ok(menu(url).includes(`href="${rutas.votaciones()}" aria-current="page"`), `${url} no marca «Votaciones» en el menú`);
   }
   for (const url of paginasDeTemas()) {
@@ -714,4 +717,51 @@ test("votos por tema: índice, una página por tema con el reparto de cada grupo
     const bytes = statSync(pagina(t.url)).size;
     assert.ok(bytes < 900_000, `${t.url} pesa ${bytes} bytes`);
   }
+});
+
+test("una página por votación con su imagen para compartir, botones sin servicios de terceros y enlaces desde las listas", () => {
+  const periodo = periodos().find((p) => p.vigente).id;
+  const { votaciones, anios } = votacionesDelPeriodo(periodo);
+  const cita = estado().fuente.cita;
+  let mayor = 0;
+  for (const v of votaciones) {
+    const html = leer(v.pagina);
+    const c = compartirVotacion(v);
+    assert.ok(html.includes(`<meta property="og:image" content="${c.vistaPrevia.url}"`), `Falta la imagen de vista previa en ${v.pagina}`);
+    assert.ok(html.includes('<meta name="twitter:card" content="summary_large_image"'), v.pagina);
+    for (const formato of ["horizontal", "vertical"]) {
+      const imagen = join(dist, rutas.imagenVotacion(v.id, formato));
+      assert.ok(existsSync(imagen) && statSync(imagen).size < 300_000, `Falta o pesa demasiado ${imagen}`);
+    }
+    assert.ok(html.includes(`href="${escapar(c.enlaces.whatsapp)}"`) && html.includes(`href="${escapar(c.enlaces.x)}"`), `Faltan los botones en ${v.pagina}`);
+    assert.ok(html.includes(`href="${rutas.imagenVotacion(v.id, "vertical")}" download`), v.pagina);
+    assert.ok(html.includes(`id="${rutas.anclaVotacion(v.id)}"`) && html.includes(cita), v.pagina);
+    assert.ok(html.includes(`href="${escapar(v.url)}"`) || v.leyes.length, `Falta el enlace a SILpy en ${v.pagina}`);
+    for (const l of v.leyes) assert.ok(html.includes(`href="${rutas.ley(l.numero)}"`), v.pagina);
+    assert.ok(!html.includes("Compartir esta votación"), `${v.pagina} se enlaza a sí misma`);
+    mayor = Math.max(mayor, statSync(pagina(v.pagina)).size);
+  }
+  assert.ok(mayor < 300_000, `La página de votación más pesada pesa ${mayor} bytes`);
+  // Cada lista de un año y cada ficha de ley enlazan a la página de cada una de sus votaciones.
+  for (const a of anios) {
+    const html = leer(a.url);
+    for (const v of votaciones.filter((x) => x.anio === a.anio)) assert.ok(html.includes(`href="${v.pagina}"`), `${a.url} no enlaza ${v.pagina}`);
+  }
+  for (const ley of leyes()) {
+    const html = leer(ley.url);
+    for (const r of ley.registros) for (const v of detalleDeRegistro(r).votaciones.indice) assert.ok(html.includes(`href="${v.pagina}"`), `${ley.url} no enlaza ${v.pagina}`);
+  }
+  // Ningún archivo del sitio supera el límite de Cloudflare Pages (25 MiB) y el total de archivos queda lejos de 20.000.
+  let archivos = 0;
+  const recorrer = (carpeta) => {
+    for (const e of readdirSync(carpeta, { withFileTypes: true })) {
+      if (e.isDirectory()) recorrer(join(carpeta, e.name));
+      else {
+        archivos++;
+        assert.ok(statSync(join(carpeta, e.name)).size < 25 * 1024 * 1024, e.name);
+      }
+    }
+  };
+  recorrer(dist);
+  assert.ok(archivos < 15_000, `El sitio tiene ${archivos} archivos`);
 });

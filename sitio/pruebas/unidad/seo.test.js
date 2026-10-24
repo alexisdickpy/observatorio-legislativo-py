@@ -92,9 +92,10 @@ test("datos del sitio y del conjunto de datos", () => {
 test("el sitemap tiene cada ley y cada legislador una vez, sin la búsqueda", () => {
   const urls = direccionesDelSitemap();
   assert.equal(new Set(urls).size, urls.length);
-  const anios = votacionesDelPeriodo("2023-2028").anios;
+  const { anios, votaciones } = votacionesDelPeriodo("2023-2028");
   const temas = votosPorTema("2023-2028");
-  assert.equal(urls.length, leyes().length + legisladores().length + 11 + anios.length + temas.length);
+  assert.equal(urls.length, leyes().length + legisladores().length + 11 + anios.length + temas.length + votaciones.length);
+  for (const v of votaciones) assert.ok(urls.includes(rutas.absoluta(rutas.votacion(v.id))), v.id);
   for (const t of temas) assert.ok(urls.includes(rutas.absoluta(t.url)), t.url);
   assert.ok(urls.includes(rutas.absoluta(rutas.votosPorTema())));
   assert.ok(urls.includes(rutas.absoluta(rutas.votaciones())));

@@ -1,0 +1,81 @@
+---
+// Botones para compartir una página (#45): copiar el enlace, WhatsApp y X con enlaces simples (sin
+// scripts de esos servicios ni cookies) y, si hay, la imagen vertical para estados e historias. El
+// botón de copiar aparece solo con JavaScript. Recibe lo preparado por lib/compartir.js.
+interface Props {
+  url: string;
+  enlaces: { whatsapp: string; x: string };
+  vertical?: string;
+}
+const { url, enlaces, vertical } = Astro.props;
+---
+
+<div class="compartir chico" data-compartir={url}>
+  <strong>Compartir</strong>
+  <button type="button" data-copiar hidden>Copiar enlace</button>
+  <a href={enlaces.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+  <a href={enlaces.x} target="_blank" rel="noopener noreferrer">X</a>
+  {vertical && <a href={vertical} download>Imagen para estados</a>}
+  <span class="texto-suave" role="status" data-copiado></span>
+</div>
+
+<script>
+  /** Copia con el método anterior, para navegadores que no permiten navigator.clipboard en la página. */
+  function copiarConSeleccion(texto: string) {
+    const campo = document.createElement("textarea");
+    campo.value = texto;
+    campo.setAttribute("readonly", "");
+    campo.style.position = "fixed";
+    campo.style.opacity = "0";
+    document.body.append(campo);
+    campo.select();
+    const copiado = document.execCommand("copy");
+    campo.remove();
+    return copiado;
+  }
+
+  for (const caja of document.querySelectorAll<HTMLElement>("[data-compartir]")) {
+    const boton = caja.querySelector<HTMLButtonElement>("[data-copiar]")!;
+    const aviso = caja.querySelector<HTMLElement>("[data-copiado]")!;
+    boton.hidden = false;
+    boton.addEventListener("click", async () => {
+      const url = caja.dataset.compartir!;
+      let copiado = false;
+      try {
+        await navigator.clipboard.writeText(url);
+        copiado = true;
+      } catch {
+        copiado = copiarConSeleccion(url);
+      }
+      aviso.textContent = copiado ? "Enlace copiado" : "No se pudo copiar el enlace";
+    });
+  }
+</script>
+
+<style>
+  .compartir {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--espacio-2) var(--espacio-3);
+    margin: var(--espacio-4) 0;
+    padding: var(--espacio-2) var(--espacio-3);
+    border: var(--borde-ancho) solid var(--color-borde);
+    border-radius: var(--radio);
+    background: var(--color-superficie);
+  }
+  .compartir a,
+  .compartir button {
+    padding: var(--espacio-1) var(--espacio-3);
+    border: var(--borde-ancho) solid var(--color-borde);
+    border-radius: var(--radio);
+    background: var(--color-fondo);
+    color: var(--color-enlace);
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .compartir button[hidden] {
+    display: none;
+  }
+</style>
