@@ -1,0 +1,56 @@
+---
+// Votaciones nominales sobre proyectos de ley de un año del período vigente (lib/votaciones.js, alcance
+// acordado en #44), de la más reciente a la más antigua, con filtros por cámara, estado del proyecto y
+// resultado y la posición de cada partido.
+import Base from "../../layouts/Base.astro";
+import FiltroVotaciones from "../../components/FiltroVotaciones.astro";
+import ListaVotaciones from "../../components/ListaVotaciones.astro";
+import { periodos } from "../../lib/datos.js";
+import * as rutas from "../../lib/rutas.js";
+import { votacionesDelAnio, votacionesDelPeriodo } from "../../lib/votaciones.js";
+
+export function getStaticPaths() {
+  const periodo = periodos().find((p) => p.vigente).id;
+  return votacionesDelPeriodo(periodo).anios.map((a) => ({ params: { anio: a.anio }, props: { periodo, anio: a.anio } }));
+}
+
+const { periodo, anio } = Astro.props;
+const { votaciones, porCamara, opciones } = votacionesDelAnio(periodo, anio);
+const { anios } = votacionesDelPeriodo(periodo);
+const numero = (n: number) => n.toLocaleString("es-PY");
+const porCamaraTexto = porCamara.map((c: any) => `${c.camara} ${numero(c.total)}`).join(" · ");
+---
+
+<Base
+  titulo={`Votaciones de ${anio}`}
+  descripcion={`Las ${numero(votaciones.length)} votaciones nominales sobre proyectos de ley de ${anio} en el Congreso Nacional, con el resultado oficial, los totales y lo que votó la mayoría de cada partido.`}
+>
+  <p class="chico"><a href={rutas.votaciones()}>← Votaciones y posición de cada partido</a></p>
+  <h1>Votaciones de {anio}</h1>
+  <nav class="otros-anios chico" aria-label="Otros años">
+    {anios.map((a: any) => (a.anio === anio ? <strong aria-current="page">{a.anio}</strong> : <a href={a.url}>{a.anio}</a>))}
+  </nav>
+  <p class="lectura">
+    {numero(votaciones.length)} votaciones nominales sobre proyectos de ley ({porCamaraTexto}), de la más
+    reciente a la más antigua. Cada etiqueta muestra la sigla del partido y la categoría con más votos entre
+    los votos emitidos de sus legisladores.{" "}
+    <a href={rutas.metodologia(rutas.anclasMetodologia.posicionPartidos)}>Cómo se calcula</a>
+  </p>
+  <p class="lectura chico texto-suave">
+    Partido es el que la API registra para cada legislador en el período, no necesariamente el de la fecha
+    de cada votación.
+  </p>
+  <div data-votaciones>
+    <FiltroVotaciones opciones={opciones} total={votaciones.length} />
+    <ListaVotaciones votaciones={votaciones} />
+  </div>
+</Base>
+
+<style>
+  .otros-anios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espacio-2) var(--espacio-3);
+    margin-bottom: var(--espacio-4);
+  }
+</style>

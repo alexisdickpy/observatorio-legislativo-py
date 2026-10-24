@@ -2,13 +2,16 @@
 // Barra apilada de una votación o de un grupo: un segmento de color por categoría con votos.
 // Recibe los segmentos ya calculados por lib/ficha.js. Los colores están en tokens.css.
 // Estilos globales con prefijo de clase: los estilos con alcance agregan un atributo a cada segmento.
+// Con `compacta`, los segmentos van sin título (la etiqueta de la barra ya los nombra), por el peso de
+// las listas largas.
 interface Props {
   barra: { segmentos: any[]; etiqueta: string };
+  compacta?: boolean;
 }
-const { barra } = Astro.props;
+const { barra, compacta = false } = Astro.props;
 ---
 
-<div class="barra-votos" role="img" aria-label={barra.etiqueta}>{barra.segmentos.map((s) => <span class={`segmento ${s.clase}`} style={`width:${s.ancho}%`} title={s.texto}></span>)}</div>
+<div class="barra-votos" role="img" aria-label={barra.etiqueta}>{barra.segmentos.map((s) => <span class={`segmento ${s.clase}`} style={`width:${s.ancho}%`} title={compacta ? undefined : s.texto}></span>)}</div>
 
 <style is:global>
   .barra-votos {

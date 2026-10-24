@@ -46,6 +46,7 @@ import {
   proporcion,
   valor,
 } from "./ficha.js";
+import { esVotoEmitido, mayoriaDe } from "./mayoria.js";
 import { partidoUnificado } from "./partidos.js";
 import * as rutas from "./rutas.js";
 import { normalizar, recortar, slug } from "./texto.js";
@@ -98,7 +99,7 @@ function autoriaDelPeriodo(periodo) {
 }
 
 /** Ley o leyes de una votación: número (enlace a la votación en su ficha) y título oficial. */
-function leyesDeVotacion(v, i) {
+export function leyesDeVotacion(v, i) {
   const vistas = new Map();
   for (const idLey of v._propio.idLeyes) {
     const r = i.leyes.get(idLey);
@@ -116,7 +117,7 @@ function leyesDeVotacion(v, i) {
 }
 
 /** Proyecto de una votación: expediente oficial, título y estado oficial, con su valor de filtro. */
-function proyectoDeVotacion(v, estados) {
+export function proyectoDeVotacion(v, estados) {
   const p = v.proyecto ?? {};
   const titulo = valor(p.acapite);
   const estadoOficial = valor(p.estadoProyecto);
@@ -174,20 +175,7 @@ function participacionDe(todas) {
   return { noVota: cifraDe(todas, NO_VOTA), abstencion: cifraDe(todas, ABSTENCION) };
 }
 
-/** Si un voto fue emitido: toda categoría oficial salvo AUSENTE y NO VOTA (SI, NO, ABSTENCIÓN/BLANCO, MOCIÓN n). */
-export const esVotoEmitido = (sentido) => Boolean(valor(sentido)) && sentido !== AUSENTE && sentido !== NO_VOTA;
-
-/**
- * Mayoría de un grupo en una votación, a partir de los votos emitidos de sus miembros: la categoría
- * con más votos, o null si dos o más empatan en el primer lugar. votantes = cantidad de votos emitidos.
- */
-export function mayoriaDe(sentidos) {
-  const cuenta = new Map();
-  for (const s of sentidos.filter(esVotoEmitido)) cuenta.set(s, (cuenta.get(s) ?? 0) + 1);
-  const orden = [...cuenta.entries()].sort((a, b) => b[1] - a[1]);
-  const empate = orden.length > 1 && orden[0][1] === orden[1][1];
-  return { mayoria: orden.length && !empate ? orden[0][0] : null, votantes: [...cuenta.values()].reduce((n, c) => n + c, 0) };
-}
+export { esVotoEmitido, mayoriaDe };
 
 /** Grupos de la comparación con la mayoría (alcance acordado en #39): campo del legislador en la API. */
 export const GRUPOS_MAYORIA = [
@@ -387,7 +375,7 @@ const CAMPOS_FILTRO = ["camara", "partido", "bancada", "departamento"];
  * Valor de URL de cada texto oficial (su slug). Si dos textos distintos dan el mismo slug
  * (por ejemplo, «"PEN"» y «(PEN)»), el segundo en orden alfabético recibe "-2": no se fusionan.
  */
-function valoresUnicos(textos) {
+export function valoresUnicos(textos) {
   const valores = new Map();
   const usados = new Set();
   for (const t of [...new Set(textos.filter(Boolean))].sort(porTexto)) {
@@ -459,7 +447,7 @@ export function opcionesDelListado(periodo) {
 
 // Estados oficiales de los proyectos votados en cada período, con su valor de filtro (slug).
 const estadosPorPeriodo = new Map();
-function estadosDelPeriodo(periodo) {
+export function estadosDelPeriodo(periodo) {
   if (!estadosPorPeriodo.has(periodo)) {
     const textos = [...indice(periodo).votaciones.values()]
       .filter(esDeProyectoDeLey)

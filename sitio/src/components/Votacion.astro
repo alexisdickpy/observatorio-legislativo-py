@@ -1,9 +1,10 @@
 ---
-// Una votación nominal: textos oficiales, totales, desglose por partido y bancada y voto de
-// cada legislador. Recibe los valores ya calculados por lib/ficha.js.
+// Una votación nominal: textos oficiales, totales, posición de cada partido agrupada por sentido
+// (#44), desglose por partido y bancada y voto de cada legislador. Recibe los valores ya calculados por lib/ficha.js.
 // Estilos globales con prefijo de clase: los estilos con alcance agregan un atributo a cada celda.
 import BarraVotos from "./BarraVotos.astro";
 import GraficoPartidos from "./GraficoPartidos.astro";
+import PosicionPorSentido from "./PosicionPorSentido.astro";
 import TablaDesglose from "./TablaDesglose.astro";
 
 interface Props {
@@ -54,6 +55,15 @@ const sinDato = "Sin dato";
     )
   }
   {v.notas.map((n: string) => <p class="nota chico lectura"><strong>Nota del Observatorio.</strong> {n}</p>)}
+
+  {
+    v.posicionesPorSentido.length > 0 && (
+      <Fragment>
+        <Subtitulo class="subtitulo">Posición de cada partido</Subtitulo>
+        <PosicionPorSentido grupos={v.posicionesPorSentido} />
+      </Fragment>
+    )
+  }
 
   <p class="chico texto-suave lectura">
     En cada partido y bancada, el total ("de …") son sus legisladores que figuran en la lista oficial

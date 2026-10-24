@@ -1,0 +1,108 @@
+---
+// Filtro de la página de votaciones de un año por cámara, estado oficial del proyecto y resultado
+// oficial (#44). Sin JavaScript queda oculto y se ven todas las votaciones del año. Con JavaScript,
+// dentro del mismo contenedor [data-votaciones], oculta las votaciones que no cumplen el filtro y lo
+// refleja en la dirección (?camara=…&estado=…&resultado=…). Opciones de lib/votaciones.js.
+import { parametrosVotaciones } from "../lib/rutas.js";
+
+interface Props {
+  opciones: { camara: any[]; estado: any[]; resultado: any[] };
+  total: number;
+}
+const { opciones, total } = Astro.props;
+const campos = [
+  { campo: "camara", etiqueta: "Cámara", sinDato: "Sin dato" },
+  { campo: "estado", etiqueta: "Estado oficial del proyecto", sinDato: "Sin estado oficial" },
+  { campo: "resultado", etiqueta: "Resultado oficial", sinDato: "Sin resultado oficial" },
+] as const;
+const plural = (n: number) => `${n} ${n === 1 ? "votación" : "votaciones"}`;
+---
+
+<form class="filtro-votaciones" data-filtro-votaciones role="search" hidden>
+  <div class="campos">
+    {
+      campos.map((c) => (
+        <div class="campo">
+          <label for={`filtro-votaciones-${c.campo}`}>{c.etiqueta}</label>
+          <select id={`filtro-votaciones-${c.campo}`} name={parametrosVotaciones[c.campo]} data-campo={c.campo}>
+            <option value="">Todos ({plural(total)})</option>
+            {opciones[c.campo].map((o) => <option value={o.valor}>{o.texto ?? c.sinDato} ({plural(o.total)})</option>)}
+          </select>
+        </div>
+      ))
+    }
+  </div>
+  <p class="chico texto-suave">PUBLICADO es el estado de los proyectos que llegaron a ser ley.</p>
+  <p class="resultado" data-filtro-votaciones-resultado aria-live="polite"></p>
+</form>
+
+<script>
+  import { CAMPOS, escribirFiltrosVotaciones, filtrarVotaciones, leerFiltrosVotaciones } from "../lib/filtroVotaciones.js";
+  import { textoResultado } from "../lib/filtroVotos.js";
+  import { parametrosVotaciones as nombres } from "../lib/rutas.js";
+
+  for (const form of document.querySelectorAll<HTMLFormElement>("form[data-filtro-votaciones]")) {
+    const contenedor = form.closest<HTMLElement>("[data-votaciones]")!;
+    const selects = Object.fromEntries(CAMPOS.map((c) => [c, form.querySelector<HTMLSelectElement>(`select[data-campo="${c}"]`)!]));
+    const resultado = form.querySelector<HTMLElement>("[data-filtro-votaciones-resultado]")!;
+    const elementos = [...contenedor.querySelectorAll<HTMLElement>("li[data-votacion]")];
+    const entradas = elementos.map((el) => ({ el, camara: el.dataset.camara, estado: el.dataset.estado, resultado: el.dataset.resultado }));
+    const opciones = Object.fromEntries(CAMPOS.map((c) => [c, [...selects[c].options].map((o) => o.value).filter(Boolean)]));
+    const elegidos = () => Object.fromEntries(CAMPOS.map((c) => [c, selects[c].value]));
+
+    const aplicar = (actualizarDireccion: boolean) => {
+      const filtros = elegidos();
+      const visibles = new Set(filtrarVotaciones(entradas, filtros).map((e) => e.el));
+      for (const el of elementos) el.hidden = !visibles.has(el);
+      resultado.textContent = textoResultado(visibles.size, elementos.length);
+      if (actualizarDireccion) {
+        const consulta = escribirFiltrosVotaciones(new URLSearchParams(location.search), nombres, filtros).toString();
+        history.replaceState(null, "", consulta ? `?${consulta}` : location.pathname);
+      }
+    };
+
+    // Filtros iniciales desde la dirección (enlace compartido). Un valor desconocido se ignora.
+    const iniciales = leerFiltrosVotaciones(new URLSearchParams(location.search), nombres, opciones);
+    for (const c of CAMPOS) selects[c].value = iniciales[c];
+    form.hidden = false;
+    aplicar(false);
+    for (const c of CAMPOS) selects[c].addEventListener("change", () => aplicar(true));
+    form.addEventListener("submit", (e) => e.preventDefault());
+  }
+</script>
+
+<style>
+  .filtro-votaciones {
+    display: grid;
+    gap: var(--espacio-2);
+    padding: var(--espacio-4);
+    margin-bottom: var(--espacio-4);
+    background: var(--color-superficie);
+    border: var(--borde-ancho) solid var(--color-borde);
+    border-radius: var(--radio);
+  }
+  .filtro-votaciones[hidden] {
+    display: none;
+  }
+  .campos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espacio-3) var(--espacio-4);
+  }
+  .campo {
+    display: grid;
+    gap: var(--espacio-1);
+    min-width: var(--ancho-campo-filtro);
+    max-width: 100%;
+  }
+  select {
+    max-width: 100%;
+  }
+  p {
+    margin: 0;
+  }
+  .resultado {
+    font-size: var(--tamano-chico);
+    color: var(--color-texto-suave);
+  }
+</style>

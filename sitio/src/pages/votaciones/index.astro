@@ -1,0 +1,109 @@
+---
+// Votaciones nominales del período vigente sobre proyectos de ley (lib/votaciones.js, alcance acordado
+// en #44). Explica la posición de cada partido, enlaza a la página de cada año y muestra, por cámara,
+// las votaciones más ajustadas.
+import Base from "../../layouts/Base.astro";
+import ListaVotaciones from "../../components/ListaVotaciones.astro";
+import { periodos } from "../../lib/datos.js";
+import * as rutas from "../../lib/rutas.js";
+import { CANTIDAD_AJUSTADAS, masAjustadas, votacionesDelPeriodo } from "../../lib/votaciones.js";
+
+const periodo = periodos().find((p) => p.vigente).id;
+const { votaciones, anios, porCamara } = votacionesDelPeriodo(periodo);
+const ajustadas = masAjustadas(periodo);
+const numero = (n: number) => n.toLocaleString("es-PY");
+const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${n === 1 ? singular : varios}`;
+const porCamaraTexto = (lista: any[]) => lista.map((c) => `${c.camara} ${numero(c.total)}`).join(" · ");
+---
+
+<Base
+  titulo="Votaciones y posición de cada partido"
+  descripcion={`Las ${numero(votaciones.length)} votaciones nominales sobre proyectos de ley del período legislativo ${periodo}, con el resultado oficial, los totales y lo que votó la mayoría de cada partido.`}
+>
+  <h1>Votaciones y posición de cada partido</h1>
+  <div class="lectura">
+    <p>
+      Las {plural(votaciones.length, "votación nominal", "votaciones nominales")} sobre proyectos de ley del
+      período legislativo {periodo} ({porCamaraTexto(porCamara)}), con el resultado oficial, los totales de
+      cada categoría y la posición de cada partido.
+    </p>
+    <p class="formula">
+      Posición de un partido = la categoría con más votos entre los votos emitidos de sus legisladores en
+      esa votación
+    </p>
+    <ul class="chico">
+      <li>
+        <strong>Votos emitidos.</strong> SI, NO, ABSTENCIÓN/BLANCO o una moción. AUSENTE y NO VOTA no
+        cuentan. Si dos categorías empatan en el primer lugar, la etiqueta dice «empate». Si ningún
+        legislador del partido emitió voto, dice «sin votos emitidos».
+      </li>
+      <li>
+        <strong>Siglas.</strong> Son propias de este sitio, para que las etiquetas entren en poco espacio.
+        Al pasar el cursor sobre una etiqueta se ve el nombre oficial del partido y cuántos votos tuvo esa
+        categoría sobre los votos emitidos del partido.
+      </li>
+      <li>
+        <strong>Totales.</strong> Los que publica el Congreso, sobre los legisladores registrados en la
+        lista oficial de la votación.
+      </li>
+    </ul>
+    <p class="chico texto-suave">
+      Partido es el que la API registra para cada legislador en el período, no necesariamente el de la
+      fecha de cada votación.{" "}
+      <a href={rutas.metodologia(rutas.anclasMetodologia.posicionPartidos)}>Cómo se calcula la posición de cada partido</a>
+      {" · "}
+      <a href={rutas.coincidencia()}>Coincidencia de votos entre partidos</a>
+    </p>
+  </div>
+
+  <section aria-labelledby="titulo-anios">
+    <h2 id="titulo-anios">Votaciones por año</h2>
+    <p class="chico texto-suave">El año es el de la fecha del trámite en que se votó. En cada año se puede filtrar por cámara, estado del proyecto y resultado.</p>
+    <ul class="anios">
+      {
+        anios.map((a: any) => (
+          <li data-anio={a.anio}>
+            <a href={a.url}>{a.anio}</a> <span class="chico">{plural(a.total, "votación", "votaciones")}</span>{" "}
+            <span class="chico texto-suave">({porCamaraTexto(a.porCamara)})</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="titulo-ajustadas">
+    <h2 id="titulo-ajustadas">Votaciones más ajustadas</h2>
+    <p class="lectura chico">
+      Por cámara, las {CANTIDAD_AJUSTADAS} votaciones del período con menor diferencia entre los totales
+      oficiales de SI y de NO. A igual diferencia, primero la más reciente. No se cuentan las votaciones sin
+      votos SI ni NO.{" "}
+      <a href={rutas.metodologia(rutas.anclasMetodologia.masAjustadas)}>Cómo se eligen</a>
+    </p>
+    {
+      ajustadas.map((c: any) => (
+        <section data-camara-ajustadas>
+          <h3>{c.camara ?? "Sin dato"}</h3>
+          <ListaVotaciones votaciones={c.votaciones} diferencia />
+        </section>
+      ))
+    }
+  </section>
+</Base>
+
+<style>
+  .formula {
+    padding: var(--espacio-3) var(--espacio-4);
+    background: var(--color-superficie);
+    border-left: var(--foco-ancho) solid var(--color-acento);
+  }
+  .anios {
+    list-style: none;
+    padding: 0;
+  }
+  .anios li + li {
+    margin-top: var(--espacio-2);
+  }
+  .anios a {
+    font-weight: var(--peso-fuerte);
+  }
+</style>

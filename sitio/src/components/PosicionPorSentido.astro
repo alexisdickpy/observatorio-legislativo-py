@@ -1,0 +1,53 @@
+---
+// Posición de cada partido en una votación de la ficha de ley, agrupada por sentido (alcance acordado
+// en #44): qué partidos tuvieron SI como categoría más votada, cuáles NO, cuáles otra categoría, los
+// empates y los partidos sin votos emitidos. Cada partido con su sigla propia (el texto oficial en el
+// título) y sus votos de esa categoría sobre sus votos emitidos. Recibe los grupos de lib/ficha.js
+// (porSentido). Los colores de cada categoría están en BarraVotos (tokens.css).
+import * as rutas from "../lib/rutas.js";
+
+interface Props {
+  grupos: any[];
+}
+const { grupos } = Astro.props;
+const cifra = (p: any) =>
+  p.posicion
+    ? `${p.cantidad} de ${p.votantes}`
+    : p.votantes
+      ? `${p.votantes} votos emitidos`
+      : `${p.miembros} ${p.miembros === 1 ? "legislador" : "legisladores"} sin voto emitido`;
+---
+
+<ul class="posicion-sentido chico">
+  {grupos.map((g) => <li data-sentido={g.titulo}><span class={`cuadro ${g.clase}`}></span><strong>{g.titulo}</strong> <span class="texto-suave" aria-hidden="true">·</span> {g.partidos.map((p: any, n: number) => <Fragment>{n > 0 && ", "}<abbr title={p.partido}>{p.sigla}</abbr> <span class="texto-suave">({cifra(p)})</span></Fragment>)}</li>)}
+</ul>
+<p class="chico texto-suave lectura">
+  Para cada partido, la categoría con más votos entre los votos emitidos de sus legisladores en esta
+  votación. Entre paréntesis, los votos de esa categoría sobre los votos emitidos del partido. Las siglas
+  son propias de este sitio.{" "}
+  <a href={rutas.metodologia(rutas.anclasMetodologia.posicionPartidos)}>Cómo se calcula</a>
+</p>
+
+<style is:global>
+  .posicion-sentido {
+    list-style: none;
+    margin: var(--espacio-2) 0;
+    padding: 0;
+    display: grid;
+    gap: var(--espacio-1);
+  }
+  .posicion-sentido .cuadro {
+    display: inline-block;
+    width: var(--tamano-cuadro-voto);
+    height: var(--tamano-cuadro-voto);
+    margin-right: var(--espacio-2);
+    border-radius: 2px;
+  }
+  .posicion-sentido .voto-sin-posicion {
+    background: transparent;
+    border: var(--borde-ancho) solid var(--color-texto-suave);
+  }
+  .posicion-sentido abbr {
+    text-decoration: none;
+  }
+</style>

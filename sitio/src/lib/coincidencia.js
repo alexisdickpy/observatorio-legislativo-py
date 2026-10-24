@@ -4,7 +4,7 @@
 // - Votaciones: las nominales del período sobre un proyecto de ley, las mismas del historial de votos
 //   de la ficha de legislador (#28).
 // - Posición de un grupo en una votación: su mayoría, igual que en los votos distintos a la mayoría
-//   (#39, mayoriaDe de lib/legisladores.js). Es la categoría con más votos entre los votos emitidos de
+//   (#39, mayoriaDe de lib/mayoria.js). Es la categoría con más votos entre los votos emitidos de
 //   sus miembros (SI, NO, ABSTENCIÓN/BLANCO o una moción). Si dos o más empatan en el primer lugar, el
 //   grupo no tiene posición en esa votación. Un grupo en que solo votó una persona tiene como posición
 //   su voto. Si ninguno de sus miembros emitió voto, no tiene posición.

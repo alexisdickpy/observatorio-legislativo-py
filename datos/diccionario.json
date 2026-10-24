@@ -1117,6 +1117,12 @@
           "descripcion": "Nombre con el que el sitio muestra el partido unificado (uno de sus textos oficiales)."
         },
         {
+          "campo": "sigla",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Sigla corta con la que el sitio muestra el partido donde hay poco espacio, como la posición de cada partido en las votaciones. Sale del texto oficial cuando lo incluye y, si no, del nombre de su bancada oficial, del nombre por el que se lo conoce o de sus iniciales. Los textos del mismo partido unificado comparten sigla."
+        },
+        {
           "campo": "fundamentoUnificado",
           "origen": "propio",
           "tipo": "texto",

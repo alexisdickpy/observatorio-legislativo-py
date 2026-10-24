@@ -7,9 +7,18 @@ import * as rutas from "./rutas.js";
 
 /**
  * Vistas de análisis, en el orden del menú. `menu` es el nombre corto de su entrada; `titulo` y
- * `descripcion`, los de la portada. Con `portada: false` la vista está en el menú y no en la portada.
+ * `descripcion`, los de la portada. Con `portada: false` la vista está en el menú y no en la portada; con
+ * `portadaAlFinal`, su tarjeta va a lo ancho debajo de las demás.
  */
 export const vistasDeAnalisis = () => [
+  {
+    clave: "votaciones",
+    url: rutas.votaciones(),
+    menu: "Votaciones",
+    titulo: "Votaciones y posición de cada partido",
+    descripcion: "Las votaciones nominales sobre proyectos de ley con su resultado oficial y lo que votó la mayoría de cada partido. Aquí, las más recientes.",
+    portadaAlFinal: true,
+  },
   {
     clave: "coincidencia",
     url: rutas.coincidencia(),

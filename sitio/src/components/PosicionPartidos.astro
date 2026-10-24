@@ -1,0 +1,50 @@
+---
+// Posición de cada partido en una votación (alcance acordado en #44): una etiqueta por partido con su
+// sigla propia, un cuadro del color de su posición y la posición escrita. El texto oficial del partido
+// y sus votos de esa categoría sobre sus votos emitidos van en el título de la etiqueta. Recibe las
+// posiciones de lib/ficha.js (posicionesDePartidos). Los colores de cada categoría están en BarraVotos (tokens.css).
+// Etiquetas en una sola línea y con elementos cortos (<i> el cuadro, <b> la sigla) por el peso de la
+// página de votaciones de un año: con compressHTML desactivado, la sangría se copia en cada una.
+interface Props {
+  partidos: any[];
+}
+const { partidos } = Astro.props;
+const detalle = (p: any) => (p.posicion ? `${p.partido}, ${p.cantidad} de ${p.votantes}` : `${p.partido}, ${p.votantes} de ${p.miembros} con voto emitido`);
+---
+
+<ul class="posicion-partidos chico">{partidos.map((p) => <li title={detalle(p)}><i class={p.clase}></i><b>{p.sigla}</b> {p.texto}</li>)}</ul>
+
+<style is:global>
+  .posicion-partidos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espacio-1) var(--espacio-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .posicion-partidos li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--espacio-1);
+    padding: 0 var(--espacio-2);
+    border: var(--borde-ancho) solid var(--color-borde);
+    border-radius: var(--radio);
+    background: var(--color-fondo);
+    white-space: nowrap;
+  }
+  .posicion-partidos b {
+    font-weight: var(--peso-fuerte);
+  }
+  .posicion-partidos i {
+    display: inline-block;
+    flex: none;
+    width: var(--tamano-cuadro-voto);
+    height: var(--tamano-cuadro-voto);
+    border-radius: 2px;
+  }
+  .posicion-partidos .voto-sin-posicion {
+    background: transparent;
+    border: var(--borde-ancho) solid var(--color-texto-suave);
+  }
+</style>

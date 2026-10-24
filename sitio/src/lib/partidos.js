@@ -24,6 +24,16 @@ export function nombreConocido(partidoOficial) {
 }
 
 /**
+ * Sigla de un partido oficial (dato propio, #44), para los lugares con poco espacio. Si el texto todavía
+ * no está en la tabla, el texto oficial completo; null si está vacío.
+ */
+export function siglaDe(partidoOficial) {
+  const texto = String(partidoOficial ?? "").trim();
+  if (!texto) return null;
+  return entradaDe(partidoOficial)?.sigla ?? texto;
+}
+
+/**
  * Partido unificado de un texto oficial: { id, nombre, enTabla }, o null si el texto está vacío.
  * `enTabla` es false si el texto todavía no figura en la tabla (queda solo).
  */

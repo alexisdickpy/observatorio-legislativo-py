@@ -4,30 +4,35 @@
       "partidoPolitico": "Asociación Nacional Republicana ANR",
       "partidoUnificado": "asociacion-nacional-republicana-anr",
       "nombreUnificado": "Asociación Nacional Republicana ANR",
+      "sigla": "ANR",
       "fundamentoUnificado": "Único texto oficial de este partido en el período 2023-2028. No hay otro texto que corresponda al mismo partido."
     },
     {
       "partidoPolitico": "CRUZADA NACIONAL",
       "partidoUnificado": "partido-cruzada-nacional",
       "nombreUnificado": "Partido Cruzada Nacional",
+      "sigla": "CN",
       "fundamentoUnificado": "Texto oficial de la Cámara de Diputados. Se agrupa con «Partido Cruzada Nacional» (Cámara de Senadores) porque la bancada oficial de la diputada con este texto se llama «PARTIDO CRUZADA NACIONAL \"CN\"», el mismo nombre del partido que figura en el Senado."
     },
     {
       "partidoPolitico": "INDEPENDIENTE",
       "partidoUnificado": "independiente",
       "nombreUnificado": "INDEPENDIENTE",
+      "sigla": "IND",
       "fundamentoUnificado": "Queda solo. No se agrupa con «Independiente A» (Cámara de Senadores) porque nada en los datos oficiales indica que sean el mismo partido."
     },
     {
       "partidoPolitico": "Independiente A",
       "partidoUnificado": "independiente-a",
       "nombreUnificado": "Independiente A",
+      "sigla": "IND A",
       "fundamentoUnificado": "Queda solo. No se agrupa con «INDEPENDIENTE» (Cámara de Diputados) porque nada en los datos oficiales indica que sean el mismo partido. Su bancada oficial es «LIBERAL INDEPENDIENTE» y la del diputado con el otro texto, «BANCADA INDEPENDIENTE»."
     },
     {
       "partidoPolitico": "Movimiento Conciencia Democrática Nacional",
       "partidoUnificado": "movimiento-conciencia-democratica-nacional",
       "nombreUnificado": "Movimiento Conciencia Democrática Nacional",
+      "sigla": "Yo Creo",
       "fundamentoUnificado": "Único texto oficial de este partido en el período 2023-2028. No hay otro texto que corresponda al mismo partido.",
       "nombreConocido": "Yo Creo",
       "fundamentoNombreConocido": "Las bancadas oficiales de sus legisladores en el período 2023-2028 llevan ese nombre: «CONCIENCIA DEMOCRÁTICA NACIONAL - \"YO CREO\"» (Cámara de Senadores) y «BANCADA DEL MOVIMIENTO CONCIENCIA DEMOCRÁTICA NACIONAL -YO CREO» (Cámara de Diputados)."
@@ -36,42 +41,49 @@
       "partidoPolitico": "Partido Cruzada Nacional",
       "partidoUnificado": "partido-cruzada-nacional",
       "nombreUnificado": "Partido Cruzada Nacional",
+      "sigla": "CN",
       "fundamentoUnificado": "Texto oficial de la Cámara de Senadores. Se agrupa con «CRUZADA NACIONAL» (Cámara de Diputados) porque la bancada oficial de la diputada con ese texto se llama «PARTIDO CRUZADA NACIONAL \"CN\"» y la de dos de los senadores con este texto, «CRUZADA NACIONAL»."
     },
     {
       "partidoPolitico": "Partido Democrático Progresista PDP",
       "partidoUnificado": "partido-democratico-progresista-pdp",
       "nombreUnificado": "Partido Democrático Progresista PDP",
+      "sigla": "PDP",
       "fundamentoUnificado": "Único texto oficial de este partido en el período 2023-2028. No hay otro texto que corresponda al mismo partido."
     },
     {
       "partidoPolitico": "Partido Encuentro Nacional PEN",
       "partidoUnificado": "partido-encuentro-nacional-pen",
       "nombreUnificado": "Partido Encuentro Nacional PEN",
+      "sigla": "PEN",
       "fundamentoUnificado": "Único texto oficial de este partido en el período 2023-2028. No hay otro texto que corresponda al mismo partido."
     },
     {
       "partidoPolitico": "Partido Liberal Radical Auténtico PLRA",
       "partidoUnificado": "partido-liberal-radical-autentico-plra",
       "nombreUnificado": "Partido Liberal Radical Auténtico PLRA",
+      "sigla": "PLRA",
       "fundamentoUnificado": "Único texto oficial de este partido en el período 2023-2028. No hay otro texto que corresponda al mismo partido."
     },
     {
       "partidoPolitico": "Partido Participación Ciudadana",
       "partidoUnificado": "partido-participacion-ciudadana",
       "nombreUnificado": "Partido Participación Ciudadana",
+      "sigla": "PPC",
       "fundamentoUnificado": "Único texto oficial de este partido en el período 2023-2028. No hay otro texto que corresponda al mismo partido."
     },
     {
       "partidoPolitico": "Partido Patria Querida PPQ",
       "partidoUnificado": "partido-patria-querida-ppq",
       "nombreUnificado": "Partido Patria Querida PPQ",
+      "sigla": "PPQ",
       "fundamentoUnificado": "Único texto oficial de este partido en el período 2023-2028. No hay otro texto que corresponda al mismo partido."
     },
     {
       "partidoPolitico": "Partido País Solidario PPS",
       "partidoUnificado": "partido-pais-solidario-pps",
       "nombreUnificado": "Partido País Solidario PPS",
+      "sigla": "PPS",
       "fundamentoUnificado": "Único texto oficial de este partido en el período 2023-2028. No hay otro texto que corresponda al mismo partido."
     }
   ]

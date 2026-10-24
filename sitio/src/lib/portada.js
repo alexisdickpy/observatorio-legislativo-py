@@ -1,9 +1,10 @@
 // Vista previa de las vistas de análisis en la portada (alcance acordado en #51). Sin HTML. Datos por
 // cámara; los únicos nombres de personas son los primeros del cuadro de votos distintos a la mayoría
 // de su partido (#54). Las cifras salen de los mismos cálculos que las páginas de cada vista
-// (lib/coincidencia.js y lib/votosDistintos.js), nunca se suman las cámaras.
+// (lib/votaciones.js, lib/coincidencia.js y lib/votosDistintos.js), nunca se suman las cámaras.
 
 import { coincidencia } from "./coincidencia.js";
+import { ultimasVotaciones } from "./votaciones.js";
 import { CANTIDAD_PORTADA, votosDistintosAlPartido } from "./votosDistintos.js";
 
 const porMayorCoincidencia = (a, b) => b.porcentaje - a.porcentaje || b.total - a.total || a.nombres.localeCompare(b.nombres, "es");
@@ -47,6 +48,7 @@ export function barrasDeReferencia(cuadro, id = cuadro.filas[0]?.id) {
  * - coincidencia: por cámara, sus votaciones sobre proyectos de ley, el par de partidos con más y con
  *   menos coincidencia (null si la cámara no tiene al menos dos pares con porcentaje) y un gráfico
  *   por partido (barrasDeReferencia), en el orden de `partidos`.
+ * - votaciones: las CANTIDAD_ULTIMAS_PORTADA votaciones más recientes, de las dos cámaras.
  * - votosDistintos: por cámara, los CANTIDAD_PORTADA primeros del cuadro de votos distintos a la mayoría
  *   de su partido, en el mismo orden.
  */
@@ -64,6 +66,7 @@ export function vistaPrevia(periodo) {
         graficos: c.partidos.map((p) => ({ id: p.id, ...barrasDeReferencia(cuadro, p.id) })),
       };
     }),
+    votaciones: ultimasVotaciones(periodo),
     votosDistintos: votosDistintosAlPartido(periodo).camaras.map((x) => ({
       camara: x.camara,
       filas: x.filas.slice(0, CANTIDAD_PORTADA),

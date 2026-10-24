@@ -175,6 +175,33 @@ Decisión de alcance (#43). La página `/coincidencia-de-votos/` muestra qué ta
 
 Comprobación. Las pruebas recalculan a mano 3 pares en 12 votaciones cada uno a partir de `votos.csv` y `legisladores.json` (dos bancadas de Diputados, ANR y PLRA en el Senado, y dos partidos de un solo senador), además de casos sintéticos de posición, empate y grupos sin votos emitidos.
 
+## Votaciones y posición de cada partido
+
+Decisión de alcance (#44). La página `/votaciones/` reúne las votaciones nominales del período con su resultado oficial y lo que votó la mayoría de cada partido. Hay una página por año (`/votaciones/{año}/`) para que ninguna pese demasiado.
+
+- **Votaciones.** Las nominales del período sobre un proyecto de ley, las mismas del historial de votos (#28) y de la coincidencia (#43): 211 en la Cámara de Senadores y 793 en la de Diputados en 2023-2028. Quedan fuera resoluciones, declaraciones, designaciones y demás tipos de expediente.
+- **Año.** El de la fecha del trámite votado (`tramitacion._propio.fechaTramite`). Dentro de cada año, de la más reciente a la más antigua (a igual fecha, la de mayor `idVotacion`).
+- **Cada votación.** Fecha, cámara, etapa, proyecto (enlace a la ficha de la ley si llegó a ser ley; si no, al expediente oficial en SILpy), estado oficial del proyecto (`estadoProyecto`, el de la última actualización), resultado oficial (`resultadoTramite`), totales oficiales de las categorías con votos sobre los legisladores registrados en la lista, la barra y un enlace a la votación (en la ficha de la ley o, sin ley, en SILpy). Las categorías sin total publicado (mociones) se cuentan desde los votos individuales, como en la ficha de ley.
+- **Posición de cada partido.** La categoría con más votos entre los votos emitidos de sus legisladores registrados en la votación (`mayoriaDe`, en `lib/mayoria.js`, el mismo criterio que la coincidencia). `AUSENTE` y `NO VOTA` no son votos emitidos. Si dos o más categorías empatan en el primer lugar, la etiqueta dice «empate». Si ningún legislador del partido emitió voto, dice «sin votos emitidos». Un partido con un solo votante tiene como posición su voto.
+- **Partido.** El texto oficial de `partidoPolitico` dentro de la cámara de la votación, que dentro de una cámara equivale al partido unificado (#42). Los legisladores sin partido registrado no forman parte de ninguna etiqueta. Partido es el que la API registra para el período, sin fecha. No se muestran bancadas en la lista; la ficha de ley mantiene el desglose por bancada.
+- **Siglas.** Dato propio en `datos/propios/partidos.json` (campo `sigla`), para que las etiquetas entren en poco espacio. Salen del texto oficial cuando lo incluye (ANR, PLRA, PPQ, PEN, PDP, PPS); si no, de la bancada oficial (CN, de «PARTIDO CRUZADA NACIONAL "CN"»), del nombre conocido (Yo Creo) o de las iniciales (PPC, IND, IND A). Los textos del mismo partido unificado comparten sigla. El nombre oficial va en el título de cada etiqueta, con los votos de la categoría sobre los votos emitidos del partido.
+- **Presentación.** Cada etiqueta lleva la sigla, un cuadro del color de la categoría (los mismos colores de la barra, en `tokens.css`) y la categoría escrita, para que no dependa solo del color. Las posiciones sin categoría llevan un cuadro sin relleno. Etiquetas de más a menos legisladores del partido en la lista de la votación.
+- **Filtros.** En cada año, por cámara, estado oficial del proyecto y resultado oficial (`?camara=…&estado=…&resultado=…`, con el slug del texto oficial). Sin JavaScript se ven todas las votaciones del año.
+- **Ficha de ley.** Junto a los totales de cada votación, los partidos agrupados por su posición (qué partidos tuvieron `SI` como categoría más votada, cuáles `NO`, cuáles otra categoría, los empates y los que no emitieron voto), cada uno con sus votos de esa categoría sobre sus votos emitidos. El desglose por partido y por bancada sigue igual.
+- **Menú y portada.** Entrada «Votaciones» en el menú. La portada muestra, a lo ancho y debajo de las demás tarjetas de análisis, las 5 votaciones más recientes de las dos cámaras (`portadaAlFinal` en `vistasDeAnalisis`).
+
+### Votaciones más ajustadas
+
+En `/votaciones/`, las **10** votaciones de cada cámara con menor diferencia entre los totales oficiales de `SI` y de `NO`. No están en la portada.
+
+> diferencia = | total oficial de SI − total oficial de NO |
+
+- **Orden.** De menor a mayor diferencia; a igual diferencia, la más reciente primero.
+- **Fuera.** Las votaciones sin votos `SI` ni `NO`. Las abstenciones, `NO VOTA` y `AUSENTE` no cambian la diferencia.
+- La diferencia no dice si la votación alcanzó la mayoría que exigía el reglamento; el resultado que vale es el oficial.
+
+Comprobación. Las pruebas recalculan los totales con `votaciones.json` y las posiciones de cada partido con un recuento aparte de `votos.csv` y `legisladores.json`, y verifican que cada votación del período figure una sola vez en la página de su año.
+
 ## Números de ley
 
 El número de ley se usa como URL (`/leyes/{número}/`). El importador verifica en cada ejecución que ningún número del período figure en otra legislatura, comparando con el listado histórico completo de la API. El resultado se informa en el resumen de cada ejecución.

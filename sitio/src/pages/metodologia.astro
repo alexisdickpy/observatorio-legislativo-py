@@ -7,6 +7,7 @@ import { periodos } from "../lib/datos.js";
 import { observacionesDeLosDatos } from "../lib/metodologia.js";
 import { tablaDePartidos } from "../lib/partidos.js";
 import * as rutas from "../lib/rutas.js";
+import { CANTIDAD_AJUSTADAS, CANTIDAD_ULTIMAS_PORTADA } from "../lib/votaciones.js";
 import { CANTIDAD_CUADRO, CANTIDAD_PORTADA, MINIMO_COMPARABLES } from "../lib/votosDistintos.js";
 
 const fuente = cita();
@@ -267,6 +268,40 @@ const anclas = rutas.anclasMetodologia;
       este sitio.
     </p>
 
+    <h2 id={anclas.posicionPartidos}>Votaciones y posición de cada partido</h2>
+    <p>
+      La página de <a href={rutas.votaciones()}>votaciones</a> reúne las votaciones nominales sobre
+      proyectos de ley del período, una página por año (el de la fecha del trámite votado), de la más
+      reciente a la más antigua. Cada votación muestra la fecha, la cámara, la etapa, el proyecto, su estado
+      oficial, el resultado oficial, los totales que publica el Congreso sobre los legisladores registrados
+      y la posición de cada partido. Se puede filtrar por cámara, estado del proyecto y resultado.
+    </p>
+    <p>
+      La posición de un partido en una votación es la categoría con más votos entre los votos emitidos de
+      sus legisladores, igual que en la coincidencia de votos. AUSENTE y NO VOTA no son votos emitidos. Si
+      dos o más categorías empatan en el primer lugar, la etiqueta dice «empate», y si ningún legislador del
+      partido emitió voto, dice «sin votos emitidos». Se calcula dentro de la cámara de la votación, con el
+      partido que la API registra para el período, sin fecha.
+    </p>
+    <p>
+      Cada partido se muestra con una sigla propia de este sitio, un cuadro del color de su posición y la
+      posición escrita, para que no dependa solo del color. Las siglas salen del nombre oficial cuando lo
+      incluye y, si no, de la bancada oficial, del nombre conocido o de las iniciales. El nombre oficial
+      aparece al pasar el cursor sobre la etiqueta. En la ficha de cada ley, junto a los totales de cada
+      votación, los partidos se agrupan por su posición, cada uno con los votos de esa categoría sobre sus
+      votos emitidos.
+    </p>
+
+    <h3 id={anclas.masAjustadas}>Votaciones más ajustadas</h3>
+    <p>
+      Son las votaciones con menor diferencia entre los totales oficiales de SI y de NO, de menor a mayor
+      diferencia y, a igual diferencia, primero la más reciente. Se muestran las {CANTIDAD_AJUSTADAS} de cada
+      cámara en la página de votaciones. La portada muestra, en cambio, las {CANTIDAD_ULTIMAS_PORTADA} votaciones más
+      recientes de las dos cámaras. No se
+      cuentan las votaciones sin votos SI ni NO. La diferencia no dice si se alcanzó la mayoría que exige el
+      reglamento. El resultado que vale es el oficial.
+    </p>
+
     <h2 id={anclas.afiliacion}>Partido y bancada</h2>
     <p>
       La API publica un único partido y una única bancada por legislador y período, sin fecha. Si un
@@ -338,6 +373,7 @@ const anclas = rutas.anclasMetodologia;
       <li>Cuenta los votos individuales de cada votación y los compara con los totales publicados.</li>
       <li>Da a cada legislador una dirección propia y estable, formada con su nombre.</li>
       <li>Reúne bajo un <a href={`#${anclas.partidoUnificado}`}>partido unificado</a> los textos oficiales que corresponden al mismo partido, sin cambiarlos.</li>
+      <li>Muestra cada partido con una <a href={`#${anclas.posicionPartidos}`}>sigla propia</a> donde hay poco espacio, sin reemplazar su nombre oficial.</li>
       <li>Guarda una copia propia de las fotos oficiales y la muestra en tamaño reducido.</li>
     </ul>
 

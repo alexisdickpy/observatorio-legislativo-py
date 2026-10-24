@@ -1,10 +1,12 @@
 ---
-// Apartado de la portada con cada vista de análisis (lib/navegacion.js) que no lleva `portada: false`:
+// Apartado de la portada con cada vista de análisis (lib/navegacion.js) que no lleva `portada: false`
+// (las de `portadaAlFinal`, a lo ancho debajo de las demás; hoy, las últimas votaciones):
 // su enlace, una línea sobre qué muestra y una vista previa con datos por cámara (lib/portada.js,
 // alcance acordado en #51). Solo la de votos distintos a la mayoría de su partido lleva nombres de
 // personas (#54). Una vista sin vista previa propia muestra solo el enlace y la línea. En
 // la coincidencia se elige el partido del gráfico; al abrir, el de más legisladores en ejercicio.
 import BarrasCoincidencia from "./BarrasCoincidencia.astro";
+import ListaVotaciones from "./ListaVotaciones.astro";
 import ListaVotosDistintos from "./ListaVotosDistintos.astro";
 import { vistasDeAnalisis } from "../lib/navegacion.js";
 import { vistaPrevia } from "../lib/portada.js";
@@ -23,7 +25,7 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
   <div class="tarjetas">
     {
       vistasDeAnalisis()
-        .filter((v) => v.portada !== false)
+        .filter((v) => v.portada !== false && !v.portadaAlFinal)
         .map((v) => (
         <article class="tarjeta" data-analisis={v.clave}>
           <h3>
@@ -80,6 +82,22 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
       ))
     }
   </div>
+  {
+    vistasDeAnalisis()
+      .filter((v) => v.portada !== false && v.portadaAlFinal)
+      .map((v) => (
+        <article class="tarjeta al-final" data-analisis={v.clave}>
+          <h3>
+            <a href={v.url}>{v.titulo}</a>
+          </h3>
+          <p class="chico">{v.descripcion}</p>
+          {v.clave === "votaciones" && <ListaVotaciones votaciones={previa.votaciones} />}
+          <p class="chico">
+            <a href={v.url}>Ver todas las votaciones y las más ajustadas</a>
+          </p>
+        </article>
+      ))
+  }
 </section>
 
 <script>
@@ -136,6 +154,9 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
     margin-top: var(--espacio-2);
   }
   .camara {
+    margin-top: var(--espacio-4);
+  }
+  .al-final {
     margin-top: var(--espacio-4);
   }
   .camara h4 {

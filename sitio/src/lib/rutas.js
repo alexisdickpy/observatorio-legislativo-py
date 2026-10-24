@@ -37,6 +37,8 @@ export const anclasMetodologia = {
   afiliacion: "partido-y-bancada",
   partidoUnificado: "partido-unificado",
   coincidencia: "coincidencia-de-votos",
+  posicionPartidos: "posicion-de-cada-partido",
+  masAjustadas: "votaciones-mas-ajustadas",
   observaciones: "observaciones-sobre-los-datos",
 };
 
@@ -61,6 +63,11 @@ export const votacionesNominalesOrdenadas = (orden) => `${votacionesNominales()}
 
 /** Cuadro de legisladores con más votos distintos a la mayoría de su partido (#54). */
 export const votosDistintosAlPartido = () => "/legisladores/votos-distintos-al-partido/";
+
+/** Votaciones con la posición de cada partido (#44); con año, la página de ese año. */
+export const votaciones = (anio) => (anio ? `/votaciones/${encodeURIComponent(anio)}/` : "/votaciones/");
+/** Parámetros de la dirección de la página de un año de votaciones (?camara=…&estado=…&resultado=…). */
+export const parametrosVotaciones = { camara: "camara", estado: "estado", resultado: "resultado" };
 
 /** Coincidencia de votos entre partidos y entre bancadas; con grupo, la dirección que lo muestra (?grupo=…). */
 export const coincidencia = (grupo) => (grupo ? `/coincidencia-de-votos/?grupo=${encodeURIComponent(grupo)}` : "/coincidencia-de-votos/");

@@ -14,9 +14,13 @@
 //   entre paréntesis y señalado como propio. El nombre oficial no cambia.
 // - Porcentajes sobre todos los legisladores del grupo registrados en la votación (incluidos
 //   AUSENTE y NO VOTA), con el denominador escrito.
+// - Posición de cada partido (alcance acordado en #44): la categoría con más votos entre los votos
+//   emitidos de sus miembros (mayoriaDe, el mismo criterio de la coincidencia de votos), con la sigla
+//   propia de datos/propios/partidos.json. La ficha la agrupa por sentido, junto a los totales.
 
 import { fuente, notas } from "./datos.js";
-import { nombreConocido } from "./partidos.js";
+import { mayoriaDe } from "./mayoria.js";
+import { nombreConocido, siglaDe } from "./partidos.js";
 import * as rutas from "./rutas.js";
 import { recortar, slug } from "./texto.js";
 
@@ -126,6 +130,73 @@ function prepararAutor(a, periodo) {
   };
 }
 
+/**
+ * Totales de una votación: los que publica el Congreso y, para las categorías sin total publicado
+ * (MOCIÓN 1, 2…), el recuento propio de los votos individuales. `sentidos` son los votos de la lista
+ * oficial; su cantidad es el denominador.
+ */
+export function totalesDe(v, sentidos) {
+  const categorias = ordenarCategorias(sentidos);
+  const oficial = new Map(TOTALES_OFICIALES);
+  const totales = categorias.map((categoria) => {
+    const campo = oficial.get(categoria);
+    const cantidad = campo ? v[campo] : sentidos.filter((s) => s === categoria).length;
+    return { categoria, ...proporcion(cantidad, sentidos.length), recuentoPropio: !campo };
+  });
+  return { categorias, totales };
+}
+
+/** Clase de las posiciones sin categoría (empate o ningún voto emitido): sin color de voto. */
+export const CLASE_SIN_POSICION = "voto-sin-posicion";
+
+/**
+ * Posición de cada partido en una votación, a partir de los votos de su lista oficial ({ partido,
+ * sentido }, partido = texto oficial). Cada votación es de una sola cámara, donde cada partido unificado
+ * tiene un solo texto oficial. Por partido: su sigla, sus miembros en la lista, sus votos emitidos, la
+ * posición (la categoría; null si hubo empate en el primer lugar; undefined si ninguno emitió voto) y
+ * cuántos votos tuvo esa categoría. De más a menos miembros y, a igualdad, por nombre. Quedan fuera
+ * los votantes sin partido registrado.
+ */
+export function posicionesDePartidos(votos) {
+  const grupos = new Map();
+  for (const x of votos) {
+    const partido = valor(x.partido);
+    if (!partido) continue;
+    if (!grupos.has(partido)) grupos.set(partido, []);
+    grupos.get(partido).push(x.sentido);
+  }
+  return [...grupos.entries()]
+    .map(([partido, sentidos]) => {
+      const { mayoria, votantes } = mayoriaDe(sentidos);
+      const posicion = votantes > 0 ? mayoria : undefined;
+      const conPosicion = Boolean(posicion);
+      return {
+        partido,
+        sigla: siglaDe(partido),
+        miembros: sentidos.length,
+        votantes,
+        posicion,
+        cantidad: conPosicion ? sentidos.filter((s) => s === posicion).length : null,
+        texto: conPosicion ? posicion : posicion === null ? "empate" : "sin votos emitidos",
+        clase: conPosicion ? claseDeCategoria(posicion) : CLASE_SIN_POSICION,
+      };
+    })
+    .sort((a, b) => b.miembros - a.miembros || porNombre(a.partido, b.partido));
+}
+
+/**
+ * Partidos agrupados por su posición: un grupo por categoría (en el orden de las columnas), después
+ * los empates y al final los partidos sin votos emitidos. Solo los grupos con algún partido.
+ */
+export function porSentido(posiciones) {
+  const categorias = ordenarCategorias(posiciones.filter((p) => p.posicion).map((p) => p.posicion));
+  return [
+    ...categorias.map((c) => ({ titulo: c, clase: claseDeCategoria(c), partidos: posiciones.filter((p) => p.posicion === c) })),
+    { titulo: "Empate", clase: CLASE_SIN_POSICION, partidos: posiciones.filter((p) => p.posicion === null) },
+    { titulo: "Sin votos emitidos", clase: CLASE_SIN_POSICION, partidos: posiciones.filter((p) => p.posicion === undefined) },
+  ].filter((g) => g.partidos.length);
+}
+
 /** Desglose de una votación por un campo del legislador (partido o bancada). */
 function desglose(votos, campo, categorias) {
   const grupos = new Map();
@@ -167,18 +238,12 @@ function prepararVotacion(v, i) {
         observacion: valor(voto.observacion),
       };
     });
-  const categorias = ordenarCategorias(votos.map((x) => x.sentido));
+  const { categorias, totales } = totalesDe(v, votos.map((x) => x.sentido));
   const posicion = new Map(categorias.map((c, n) => [c, n]));
   votos.sort(
     (a, b) => posicion.get(a.sentido) - posicion.get(b.sentido) || porNombre(a.apellidos, b.apellidos),
   );
   const recuento = (c) => votos.filter((x) => x.sentido === c).length;
-  const oficial = new Map(TOTALES_OFICIALES);
-  const totales = categorias.map((categoria) => {
-    const campo = oficial.get(categoria);
-    const cantidad = campo ? v[campo] : recuento(categoria);
-    return { categoria, ...proporcion(cantidad, votos.length), recuentoPropio: !campo };
-  });
   return {
     id: v.idVotacion,
     ancla: rutas.anclaVotacion(v.idVotacion),
@@ -209,6 +274,7 @@ function prepararVotacion(v, i) {
     totalesCoinciden: v._propio?.totalesCoinciden ?? true,
     recalculados: categorias.map((c) => ({ categoria: c, cantidad: recuento(c) })),
     porPartido: desglose(votos, "partido", categorias),
+    posicionesPorSentido: porSentido(posicionesDePartidos(votos)),
     porBancada: desglose(votos, "bancada", categorias),
     votos,
     notas: (i.notas.get(`votacion:${v.idVotacion}`) ?? []).map((n) => n.detalle),
