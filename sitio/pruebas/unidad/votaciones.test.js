@@ -203,11 +203,11 @@ test("filtro: lee y escribe la dirección, ignora valores desconocidos y combina
 
 test("tema: cada votación lleva los temas de su proyecto o pendiente, y las opciones los cuentan", () => {
   const { votaciones } = votacionesDelPeriodo(PERIODO);
-  assert.ok(votaciones.every((v) => v.temasFiltro.length > 0));
+  assert.ok(votaciones.every((v) => v.temas.filtro.length > 0));
   const anio = votacionesDelPeriodo(PERIODO).anios[0].anio;
   const delAnio = votacionesDelAnio(PERIODO, anio);
   for (const o of delAnio.opciones.tema) {
-    assert.equal(o.total, delAnio.votaciones.filter((v) => v.temasFiltro.includes(o.valor)).length, o.valor);
+    assert.equal(o.total, delAnio.votaciones.filter((v) => v.temas.filtro.includes(o.valor)).length, o.valor);
   }
 });
 

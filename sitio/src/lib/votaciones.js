@@ -91,8 +91,8 @@ function prepararVotacion(v, i, valores) {
     etapa: valor(t.descripcionEtapa),
     resultado,
     resultadoFiltro: valores.resultados.get(resultado) ?? SIN_DATO,
-    // Temas del proyecto según la clasificación propia (#36), solo como valores de filtro.
-    temasFiltro: temasDeProyectos([{ periodo: valores.periodo, idProyecto: v.proyecto?.idProyecto }]).filtro,
+    // Temas del proyecto según la clasificación propia (#36), para sus etiquetas y el filtro.
+    temas: temasDeProyectos([{ periodo: valores.periodo, idProyecto: v.proyecto?.idProyecto }]),
     proyecto: proyectoDeVotacion(v, valores.estados),
     autores: autoresPorPartido(
       (i.autores.get(v.proyecto?.idProyecto) ?? []).map((a) => ({ partido: a.legislador?.partidoPolitico, idLegislador: a.legislador?.idLegislador })),
@@ -160,7 +160,7 @@ function opcionesDe(votaciones, texto, filtro, orden) {
 /** Opciones del filtro por tema: los temas de temas.json y "pendiente", con cuántas votaciones tiene cada uno. */
 function opcionesDeTema(votaciones) {
   return [...temas().map((t) => ({ valor: t.id, texto: t.nombre })), { valor: PENDIENTE, texto: TEXTO_PENDIENTE }]
-    .map((o) => ({ ...o, total: votaciones.filter((v) => v.temasFiltro.includes(o.valor)).length }))
+    .map((o) => ({ ...o, total: votaciones.filter((v) => v.temas.filtro.includes(o.valor)).length }))
     .filter((o) => o.total > 0);
 }
 

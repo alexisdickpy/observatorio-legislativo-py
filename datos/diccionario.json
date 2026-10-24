@@ -1161,6 +1161,12 @@
           "descripcion": "Nombre con que el sitio muestra el tema."
         },
         {
+          "campo": "nombreCorto",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Nombre corto con que el sitio muestra el tema en sus etiquetas."
+        },
+        {
           "campo": "definicion",
           "origen": "propio",
           "tipo": "texto",

@@ -3,6 +3,7 @@
     {
       "id": "presupuesto",
       "nombre": "Presupuesto y finanzas públicas",
+      "nombreCorto": "Presupuesto",
       "definicion": "Presupuesto General de la Nación y sus cambios, impuestos y exoneraciones, préstamos, deuda y uso de los fondos públicos.",
       "palabrasClave": [
         "presupuesto",
@@ -37,6 +38,7 @@
     {
       "id": "economia",
       "nombre": "Economía y producción",
+      "nombreCorto": "Economía",
       "definicion": "Empresas, comercio, inversión, mercado financiero, turismo, industria, producción agropecuaria y ganadera.",
       "palabrasClave": [
         "comercio",
@@ -88,6 +90,7 @@
     {
       "id": "trabajo",
       "nombre": "Trabajo y jubilaciones",
+      "nombreCorto": "Trabajo",
       "definicion": "Trabajo, salarios, ejercicio de profesiones, función pública y carrera del servicio civil, jubilaciones y seguridad social.",
       "palabrasClave": [
         "jubilacion",
@@ -119,6 +122,7 @@
     {
       "id": "pensiones-graciables",
       "nombre": "Pensiones graciables",
+      "nombreCorto": "Pensiones graciables",
       "definicion": "Leyes que conceden o aumentan una pensión graciable a una persona determinada.",
       "palabrasClave": [
         "pension graciable"
@@ -128,6 +132,7 @@
     {
       "id": "inmuebles",
       "nombre": "Inmuebles del Estado",
+      "nombreCorto": "Inmuebles",
       "definicion": "Desafectaciones, transferencias, permutas y expropiaciones de inmuebles determinados, y los cambios a leyes anteriores de ese tipo.",
       "palabrasClave": [
         "desafecta",
@@ -149,6 +154,7 @@
     {
       "id": "relaciones-exteriores",
       "nombre": "Relaciones exteriores",
+      "nombreCorto": "Relaciones exteriores",
       "definicion": "Tratados, convenios, acuerdos y memorandos con otros países y organismos internacionales, incluido el Mercosur.",
       "palabrasClave": [
         "acuerdo",
@@ -173,6 +179,7 @@
     {
       "id": "salud",
       "nombre": "Salud",
+      "nombreCorto": "Salud",
       "definicion": "Salud pública, hospitales, profesiones de la salud, enfermedades, medicamentos y vacunas.",
       "palabrasClave": [
         "salud",
@@ -207,6 +214,7 @@
     {
       "id": "educacion",
       "nombre": "Educación",
+      "nombreCorto": "Educación",
       "definicion": "Escuelas, colegios, universidades e institutos superiores, docentes, planes de estudio y alimentación escolar.",
       "palabrasClave": [
         "educacion",
@@ -233,6 +241,7 @@
     {
       "id": "cultura",
       "nombre": "Cultura, símbolos y fechas conmemorativas",
+      "nombreCorto": "Cultura",
       "definicion": "Cultura, música, literatura, patrimonio histórico, símbolos nacionales, homenajes, nombres de lugares, días nacionales y feriados.",
       "palabrasClave": [
         "cultura",
@@ -280,6 +289,7 @@
     {
       "id": "deporte",
       "nombre": "Deporte",
+      "nombreCorto": "Deporte",
       "definicion": "Deporte y deportistas, entidades y eventos deportivos, y la seguridad en los espectáculos deportivos.",
       "palabrasClave": [
         "deport",
@@ -294,6 +304,7 @@
     {
       "id": "justicia",
       "nombre": "Justicia",
+      "nombreCorto": "Justicia",
       "definicion": "Juzgados y tribunales, Ministerio Público, Defensoría Pública, códigos y leyes penales, civiles y procesales, y procesos judiciales.",
       "palabrasClave": [
         "juzgado",
@@ -329,6 +340,7 @@
     {
       "id": "seguridad",
       "nombre": "Seguridad y defensa",
+      "nombreCorto": "Seguridad",
       "definicion": "Policía, Fuerzas Armadas, defensa nacional, armas, cárceles, prevención del delito y personas desaparecidas.",
       "palabrasClave": [
         "policia",
@@ -359,6 +371,7 @@
     {
       "id": "ambiente",
       "nombre": "Ambiente",
+      "nombreCorto": "Ambiente",
       "definicion": "Áreas protegidas, bosques, incendios forestales, biodiversidad, fauna y protección animal, ríos y cambio climático.",
       "palabrasClave": [
         "ambient",
@@ -389,6 +402,7 @@
     {
       "id": "obras",
       "nombre": "Obras, transporte y energía",
+      "nombreCorto": "Obras y transporte",
       "definicion": "Rutas, puentes, trenes y transporte, tránsito, obras e infraestructura pública, energía eléctrica y telecomunicaciones.",
       "palabrasClave": [
         "ruta",
@@ -417,6 +431,7 @@
     {
       "id": "estado",
       "nombre": "Estado, municipios y elecciones",
+      "nombreCorto": "Estado",
       "definicion": "Organización y control del Estado, ministerios y entes públicos, municipios y límites de distritos, elecciones, transparencia, trámites y registros públicos.",
       "palabrasClave": [
         "electoral",
@@ -454,6 +469,7 @@
     {
       "id": "derechos",
       "nombre": "Derechos y protección social",
+      "nombreCorto": "Derechos",
       "definicion": "Niñez, mujeres, personas mayores, personas con discapacidad, pueblos indígenas, víctimas, vivienda social, programas sociales y protección de datos personales.",
       "palabrasClave": [
         "ninez",

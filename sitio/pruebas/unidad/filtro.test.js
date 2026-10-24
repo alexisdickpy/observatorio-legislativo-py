@@ -95,3 +95,15 @@ test("los filtros se leen y se escriben en la dirección", () => {
   // Valores vacíos y orden predeterminado no ensucian la dirección; un orden desconocido se ignora.
   assert.equal(escribirFiltros(leerFiltros(new URLSearchParams("orden=otro"), nombres), nombres).toString(), "");
 });
+
+test("cuadro de leyes por tema: cuenta las leyes de cada tema y los proyectos votados sin ley", async () => {
+  const { resumenPorTema } = await import("../../src/lib/resumenTemas.js");
+  const vigente = periodos().find((p) => p.vigente).id;
+  const cuadros = resumenPorTema(vigente);
+  for (const c of cuadros) assert.equal(c.leyes, buscar({ tema: c.id }).length, c.id);
+  for (let n = 1; n < cuadros.length; n++) assert.ok(cuadros[n - 1].leyes >= cuadros[n].leyes);
+  // Los proyectos votados sin ley con algún tema suman al menos los 238 de la clasificación.
+  const sinLey = cuadros.reduce((s, c) => s + c.archivados + c.enTramite + c.otros, 0);
+  assert.ok(sinLey >= 238, String(sinLey));
+  assert.ok(cuadros.find((c) => c.id === "deporte").archivados >= 0);
+});

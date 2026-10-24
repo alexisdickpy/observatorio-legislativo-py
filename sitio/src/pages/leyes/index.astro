@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import CuadroTemas from "../../components/CuadroTemas.astro";
 import FiltroLeyes from "../../components/FiltroLeyes.astro";
 import TablaLeyes from "../../components/TablaLeyes.astro";
 import { leyes, opcionesDeFiltro } from "../../lib/catalogo.js";
@@ -29,6 +30,7 @@ const nombresPeriodos = periodos().map((p) => p.id).join(", ");
     el mismo número de ley, se muestran todos sus títulos. El tema es una clasificación del
     Observatorio, no del Congreso. <a href={rutas.metodologia(rutas.anclasMetodologia.temas)}>Cómo se clasifica</a>
   </p>
+  <CuadroTemas periodo={periodos().find((p) => p.vigente).id} />
   <FiltroLeyes entradas={ordenadas.map((l) => l.filtro)} anios={anios} camaras={camaras} temas={temas} idTabla="tabla-leyes" />
   <div id="tabla-leyes">
     <TablaLeyes leyes={ordenadas} />

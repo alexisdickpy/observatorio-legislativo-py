@@ -1,5 +1,7 @@
 ---
-// Tabla del catálogo de leyes. Recibe las leyes ya preparadas por lib/catalogo.js.
+// Tabla del catálogo de leyes. Recibe las leyes ya preparadas por lib/catalogo.js. Debajo del título
+// oficial, los temas de la clasificación propia (#36).
+import EtiquetasTema from "./EtiquetasTema.astro";
 import ValoresOficiales from "./ValoresOficiales.astro";
 
 interface Props {
@@ -31,6 +33,7 @@ const { leyes } = Astro.props;
             {l.titulos.map((t: string) => (
               <p>{t}</p>
             ))}
+            <EtiquetasTema clasificacion={l.temas} />
           </td>
           <td data-etiqueta="Sanción">
             <ValoresOficiales valores={l.fechasSancion} />
@@ -88,6 +91,9 @@ const { leyes } = Astro.props;
     overflow: hidden;
   }
   .titulo p + p {
+    margin-top: var(--espacio-2);
+  }
+  .titulo :global(.temas) {
     margin-top: var(--espacio-2);
   }
 

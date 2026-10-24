@@ -283,6 +283,7 @@ Se publica en `propios/temas.json`.
 |---|---|---|---|
 | `id` | propio | texto | Identificador del tema (minúsculas y guiones). Es el valor del filtro por tema en las direcciones del sitio. |
 | `nombre` | propio | texto | Nombre con que el sitio muestra el tema. |
+| `nombreCorto` | propio | texto | Nombre corto con que el sitio muestra el tema en sus etiquetas. |
 | `definicion` | propio | texto | Qué leyes incluye el tema. |
 | `palabrasClave` | propio | lista de textos | Palabras clave de la regla del tema, sin mayúsculas ni tildes. Cada una es el comienzo de una palabra del acápite oficial. |
 | `excepto` | propio | lista de textos | Frases que no cuentan para el tema. Solo en algunos temas. |

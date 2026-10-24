@@ -15,11 +15,12 @@ export const PENDIENTE = "pendiente";
 export const TEXTO_PENDIENTE = "Pendiente de clasificación";
 
 let temasCache;
-/** Temas en el orden de temas.json: { id, nombre, definicion, url (catálogo filtrado) }. */
+/** Temas en el orden de temas.json: { id, nombre, nombreCorto (etiquetas), definicion, url (catálogo filtrado) }. */
 export function temas() {
   temasCache ??= leerJson("propios/temas.json").temas.map((t) => ({
     id: t.id,
     nombre: t.nombre,
+    nombreCorto: t.nombreCorto ?? t.nombre,
     definicion: t.definicion,
     url: rutas.leyesPorTema(t.id),
   }));
