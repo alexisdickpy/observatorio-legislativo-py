@@ -10,6 +10,7 @@ import { barrasDeReferencia, paresConPorcentaje, vistaPrevia } from "../../src/l
 import * as rutas from "../../src/lib/rutas.js";
 import { CANTIDAD_ULTIMAS_PORTADA, votacionesDelPeriodo } from "../../src/lib/votaciones.js";
 import { CANTIDAD_PORTADA, votosDistintosAlPartido } from "../../src/lib/votosDistintos.js";
+import { votosPorTema } from "../../src/lib/votosPorTema.js";
 
 const PERIODO = "2023-2028";
 
@@ -18,7 +19,7 @@ test("el menú tiene una entrada por cada vista de análisis, con direcciones de
   for (const v of vistasDeAnalisis()) assert.ok(urls.includes(v.url), `Falta ${v.url} en el menú`);
   assert.deepEqual(
     menuPrincipal().map((e) => e.texto),
-    ["Leyes", "Legisladores", "Votaciones", "Partidos", "Rankings", "Buscar", "Datos abiertos"],
+    ["Leyes", "Legisladores", "Votaciones", "Partidos", "Temas", "Rankings", "Buscar", "Datos abiertos"],
   );
   assert.ok(urls.includes(rutas.coincidencia()) && urls.includes(rutas.rankings()));
   // La tabla de votaciones nominales ya no tiene entrada propia; marca «Rankings» (siguiente prueba).
@@ -153,6 +154,8 @@ test("vista previa de votaciones: las más recientes de las dos cámaras, al fin
     vistasDeAnalisis()
       .filter((v) => v.portadaAlFinal)
       .map((v) => v.clave),
-    ["votaciones"],
+    ["votaciones", "temas"],
   );
+  // Los temas van a lo ancho, con una etiqueta por tema que lleva a su página (#37).
+  assert.deepEqual(previa.temas.map((t) => t.url), votosPorTema(PERIODO).map((t) => t.url));
 });

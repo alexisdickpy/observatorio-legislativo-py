@@ -350,6 +350,31 @@ const anclas = rutas.anclasMetodologia;
       proyecto se pueden <a href={rutas.datosAbiertos()}>descargar</a>.
     </p>
 
+    <h2 id={anclas.votosPorTema}>Votos de partidos y bancadas por tema</h2>
+    <p>
+      La página de <a href={rutas.votosPorTema()}>votos por tema</a> muestra, para cada tema, cómo votaron
+      los legisladores de cada partido y de cada bancada en las votaciones nominales sobre proyectos de ley
+      de ese tema, incluidos los proyectos que no llegaron a ser ley. Una votación con dos temas cuenta en
+      los dos.
+    </p>
+    <p>
+      Se suman los votos individuales de la lista oficial de cada votación, en las categorías oficiales sin
+      fusionar (SI, NO, ABSTENCIÓN/BLANCO, mociones, NO VOTA y AUSENTE). Cada cantidad se muestra sobre
+      todos los votos registrados del grupo en las votaciones del tema, incluidos AUSENTE y NO VOTA. No hay
+      una cifra única de apoyo. El reparto se muestra siempre, junto a la cantidad de votaciones, aunque
+      sean pocas.
+    </p>
+    <p>
+      Todo va por cámara y nunca se suman senadores y diputados. Los partidos se identifican con el
+      <a href={`#${anclas.partidoUnificado}`}>partido unificado</a> y las bancadas con su nombre oficial,
+      dentro de su cámara. Partido y bancada son los que la API registra para el período, sin fecha.
+    </p>
+    <p>
+      Un NO puede ser a una modificación o a una objeción del Poder Ejecutivo, y no a la ley. Por eso cada
+      tema lista sus votaciones con la fecha, la etapa y el resultado oficial. La tabla completa se puede
+      descargar en <a href={rutas.datosAbiertos()}>datos abiertos</a>, como cálculo propio de este sitio.
+    </p>
+
     <h2 id={anclas.afiliacion}>Partido y bancada</h2>
     <p>
       La API publica un único partido y una única bancada por legislador y período, sin fecha. Si un

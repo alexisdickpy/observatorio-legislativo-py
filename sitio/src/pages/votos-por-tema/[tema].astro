@@ -1,0 +1,95 @@
+---
+// Votos de partidos y bancadas en un tema (lib/votosPorTema.js, alcance acordado en #37): por cámara, el
+// reparto de los votos de cada partido y de cada bancada en las categorías oficiales, con su
+// denominador, y la lista de las votaciones del tema con su etapa. Sin cifra única de apoyo.
+import Base from "../../layouts/Base.astro";
+import RepartoTema from "../../components/RepartoTema.astro";
+import VotacionesTema from "../../components/VotacionesTema.astro";
+import { periodos } from "../../lib/datos.js";
+import * as rutas from "../../lib/rutas.js";
+import { votosPorTema } from "../../lib/votosPorTema.js";
+
+export function getStaticPaths() {
+  const periodo = periodos().find((p) => p.vigente).id;
+  return votosPorTema(periodo).map((t: any) => ({ params: { tema: t.id }, props: { periodo, tema: t } }));
+}
+
+const { periodo, tema } = Astro.props;
+const otros = votosPorTema(periodo);
+const numero = (n: number) => n.toLocaleString("es-PY");
+const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${n === 1 ? singular : varios}`;
+---
+
+<Base
+  titulo={`Votos de partidos en ${tema.nombre}`}
+  descripcion={`Cómo votaron los legisladores de cada partido y de cada bancada en las ${numero(tema.total)} votaciones nominales sobre proyectos de ley del tema ${tema.nombre}, período legislativo ${periodo}, en cada cámara.`}
+>
+  <p class="chico"><a href={rutas.votosPorTema()}>← Votos de partidos por tema</a></p>
+  <h1>Votos de partidos en {tema.nombre}</h1>
+  <div class="lectura">
+    {tema.definicion && <p class="texto-suave">{tema.definicion}</p>}
+    <p>
+      Votos de cada partido y de cada bancada en las {plural(tema.total, "votación nominal", "votaciones nominales")}
+      de este tema, sobre todos sus votos registrados (con AUSENTE y NO VOTA).{" "}
+      <a href={rutas.metodologia(rutas.anclasMetodologia.votosPorTema)}>Cómo se calcula</a>
+    </p>
+    <p class="chico texto-suave">
+      Un NO puede ser a una modificación o a una objeción del Poder Ejecutivo, y no a la ley. Por eso la
+      lista de votaciones muestra la etapa de cada una. Partido y bancada son los que la API registra para
+      el período, no necesariamente los de la fecha de cada votación.
+    </p>
+  </div>
+
+  {
+    tema.camaras.map((c: any) => (
+      <section class="camara-tema">
+        <h2>{c.camara}</h2>
+        <p class="chico">{plural(c.votaciones.length, "votación nominal", "votaciones nominales")} · {plural(c.votos, "voto registrado", "votos registrados")}</p>
+        <ul class="leyenda chico" aria-hidden="true">
+          {c.leyenda.map((l: any) => <li><span class={`muestra ${l.clase}`}></span>{l.categoria}</li>)}
+        </ul>
+        <RepartoTema titulo="Por partido" categorias={c.categorias} filas={c.partidos} />
+        <RepartoTema titulo="Por bancada" categorias={c.categorias} filas={c.bancadas} />
+        <details>
+          <summary>Ver las {plural(c.votaciones.length, "votación", "votaciones")} de la {c.camara}</summary>
+          <VotacionesTema votaciones={c.votaciones} />
+        </details>
+      </section>
+    ))
+  }
+
+  <h2>Otros temas</h2>
+  <nav class="otros-temas" aria-label="Otros temas">
+    {otros.map((t: any) => (t.id === tema.id ? <strong class="tema" data-tema={t.id} aria-current="page">{t.nombreCorto}</strong> : <a class="tema" data-tema={t.id} href={t.url} title={t.nombre}>{t.nombreCorto}</a>))}
+  </nav>
+</Base>
+
+<style>
+  .otros-temas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espacio-2);
+    margin-bottom: var(--espacio-4);
+  }
+  .camara-tema {
+    margin-top: var(--espacio-5);
+  }
+  .leyenda {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espacio-1) var(--espacio-4);
+  }
+  .leyenda li {
+    display: flex;
+    align-items: center;
+    gap: var(--espacio-1);
+  }
+  .muestra {
+    display: inline-block;
+    width: var(--espacio-4);
+    height: var(--espacio-4);
+    border-radius: var(--radio);
+  }
+</style>

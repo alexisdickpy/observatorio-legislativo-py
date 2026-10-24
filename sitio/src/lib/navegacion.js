@@ -28,6 +28,14 @@ export const vistasDeAnalisis = () => [
     descripcion: "Qué tan seguido votaron igual los partidos y las bancadas de cada cámara en las votaciones nominales sobre proyectos de ley.",
   },
   {
+    clave: "temas",
+    url: rutas.votosPorTema(),
+    menu: "Temas",
+    titulo: "Votos de partidos por tema",
+    descripcion: "Cómo votaron los legisladores de cada partido y de cada bancada en las votaciones nominales de cada tema, por cámara.",
+    portadaAlFinal: true,
+  },
+  {
     // En la portada, solo la lista de más «rebeldes» (#57); la de más «ausentes» está en la página.
     clave: "rankings",
     url: rutas.rankings(),
