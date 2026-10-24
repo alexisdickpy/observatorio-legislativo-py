@@ -1,19 +1,21 @@
 ---
 import Base from "../../layouts/Base.astro";
+import CuadroTemas from "../../components/CuadroTemas.astro";
 import FiltroLeyes from "../../components/FiltroLeyes.astro";
 import TablaLeyes from "../../components/TablaLeyes.astro";
 import { leyes, opcionesDeFiltro } from "../../lib/catalogo.js";
 import { filtrar, ORDEN_PREDETERMINADO } from "../../lib/filtro.js";
 import { periodos } from "../../lib/datos.js";
+import * as rutas from "../../lib/rutas.js";
 
 const lista = leyes();
 // Orden inicial: el mismo que aplica el filtro sin parámetros, para que sin JavaScript se vea igual.
 const porNumero = new Map(lista.map((l) => [l.numero, l]));
 const ordenadas = filtrar(
   lista.map((l) => l.filtro),
-  { texto: "", anio: "", camara: "", orden: ORDEN_PREDETERMINADO },
+  { texto: "", anio: "", camara: "", tema: "", orden: ORDEN_PREDETERMINADO },
 ).map((e) => porNumero.get(e.numero));
-const { anios, camaras } = opcionesDeFiltro();
+const { anios, camaras, temas } = opcionesDeFiltro();
 const nombresPeriodos = periodos().map((p) => p.id).join(", ");
 ---
 
@@ -25,9 +27,11 @@ const nombresPeriodos = periodos().map((p) => p.id).join(", ");
   <p class="lectura">
     {lista.length} leyes del período legislativo {nombresPeriodos}. El título y las fechas se
     muestran tal como los publica el Congreso. Cuando el Congreso publica más de un registro con
-    el mismo número de ley, se muestran todos sus títulos.
+    el mismo número de ley, se muestran todos sus títulos. El tema es una clasificación del
+    Observatorio, no del Congreso. <a href={rutas.metodologia(rutas.anclasMetodologia.temas)}>Cómo se clasifica</a>
   </p>
-  <FiltroLeyes entradas={ordenadas.map((l) => l.filtro)} anios={anios} camaras={camaras} idTabla="tabla-leyes" />
+  <CuadroTemas periodo={periodos().find((p) => p.vigente).id} />
+  <FiltroLeyes entradas={ordenadas.map((l) => l.filtro)} anios={anios} camaras={camaras} temas={temas} idTabla="tabla-leyes" />
   <div id="tabla-leyes">
     <TablaLeyes leyes={ordenadas} />
   </div>

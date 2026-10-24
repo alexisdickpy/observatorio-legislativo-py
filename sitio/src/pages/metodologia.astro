@@ -6,6 +6,7 @@ import { actualizacion, cita } from "../lib/catalogo.js";
 import { periodos } from "../lib/datos.js";
 import { observacionesDeLosDatos } from "../lib/metodologia.js";
 import { tablaDePartidos } from "../lib/partidos.js";
+import { temas, TEXTO_PENDIENTE } from "../lib/temas.js";
 import * as rutas from "../lib/rutas.js";
 import { CANTIDAD_RANKING, MINIMO_VOTACIONES_AUSENCIAS } from "../lib/rankings.js";
 import { CANTIDAD_AJUSTADAS, CANTIDAD_ULTIMAS_PORTADA } from "../lib/votaciones.js";
@@ -292,7 +293,7 @@ const anclas = rutas.anclasMetodologia;
       proyectos de ley del período, una página por año (el de la fecha del trámite votado), de la más
       reciente a la más antigua. Cada votación muestra la fecha, la cámara, la etapa, el proyecto, su estado
       oficial, el resultado oficial, los totales que publica el Congreso sobre los legisladores registrados
-      y la posición de cada partido. Se puede filtrar por cámara, estado del proyecto y resultado.
+      y la posición de cada partido. Se puede filtrar por cámara, estado del proyecto, resultado y tema.
     </p>
     <p>
       La posición de un partido en una votación es la categoría con más votos entre los votos emitidos de
@@ -324,6 +325,29 @@ const anclas = rutas.anclasMetodologia;
       recientes de las dos cámaras. No se
       cuentan las votaciones sin votos SI ni NO. La diferencia no dice si se alcanzó la mayoría que exige el
       reglamento. El resultado que vale es el oficial.
+    </p>
+
+    <h2 id={anclas.temas}>Temas de las leyes</h2>
+    <p>
+      El tema de cada ley es una clasificación del Observatorio, no un dato del Congreso. Abarca las leyes
+      sancionadas y los proyectos de ley votados que no llegaron a ser ley. Un proyecto puede tener más de
+      un tema. Se usan estos {temas().length}.
+    </p>
+    <dl>
+      {
+        temas().map((t) => (
+          <>
+            <dt><a href={t.url}>{t.nombre}</a></dt>
+            <dd>{t.definicion}</dd>
+          </>
+        ))
+      }
+    </dl>
+    <p>
+      Unas reglas buscan palabras clave en el título oficial de cada proyecto, y después cada clasificación
+      se revisó a mano. Si ninguna regla encaja, el proyecto figura como «{TEXTO_PENDIENTE}». Las pensiones
+      graciables y los inmuebles llevan solo ese tema. La lista de palabras clave y la clasificación de cada
+      proyecto se pueden <a href={rutas.datosAbiertos()}>descargar</a>.
     </p>
 
     <h2 id={anclas.afiliacion}>Partido y bancada</h2>
@@ -437,6 +461,7 @@ const anclas = rutas.anclasMetodologia;
         Las que se hacen sin ese registro, por ejemplo a mano alzada, no se publican en la API. El Senado registra
         muchas menos votaciones nominales que Diputados.
       </li>
+      <li>El tema sale solo del título oficial del proyecto, no de su texto completo.</li>
       <li>Por ahora el sitio cubre solo el período {vigente.id}.</li>
     </ul>
   </div>

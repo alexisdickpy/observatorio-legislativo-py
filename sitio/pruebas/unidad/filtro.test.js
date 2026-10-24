@@ -67,6 +67,19 @@ test("filtro por año de sanción y por cámara de origen", () => {
   assert.ok(opciones.camaras.some((c) => c.valor === diputados));
 });
 
+test("filtro por tema: clasificación propia, una ley puede tener más de un tema", () => {
+  assert.deepEqual(leyes().find((l) => l.numero === "7076").filtro.temas, ["inmuebles"]);
+  const ley7081 = leyes().find((l) => l.numero === "7081");
+  assert.ok(ley7081.filtro.temas.includes("seguridad"));
+  assert.ok(buscar({ tema: "seguridad" }).includes("7081"));
+  assert.ok(!buscar({ tema: "seguridad" }).includes("7076"));
+  for (const n of buscar({ tema: "salud" })) assert.ok(leyes().find((l) => l.numero === n).filtro.temas.includes("salud"));
+  // Cada ley tiene al menos un tema o figura como pendiente; las opciones cuentan sus leyes.
+  for (const l of leyes()) assert.ok(l.filtro.temas.length > 0, l.numero);
+  const { temas } = opcionesDeFiltro();
+  for (const t of temas) assert.equal(t.total, buscar({ tema: t.valor }).length, t.valor);
+});
+
 test("orden por fecha de sanción y por número", () => {
   const fechas = buscar({}).map((n) => leyes().find((l) => l.numero === n).fechaOrden);
   assert.deepEqual(fechas, [...fechas].sort().reverse());
@@ -75,10 +88,22 @@ test("orden por fecha de sanción y por número", () => {
 });
 
 test("los filtros se leen y se escriben en la dirección", () => {
-  const p = new URLSearchParams("q=salud&anio=2024&camara=camara-de-senadores&orden=numero-asc");
+  const p = new URLSearchParams("q=salud&anio=2024&camara=camara-de-senadores&tema=salud&orden=numero-asc");
   const f = leerFiltros(p, nombres);
-  assert.deepEqual(f, { texto: "salud", anio: "2024", camara: "camara-de-senadores", orden: "numero-asc" });
+  assert.deepEqual(f, { texto: "salud", anio: "2024", camara: "camara-de-senadores", tema: "salud", orden: "numero-asc" });
   assert.equal(escribirFiltros(f, nombres).toString(), p.toString());
   // Valores vacíos y orden predeterminado no ensucian la dirección; un orden desconocido se ignora.
   assert.equal(escribirFiltros(leerFiltros(new URLSearchParams("orden=otro"), nombres), nombres).toString(), "");
+});
+
+test("cuadro de leyes por tema: cuenta las leyes de cada tema y los proyectos votados sin ley", async () => {
+  const { resumenPorTema } = await import("../../src/lib/resumenTemas.js");
+  const vigente = periodos().find((p) => p.vigente).id;
+  const cuadros = resumenPorTema(vigente);
+  for (const c of cuadros) assert.equal(c.leyes, buscar({ tema: c.id }).length, c.id);
+  for (let n = 1; n < cuadros.length; n++) assert.ok(cuadros[n - 1].leyes >= cuadros[n].leyes);
+  // Los proyectos votados sin ley con algún tema suman al menos los 238 de la clasificación.
+  const sinLey = cuadros.reduce((s, c) => s + c.archivados + c.enTramite + c.otros, 0);
+  assert.ok(sinLey >= 238, String(sinLey));
+  assert.ok(cuadros.find((c) => c.id === "deporte").archivados >= 0);
 });

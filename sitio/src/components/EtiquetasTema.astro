@@ -1,0 +1,15 @@
+---
+// Temas de una ley o de un proyecto (lib/temas.js, #36) como recuadros con el color de cada tema
+// (estilos .tema y .temas de base.css), con su nombre corto. Con `enlaces`, cada tema lleva al
+// catálogo filtrado por ese tema y muestra el nombre completo al pasar el cursor.
+// El filtro de votaciones lee el tema de cada votación de estas etiquetas (data-tema). En una sola
+// línea por el peso de las páginas de votaciones.
+import { PENDIENTE, TEXTO_PENDIENTE } from "../lib/temas.js";
+
+interface Props {
+  clasificacion: { temas: { id: string; nombre: string; url: string }[]; pendiente: boolean };
+  enlaces?: boolean;
+}
+const { clasificacion, enlaces = false } = Astro.props;
+---
+<span class="temas">{clasificacion.pendiente && <span class="tema" data-tema={PENDIENTE}>{TEXTO_PENDIENTE}</span>}{clasificacion.temas.map((t) => (enlaces ? <a class="tema" data-tema={t.id} href={t.url} title={t.nombre}>{t.nombreCorto}</a> : <span class="tema" data-tema={t.id}>{t.nombreCorto}</span>))}</span>

@@ -199,7 +199,7 @@ Decisión de alcance (#44). La página `/votaciones/` reúne las votaciones nomi
 - **Partido.** El texto oficial de `partidoPolitico` dentro de la cámara de la votación, que dentro de una cámara equivale al partido unificado (#42). Los legisladores sin partido registrado no forman parte de ninguna etiqueta. Partido es el que la API registra para el período, sin fecha. No se muestran bancadas en la lista; la ficha de ley mantiene el desglose por bancada.
 - **Siglas.** Dato propio en `datos/propios/partidos.json` (campo `sigla`), para que las etiquetas entren en poco espacio. Salen del texto oficial cuando lo incluye (ANR, PLRA, PPQ, PEN, PDP, PPS); si no, de la bancada oficial (CN, de «PARTIDO CRUZADA NACIONAL "CN"»), del nombre conocido (Yo Creo) o de las iniciales (PPC, IND, IND A). Los textos del mismo partido unificado comparten sigla. El nombre oficial va en el título de cada etiqueta, con los votos de la categoría sobre los votos emitidos del partido.
 - **Presentación.** Cada etiqueta lleva la sigla, un cuadro del color de la categoría (los mismos colores de la barra, en `tokens.css`) y la categoría escrita, para que no dependa solo del color. Las posiciones sin categoría llevan un cuadro sin relleno. Etiquetas de más a menos legisladores del partido en la lista de la votación.
-- **Filtros.** En cada año, por cámara, estado oficial del proyecto y resultado oficial (`?camara=…&estado=…&resultado=…`, con el slug del texto oficial). Sin JavaScript se ven todas las votaciones del año.
+- **Filtros.** En cada año, por cámara, estado oficial del proyecto y resultado oficial (`?camara=…&estado=…&resultado=…`, con el slug del texto oficial), y por tema según la clasificación propia (`?tema=…`, ver [Temas de las leyes](#temas-de-las-leyes)). Sin JavaScript se ven todas las votaciones del año.
 - **Ficha de ley.** Junto a los totales de cada votación, los partidos agrupados por su posición (qué partidos tuvieron `SI` como categoría más votada, cuáles `NO`, cuáles otra categoría, los empates y los que no emitieron voto), cada uno con sus votos de esa categoría sobre sus votos emitidos. El desglose por partido y por bancada sigue igual.
 - **Menú y portada.** Entrada «Votaciones» en el menú. La portada muestra, a lo ancho y debajo de las demás tarjetas de análisis, las 5 votaciones más recientes de las dos cámaras (`portadaAlFinal` en `vistasDeAnalisis`).
 
@@ -215,6 +215,42 @@ En `/votaciones/`, las **10** votaciones de cada cámara con menor diferencia en
 
 Comprobación. Las pruebas recalculan los totales con `votaciones.json` y las posiciones de cada partido con un recuento aparte de `votos.csv` y `legisladores.json`, y verifican que cada votación del período figure una sola vez en la página de su año.
 
+## Temas de las leyes
+
+Decisión de alcance (#36). Cada proyecto de ley del período lleva uno o más temas de una lista propia de 16. Es una clasificación de este proyecto, no un dato oficial: el Congreso no publica temas. Se clasifican los 556 proyectos con ley sancionada y los 238 proyectos de ley votados en el período sin ley (rechazados, archivados o en trámite), 794 en total en 2023-2028.
+
+| Tema | Identificador | Qué incluye |
+|---|---|---|
+| Presupuesto y finanzas públicas | `presupuesto` | Presupuesto General de la Nación y sus cambios, impuestos y exoneraciones, préstamos, deuda y uso de los fondos públicos. |
+| Economía y producción | `economia` | Empresas, comercio, inversión, mercado financiero, turismo, industria, producción agropecuaria y ganadera. |
+| Trabajo y jubilaciones | `trabajo` | Trabajo, salarios, ejercicio de profesiones, función pública y carrera del servicio civil, jubilaciones y seguridad social. |
+| Pensiones graciables | `pensiones-graciables` | Leyes que conceden o aumentan una pensión graciable a una persona determinada. |
+| Inmuebles del Estado | `inmuebles` | Desafectaciones, transferencias, permutas y expropiaciones de inmuebles determinados, y los cambios a leyes anteriores de ese tipo. |
+| Relaciones exteriores | `relaciones-exteriores` | Tratados, convenios, acuerdos y memorandos con otros países y organismos internacionales, incluido el Mercosur. |
+| Salud | `salud` | Salud pública, hospitales, profesiones de la salud, enfermedades, medicamentos y vacunas. |
+| Educación | `educacion` | Escuelas, colegios, universidades e institutos superiores, docentes, planes de estudio y alimentación escolar. |
+| Cultura, símbolos y fechas conmemorativas | `cultura` | Cultura, música, literatura, patrimonio histórico, símbolos nacionales, homenajes, nombres de lugares, días nacionales y feriados. |
+| Deporte | `deporte` | Deporte y deportistas, entidades y eventos deportivos, y la seguridad en los espectáculos deportivos. |
+| Justicia | `justicia` | Juzgados y tribunales, Ministerio Público, Defensoría Pública, códigos y leyes penales, civiles y procesales, y procesos judiciales. |
+| Seguridad y defensa | `seguridad` | Policía, Fuerzas Armadas, defensa nacional, armas, cárceles, prevención del delito y personas desaparecidas. |
+| Ambiente | `ambiente` | Áreas protegidas, bosques, incendios forestales, biodiversidad, fauna y protección animal, ríos y cambio climático. |
+| Obras, transporte y energía | `obras` | Rutas, puentes, trenes y transporte, tránsito, obras e infraestructura pública, energía eléctrica y telecomunicaciones. |
+| Estado, municipios y elecciones | `estado` | Organización y control del Estado, ministerios y entes públicos, municipios y límites de distritos, elecciones, transparencia, trámites y registros públicos. |
+| Derechos y protección social | `derechos` | Niñez, mujeres, personas mayores, personas con discapacidad, pueblos indígenas, víctimas, vivienda social, programas sociales y protección de datos personales. |
+
+La lista, las definiciones y las palabras clave están en `datos/propios/temas.json`, que manda sobre esta tabla.
+
+- **Reglas.** `importador/temas.py` busca las palabras clave de cada tema en el acápite oficial del proyecto, sin mayúsculas ni tildes. Antes quita el encabezado de los mensajes del Poder Ejecutivo («Mensaje N° …, Ministerio de …, por el cual remite»), porque el ministerio que envía el proyecto no es su tema, y la parte final «presentado por …». Cada palabra clave es el comienzo de una palabra (`tributari` encuentra «tributaria» y «tributario»). Un tema puede tener frases que no cuentan (`excepto`): «centros educativos» junto a «establecimientos penitenciarios» no es educación.
+- **Más de un tema.** Un proyecto toma todos los temas cuyas reglas se cumplen (una ampliación del presupuesto del Ministerio de Salud es presupuesto y salud). Pensiones graciables e inmuebles son exclusivos: dejan fuera a los demás, porque el oficio de quien recibe la pensión o el organismo que recibe el inmueble no es el tema de la ley.
+- **Pendiente.** Si ninguna regla se cumple, el proyecto queda «pendiente de clasificación», sin tema; nunca se fuerza uno.
+- **Revisión manual.** Las 794 clasificaciones se revisaron a mano una por una. La revisión ajustó las reglas y corrigió 20 proyectos (temas que sobraban o faltaban, y los 2 que ninguna regla clasificaba). Después se separó Deporte de Cultura, y los 12 proyectos que alcanza su regla se reclasificaron con las reglas nuevas. Las entradas revisadas llevan `revisado: true` y no se recalculan. Cada tema guarda cómo se asignó: `regla`, con la palabra clave, o `revision`. Los proyectos nuevos de la actualización diaria toman tema por las reglas y quedan sin revisar (`revisado: false`) hasta la próxima revisión.
+- **Ley y votación.** Una ley toma los temas de su proyecto; una ley con más de un registro, los de todos sus proyectos. Una votación toma los del proyecto votado. Las votaciones que no son de un proyecto de ley (resoluciones, declaraciones, etc.) no se clasifican.
+- **Dónde se ve.** Cada ley y cada votación lleva sus temas como etiquetas de color, con un nombre corto (`nombreCorto` en `temas.json`; colores en `tokens.css`): en el catálogo, debajo del título; en la ficha, como «Tema según el Observatorio», con enlace al catálogo filtrado; en cada votación de `/votaciones/`. El catálogo tiene el filtro «Tema» (`/leyes/?tema={identificador}`, o `tema=pendiente`) y cada año de `/votaciones/` el mismo filtro (`?tema=…`), que incluye los proyectos rechazados y los que siguen en trámite.
+- **Leyes por tema.** En la portada y arriba del catálogo, una tarjeta por tema con la cantidad de leyes sancionadas y la de proyectos de ley votados en el período sin ley, por su estado oficial (`estadoProyecto` de su votación más reciente: archivados, en trámite y otros). Una ley con dos temas cuenta en los dos. De más a menos leyes. Cada tarjeta lleva al catálogo filtrado. Cómo votó cada partido en cada tema queda para #37.
+- **Descarga.** `datos/propios/clasificacion-temas.json` y `.csv` (un registro por proyecto, con `idProyecto`, `periodoLegislativo`, `temas`, `pendiente` y `revisado`) y `datos/propios/temas.json`, descritos en el diccionario de datos.
+
+Comprobación. Las pruebas del importador revisan las reglas (tildes, comienzo de palabra, varios temas, exclusivos, excepciones, encabezado de mensaje y «presentado por»), que lo revisado no se recalcule y que cada proyecto del período tenga tema o figure como pendiente. La compilación del sitio falla si una ley o una votación sobre un proyecto de ley no figura en la clasificación.
+
 ## Números de ley
 
 El número de ley se usa como URL (`/leyes/{número}/`). El importador verifica en cada ejecución que ningún número del período figure en otra legislatura, comparando con el listado histórico completo de la API. El resultado se informa en el resumen de cada ejecución.
@@ -223,4 +259,5 @@ El número de ley se usa como URL (`/leyes/{número}/`). El importador verifica 
 
 - La API no informa cuándo se modificó un registro: los cambios se detectan comparando descargas.
 - El partido y la bancada de un legislador son un único valor por período, sin fecha. Los votos no reflejan cambios de bancada.
+- El tema de cada proyecto sale solo de su acápite oficial, no del texto completo de la ley.
 - "AUSENTE" en una votación no equivale a ausencia en la sesión: la métrica se llama "ausencias en votaciones nominales".

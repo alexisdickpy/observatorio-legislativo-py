@@ -142,3 +142,76 @@ label {
   font-weight: var(--peso-fuerte);
   margin-bottom: var(--espacio-1);
 }
+
+/* Etiqueta de un tema de la clasificación propia (#36): un recuadro con el color del tema (tokens.css). */
+.tema {
+  display: inline-block;
+  padding: 0 var(--espacio-2);
+  border: var(--borde-ancho) solid var(--color-tema, var(--color-borde));
+  border-left-width: var(--foco-ancho);
+  border-radius: var(--radio);
+  background: color-mix(in srgb, var(--color-tema, var(--color-borde)) var(--mezcla-fondo-tema), var(--color-fondo));
+  color: var(--color-texto);
+  font-size: var(--tamano-chico);
+  line-height: var(--interlineado);
+  white-space: nowrap;
+}
+a.tema:visited {
+  color: var(--color-texto);
+}
+.temas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-1);
+}
+[data-tema="presupuesto"] {
+  --color-tema: var(--color-tema-presupuesto);
+}
+[data-tema="economia"] {
+  --color-tema: var(--color-tema-economia);
+}
+[data-tema="trabajo"] {
+  --color-tema: var(--color-tema-trabajo);
+}
+[data-tema="pensiones-graciables"] {
+  --color-tema: var(--color-tema-pensiones-graciables);
+}
+[data-tema="inmuebles"] {
+  --color-tema: var(--color-tema-inmuebles);
+}
+[data-tema="relaciones-exteriores"] {
+  --color-tema: var(--color-tema-relaciones-exteriores);
+}
+[data-tema="salud"] {
+  --color-tema: var(--color-tema-salud);
+}
+[data-tema="educacion"] {
+  --color-tema: var(--color-tema-educacion);
+}
+[data-tema="cultura"] {
+  --color-tema: var(--color-tema-cultura);
+}
+[data-tema="deporte"] {
+  --color-tema: var(--color-tema-deporte);
+}
+[data-tema="justicia"] {
+  --color-tema: var(--color-tema-justicia);
+}
+[data-tema="seguridad"] {
+  --color-tema: var(--color-tema-seguridad);
+}
+[data-tema="ambiente"] {
+  --color-tema: var(--color-tema-ambiente);
+}
+[data-tema="obras"] {
+  --color-tema: var(--color-tema-obras);
+}
+[data-tema="estado"] {
+  --color-tema: var(--color-tema-estado);
+}
+[data-tema="derechos"] {
+  --color-tema: var(--color-tema-derechos);
+}
+[data-tema="pendiente"] {
+  --color-tema: var(--color-tema-pendiente);
+}

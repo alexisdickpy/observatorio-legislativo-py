@@ -8,9 +8,10 @@ interface Props {
   entradas: any[];
   anios: string[];
   camaras: { valor: string; etiqueta: string }[];
+  temas: { valor: string; etiqueta: string; total: number }[];
   idTabla: string;
 }
-const { entradas, anios, camaras, idTabla } = Astro.props;
+const { entradas, anios, camaras, temas, idTabla } = Astro.props;
 const p = parametrosCatalogo;
 ---
 
@@ -31,6 +32,13 @@ const p = parametrosCatalogo;
     <select id="filtro-camara" name={p.camara}>
       <option value="">Las dos</option>
       {camaras.map((c) => <option value={c.valor}>{c.etiqueta}</option>)}
+    </select>
+  </div>
+  <div class="campo">
+    <label for="filtro-tema">Tema (clasificación del Observatorio)</label>
+    <select id="filtro-tema" name={p.tema}>
+      <option value="">Todos</option>
+      {temas.map((t) => <option value={t.valor}>{t.etiqueta} ({t.total})</option>)}
     </select>
   </div>
   <div class="campo">
@@ -69,6 +77,7 @@ const p = parametrosCatalogo;
     texto: form.elements.namedItem(nombres.texto) as HTMLInputElement,
     anio: form.elements.namedItem(nombres.anio) as HTMLSelectElement,
     camara: form.elements.namedItem(nombres.camara) as HTMLSelectElement,
+    tema: form.elements.namedItem(nombres.tema) as HTMLSelectElement,
     orden: form.elements.namedItem(nombres.orden) as HTMLSelectElement,
   };
   const total = entradas.length;
@@ -102,6 +111,7 @@ const p = parametrosCatalogo;
   campos.texto.value = inicial.texto;
   campos.anio.value = [...campos.anio.options].some((o) => o.value === inicial.anio) ? inicial.anio : "";
   campos.camara.value = [...campos.camara.options].some((o) => o.value === inicial.camara) ? inicial.camara : "";
+  campos.tema.value = [...campos.tema.options].some((o) => o.value === inicial.tema) ? inicial.tema : "";
   campos.orden.value = inicial.orden;
   form.hidden = false;
   aplicar(desdeFormulario(), false);

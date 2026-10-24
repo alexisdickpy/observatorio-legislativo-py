@@ -5,11 +5,13 @@
 // - La agrupación usa _propio.numeroLey (número sin espacios); el número oficial se conserva.
 // - Los textos que se muestran (título, fechas, cámara) son los oficiales, sin cambios. Si los
 //   registros de un mismo número tienen valores distintos, se muestran todos.
+// - Los temas son la clasificación propia de lib/temas.js (#36), con sus opciones de filtro.
 // - Las fechas ISO de _propio se usan solo para ordenar y para el año del filtro: se toma la
 //   fecha de sanción más antigua del grupo.
 
 import { registrosDeLey, estado } from "./datos.js";
 import * as rutas from "./rutas.js";
+import { PENDIENTE, TEXTO_PENDIENTE, temas as temasDelSitio, temasDeProyectos } from "./temas.js";
 import { normalizar, slug } from "./texto.js";
 
 const distintos = (valores) => [...new Set(valores.filter((v) => v !== null && v !== undefined && v !== ""))];
@@ -19,6 +21,7 @@ function prepararRegistro({ periodo, registro: r }) {
   return {
     periodo,
     idLey: r.idLey,
+    idProyecto: p.idProyecto ?? null,
     numeroOficial: r.numeroLey,
     titulo: p.acapite ?? null,
     fechaSancion: r.fechaSancion,
@@ -55,6 +58,7 @@ export function leyes() {
       const fechaOrden = distintos(registros.map((r) => r._fechaSancionIso)).sort()[0] ?? null;
       const camaras = distintos(registros.map((r) => r.camaraOrigen));
       const titulos = distintos(registros.map((r) => r.titulo));
+      const clasificacion = temasDeProyectos(registros.map((r) => ({ periodo: r.periodo, idProyecto: r.idProyecto })));
       return {
         numero,
         url: rutas.ley(numero),
@@ -65,6 +69,7 @@ export function leyes() {
         fechasPromulgacion: distintos(registros.map((r) => r.fechaPromulgacion)),
         fechasPublicacion: distintos(registros.map((r) => r.fechaPublicacion)),
         camaras,
+        temas: clasificacion,
         anio: fechaOrden ? fechaOrden.slice(0, 4) : "",
         fechaOrden,
         filtro: {
@@ -72,6 +77,7 @@ export function leyes() {
           textoBusqueda: normalizar([numero, ...titulos].join(" ")),
           anio: fechaOrden ? fechaOrden.slice(0, 4) : "",
           camaras: camaras.map(slug),
+          temas: clasificacion.filtro,
           fechaOrden,
         },
       };
@@ -87,7 +93,11 @@ export function opcionesDeFiltro() {
   const camaras = distintos(lista.flatMap((l) => l.camaras))
     .sort()
     .map((c) => ({ valor: slug(c), etiqueta: c }));
-  return { anios, camaras };
+  const conTema = (id) => lista.filter((l) => l.filtro.temas.includes(id)).length;
+  const temas = [...temasDelSitio().map((t) => ({ valor: t.id, etiqueta: t.nombre })), { valor: PENDIENTE, etiqueta: TEXTO_PENDIENTE }]
+    .map((t) => ({ ...t, total: conTema(t.valor) }))
+    .filter((t) => t.total > 0);
+  return { anios, camaras, temas };
 }
 
 /** Fecha de la última comprobación de los datos con la fuente, para la cita. */

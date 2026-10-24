@@ -24,6 +24,8 @@ const TABLAS = {
   autores: "Autores del proyecto de cada ley.",
   personas: "Identificador propio de cada legislador, que se mantiene igual entre legislaturas y se usa en las direcciones del sitio.",
   partidos: "Partido unificado de cada texto oficial de partido, que dice qué textos corresponden al mismo partido, con el fundamento de cada caso y los nombres conocidos. Los textos oficiales no cambian.",
+  temas: "Temas de la clasificación propia de las leyes, con la definición de cada uno y las palabras clave de sus reglas.",
+  "clasificacion-temas": "Temas de cada proyecto de ley con ley o con votación en el período, con la regla o la revisión que asignó cada uno. Es una clasificación propia, no oficial.",
   notas: "Problemas que este proyecto detectó en los datos oficiales (fechas mal escritas, totales que no coinciden, etc.). Los valores oficiales no se corrigen.",
 };
 

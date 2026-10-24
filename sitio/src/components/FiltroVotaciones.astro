@@ -1,12 +1,12 @@
 ---
 // Filtro de la página de votaciones de un año por cámara, estado oficial del proyecto y resultado
-// oficial (#44). Sin JavaScript queda oculto y se ven todas las votaciones del año. Con JavaScript,
+// oficial (#44), y por tema (#36). Sin JavaScript queda oculto y se ven todas las votaciones del año. Con JavaScript,
 // dentro del mismo contenedor [data-votaciones], oculta las votaciones que no cumplen el filtro y lo
-// refleja en la dirección (?camara=…&estado=…&resultado=…). Opciones de lib/votaciones.js.
+// refleja en la dirección (?camara=…&estado=…&resultado=…&tema=…). Opciones de lib/votaciones.js.
 import { parametrosVotaciones } from "../lib/rutas.js";
 
 interface Props {
-  opciones: { camara: any[]; estado: any[]; resultado: any[] };
+  opciones: { camara: any[]; estado: any[]; resultado: any[]; tema: any[] };
   total: number;
 }
 const { opciones, total } = Astro.props;
@@ -14,6 +14,7 @@ const campos = [
   { campo: "camara", etiqueta: "Cámara", sinDato: "Sin dato" },
   { campo: "estado", etiqueta: "Estado oficial del proyecto", sinDato: "Sin estado oficial" },
   { campo: "resultado", etiqueta: "Resultado oficial", sinDato: "Sin resultado oficial" },
+  { campo: "tema", etiqueta: "Tema (clasificación del Observatorio)", sinDato: "Sin dato" },
 ] as const;
 const plural = (n: number) => `${n} ${n === 1 ? "votación" : "votaciones"}`;
 ---
@@ -46,7 +47,7 @@ const plural = (n: number) => `${n} ${n === 1 ? "votación" : "votaciones"}`;
     const selects = Object.fromEntries(CAMPOS.map((c) => [c, form.querySelector<HTMLSelectElement>(`select[data-campo="${c}"]`)!]));
     const resultado = form.querySelector<HTMLElement>("[data-filtro-votaciones-resultado]")!;
     const elementos = [...contenedor.querySelectorAll<HTMLElement>("li[data-votacion]")];
-    const entradas = elementos.map((el) => ({ el, camara: el.dataset.camara, estado: el.dataset.estado, resultado: el.dataset.resultado }));
+    const entradas = elementos.map((el) => ({ el, camara: el.dataset.camara, estado: el.dataset.estado, resultado: el.dataset.resultado, tema: [...el.querySelectorAll<HTMLElement>(".tema")].map((t) => t.dataset.tema) }));
     const opciones = Object.fromEntries(CAMPOS.map((c) => [c, [...selects[c].options].map((o) => o.value).filter(Boolean)]));
     const elegidos = () => Object.fromEntries(CAMPOS.map((c) => [c, selects[c].value]));
 

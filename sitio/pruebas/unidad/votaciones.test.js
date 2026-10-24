@@ -177,25 +177,38 @@ test("más ajustadas: por cámara, de menor a mayor diferencia y, a igualdad, la
   assert.equal(masAjustadas(PERIODO, 3)[0].votaciones.length, 3);
 });
 
-test("filtro: lee y escribe la dirección, ignora valores desconocidos y combina los tres campos", () => {
+test("filtro: lee y escribe la dirección, ignora valores desconocidos y combina los campos, también el tema (con varios valores)", () => {
   const nombres = rutas.parametrosVotaciones;
-  const opciones = { camara: ["camara-de-senadores", "camara-de-diputados"], estado: ["publicado"], resultado: ["aprobado", "rechazado"] };
+  const opciones = { camara: ["camara-de-senadores", "camara-de-diputados"], estado: ["publicado"], resultado: ["aprobado", "rechazado"], tema: ["salud", "pendiente"] };
   const leidos = leerFiltrosVotaciones(new URLSearchParams("camara=camara-de-senadores&estado=otro&resultado=rechazado"), nombres, opciones);
-  assert.deepEqual(leidos, { camara: "camara-de-senadores", estado: "", resultado: "rechazado" });
+  assert.deepEqual(leidos, { camara: "camara-de-senadores", estado: "", resultado: "rechazado", tema: "" });
   assert.equal(
     escribirFiltrosVotaciones(new URLSearchParams("x=1&estado=publicado"), nombres, leidos).toString(),
     "x=1&camara=camara-de-senadores&resultado=rechazado",
   );
   const entradas = [
-    { id: 1, camara: "camara-de-senadores", estado: "publicado", resultado: "aprobado" },
-    { id: 2, camara: "camara-de-senadores", estado: "archivado", resultado: "rechazado" },
-    { id: 3, camara: "camara-de-diputados", estado: "publicado", resultado: "rechazado" },
+    { id: 1, camara: "camara-de-senadores", estado: "publicado", resultado: "aprobado", tema: ["salud", "educacion"] },
+    { id: 2, camara: "camara-de-senadores", estado: "archivado", resultado: "rechazado", tema: ["pendiente"] },
+    { id: 3, camara: "camara-de-diputados", estado: "publicado", resultado: "rechazado", tema: ["salud"] },
   ];
-  const ids = (f) => filtrarVotaciones(entradas, { camara: "", estado: "", resultado: "", ...f }).map((e) => e.id);
+  const ids = (f) => filtrarVotaciones(entradas, { camara: "", estado: "", resultado: "", tema: "", ...f }).map((e) => e.id);
   assert.deepEqual(ids({}), [1, 2, 3]);
   assert.deepEqual(ids({ camara: "camara-de-senadores" }), [1, 2]);
   assert.deepEqual(ids({ estado: "publicado", resultado: "rechazado" }), [3]);
   assert.deepEqual(ids({ camara: "camara-de-diputados", estado: "archivado" }), []);
+  assert.deepEqual(ids({ tema: "salud" }), [1, 3]);
+  assert.deepEqual(ids({ tema: "educacion", camara: "camara-de-senadores" }), [1]);
+  assert.deepEqual(ids({ tema: "pendiente" }), [2]);
+});
+
+test("tema: cada votación lleva los temas de su proyecto o pendiente, y las opciones los cuentan", () => {
+  const { votaciones } = votacionesDelPeriodo(PERIODO);
+  assert.ok(votaciones.every((v) => v.temas.filtro.length > 0));
+  const anio = votacionesDelPeriodo(PERIODO).anios[0].anio;
+  const delAnio = votacionesDelAnio(PERIODO, anio);
+  for (const o of delAnio.opciones.tema) {
+    assert.equal(o.total, delAnio.votaciones.filter((v) => v.temas.filtro.includes(o.valor)).length, o.valor);
+  }
 });
 
 test("valores de filtro: los mismos textos oficiales tienen el mismo valor y cada votación sin ley enlaza a SILpy", () => {
