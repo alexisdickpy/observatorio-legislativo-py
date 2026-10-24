@@ -44,6 +44,7 @@ export const anclasMetodologia = {
   masAjustadas: "votaciones-mas-ajustadas",
   observaciones: "observaciones-sobre-los-datos",
   temas: "temas-de-las-leyes",
+  votosPorTema: "votos-de-partidos-y-bancadas-por-tema",
 };
 
 /** Repositorio público del proyecto: código, datos y licencias. */
@@ -85,6 +86,9 @@ export const parametrosVotaciones = { camara: "camara", estado: "estado", result
 export const coincidencia = (grupo) => (grupo ? `/coincidencia-de-votos/?grupo=${encodeURIComponent(grupo)}` : "/coincidencia-de-votos/");
 /** Parámetro de la dirección de la coincidencia de votos (?grupo=…). */
 export const parametroGrupoCoincidencia = "grupo";
+
+/** Votos de partidos y bancadas por tema (#37); con tema (identificador de temas.json), la página de ese tema. */
+export const votosPorTema = (tema) => (tema ? `/votos-por-tema/${encodeURIComponent(tema)}/` : "/votos-por-tema/");
 
 /** Parámetros de la dirección del catálogo de leyes (?q=…&anio=…&camara=…&tema=…&orden=…). */
 export const parametrosCatalogo = { texto: "q", anio: "anio", camara: "camara", tema: "tema", orden: "orden" };

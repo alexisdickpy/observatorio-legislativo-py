@@ -2,7 +2,7 @@
 // Las descripciones son textos breves para el público; si una tabla nueva no tiene el suyo, se usa
 // la descripción de datos/diccionario.json. Las rutas salen de lib/rutas.
 
-import { archivosCalculados, NOMBRE_COINCIDENCIA, NOMBRE_VOTACIONES_NOMINALES } from "./calculados.js";
+import { archivosCalculados, NOMBRE_COINCIDENCIA, NOMBRE_VOTACIONES_NOMINALES, NOMBRE_VOTOS_POR_TEMA } from "./calculados.js";
 import { archivosDeDatos, diccionario, periodos } from "./datos.js";
 import * as rutas from "./rutas.js";
 
@@ -45,6 +45,8 @@ const CALCULADOS = {
     "Por legislador, las votaciones nominales en que figura como AUSENTE, NO VOTA y ABSTENCIÓN/BLANCO, cada una por separado, sobre todas las votaciones nominales en cuya lista figura, y las votaciones en que votó distinto a la mayoría de su bancada y de su partido, sobre las votaciones comparables de cada grupo. Es la tabla de la vista comparativa.",
   [NOMBRE_COINCIDENCIA]:
     "Por cámara, cada par de partidos y cada par de bancadas, con las votaciones nominales sobre proyectos de ley en que los dos tuvieron posición y en cuántas fue la misma. Los partidos se identifican con el partido unificado y las bancadas con su nombre oficial. El porcentaje queda vacío con menos de 20 votaciones en común. Es la tabla de la página de coincidencia de votos.",
+  [NOMBRE_VOTOS_POR_TEMA]:
+    "Por tema, cámara, partido o bancada y categoría oficial de voto, cuántos votos individuales sumaron sus legisladores en las votaciones nominales sobre proyectos de ley de ese tema, sobre sus votos registrados. El tema es la clasificación propia; los partidos se identifican con el partido unificado y las bancadas con su nombre oficial. Es la tabla de la página de votos por tema.",
 };
 
 /** Archivos que genera la compilación (lib/calculados.js), agrupados por período y nombre. */

@@ -1,6 +1,6 @@
 ---
 // Apartado de la portada con cada vista de análisis (lib/navegacion.js) que no lleva `portada: false`
-// (las de `portadaAlFinal`, a lo ancho debajo de las demás; hoy, las últimas votaciones):
+// (las de `portadaAlFinal`, a lo ancho debajo de las demás; hoy, los temas y, al final, las últimas votaciones):
 // su enlace, una línea sobre qué muestra y una vista previa con datos por cámara (lib/portada.js,
 // alcance acordado en #51). Solo la de rankings lleva nombres de personas, los primeros de más
 // «rebeldes» (#54, #57). Una vista sin vista previa propia muestra solo el enlace y la línea. En
@@ -8,6 +8,7 @@
 import BarrasCoincidencia from "./BarrasCoincidencia.astro";
 import ListaVotaciones from "./ListaVotaciones.astro";
 import ListaRanking from "./ListaRanking.astro";
+import EtiquetasTema from "./EtiquetasTema.astro";
 import { vistasDeAnalisis } from "../lib/navegacion.js";
 import { vistaPrevia } from "../lib/portada.js";
 
@@ -85,15 +86,18 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
   {
     vistasDeAnalisis()
       .filter((v) => v.portada !== false && v.portadaAlFinal)
+      // Las votaciones van siempre al final.
+      .sort((a, b) => Number(a.clave === "votaciones") - Number(b.clave === "votaciones"))
       .map((v) => (
         <article class="tarjeta al-final" data-analisis={v.clave}>
           <h3>
             <a href={v.url}>{v.titulo}</a>
           </h3>
           <p class="chico">{v.descripcion}</p>
+          {v.clave === "temas" && <EtiquetasTema clasificacion={{ temas: previa.temas, pendiente: false }} enlaces />}
           {v.clave === "votaciones" && <ListaVotaciones votaciones={previa.votaciones} />}
           <p class="chico">
-            <a href={v.url}>Ver todas las votaciones y las más ajustadas</a>
+            <a href={v.url}>{v.clave === "votaciones" ? "Ver todas las votaciones y las más ajustadas" : `Ver ${v.titulo.toLowerCase()}`}</a>
           </p>
         </article>
       ))

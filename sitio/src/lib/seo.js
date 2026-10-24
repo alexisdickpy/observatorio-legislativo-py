@@ -9,6 +9,7 @@ import { legisladores } from "./legisladores.js";
 import * as rutas from "./rutas.js";
 import { recortar } from "./texto.js";
 import { votacionesDelPeriodo } from "./votaciones.js";
+import { votosPorTema } from "./votosPorTema.js";
 
 export const nombreSitio = "Observatorio Legislativo";
 const LARGO_TEMA = 60;
@@ -145,6 +146,8 @@ export function direccionesDelSitemap() {
     rutas.rankings(),
     rutas.votaciones(),
     ...votacionesDelPeriodo(periodos().find((p) => p.vigente).id).anios.map((a) => a.url),
+    rutas.votosPorTema(),
+    ...votosPorTema(periodos().find((p) => p.vigente).id).map((t) => t.url),
     ...legisladores().map((p) => p.url),
     rutas.datosAbiertos(),
     rutas.metodologia(),

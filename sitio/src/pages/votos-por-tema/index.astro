@@ -1,0 +1,66 @@
+---
+// Índice de los votos de partidos y bancadas por tema (lib/votosPorTema.js, alcance acordado en #37):
+// una tarjeta por tema con la cantidad de votaciones nominales de cada cámara y el enlace a su página.
+import Base from "../../layouts/Base.astro";
+import { NOMBRE_VOTOS_POR_TEMA } from "../../lib/calculados.js";
+import { periodos } from "../../lib/datos.js";
+import * as rutas from "../../lib/rutas.js";
+import { votosPorTema } from "../../lib/votosPorTema.js";
+
+const periodo = periodos().find((p) => p.vigente).id;
+const lista = votosPorTema(periodo);
+const numero = (n: number) => n.toLocaleString("es-PY");
+const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${n === 1 ? singular : varios}`;
+---
+
+<Base
+  titulo="Votos de partidos por tema"
+  descripcion={`Cómo votaron los legisladores de cada partido y de cada bancada del Congreso Nacional del Paraguay en las votaciones nominales sobre proyectos de ley de cada tema, período legislativo ${periodo}, cada cámara por separado.`}
+>
+  <h1>Votos de partidos por tema</h1>
+  <p class="lectura">
+    Para cada tema, los votos de los legisladores de cada partido y de cada bancada en las votaciones
+    nominales sobre proyectos de ley del período {periodo}, cámara por cámara. El tema es una
+    clasificación del Observatorio, no del Congreso.{" "}
+    <a href={rutas.metodologia(rutas.anclasMetodologia.votosPorTema)}>Cómo se calcula</a>
+    {" · "}
+    <a href={rutas.archivoCalculado(periodo, NOMBRE_VOTOS_POR_TEMA, "csv")} download>Descargar la tabla (CSV)</a>
+  </p>
+  <ul class="temas-votos">
+    {
+      lista.map((t: any) => (
+        <li class="tarjeta-tema" data-tema={t.id}>
+          <h2><a href={t.url}>{t.nombre}</a></h2>
+          <p class="chico">
+            {t.camaras.map((c: any) => `${c.camara} ${plural(c.votaciones.length, "votación", "votaciones")}`).join(" · ")}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+</Base>
+
+<style>
+  .temas-votos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--espacio-3);
+  }
+  .tarjeta-tema {
+    padding: var(--espacio-3);
+    border: var(--borde-ancho) solid var(--color-borde);
+    border-top: var(--foco-ancho) solid var(--color-tema, var(--color-borde));
+    border-radius: var(--radio);
+    background: color-mix(in srgb, var(--color-tema, var(--color-borde)) var(--mezcla-fondo-tema), var(--color-fondo));
+  }
+  h2 {
+    margin: 0 0 var(--espacio-1);
+    font-size: var(--tamano-base);
+  }
+  p {
+    margin: 0;
+  }
+</style>

@@ -17,6 +17,7 @@ import * as rutas from "../../src/lib/rutas.js";
 import { masAjustadas, votacionesDelAnio, votacionesDelPeriodo } from "../../src/lib/votaciones.js";
 import { MINIMO_VOTACIONES_AUSENCIAS, masAusentes } from "../../src/lib/rankings.js";
 import { votosDistintosAlPartido } from "../../src/lib/votosDistintos.js";
+import { votosPorTema } from "../../src/lib/votosPorTema.js";
 
 const dist = resolve(process.cwd(), "dist");
 const pagina = (url) => join(dist, decodeURIComponent(url), "index.html");
@@ -299,6 +300,7 @@ test("las direcciones que cambiaron redirigen con una redirección permanente", 
 });
 
 /** Página principal de votaciones y la de cada año. */
+const paginasDeTemas = () => [rutas.votosPorTema(), ...votosPorTema(periodos().find((p) => p.vigente).id).map((t) => t.url)];
 const paginasDeVotaciones = () => [rutas.votaciones(), ...votacionesDelPeriodo(periodos().find((p) => p.vigente).id).anios.map((a) => a.url)];
 
 /** Escapa un texto como lo escribe Astro en un atributo o en el contenido. */
@@ -626,7 +628,7 @@ test("los textos propios de las páginas generales no usan dos puntos", () => {
   // Solo páginas sin valores oficiales; la cita obligatoria se mantiene textual.
   const { cita } = estado().fuente;
   // En las páginas de votaciones, los títulos oficiales de proyectos y leyes van en <span class="titulo">.
-  const urls = [rutas.inicio(), rutas.metodologia(), rutas.privacidad(), rutas.datosAbiertos(), rutas.buscar(), rutas.votacionesNominales(), rutas.coincidencia(), rutas.rankings(), ...paginasDeVotaciones()];
+  const urls = [rutas.inicio(), rutas.metodologia(), rutas.privacidad(), rutas.datosAbiertos(), rutas.buscar(), rutas.votacionesNominales(), rutas.coincidencia(), rutas.rankings(), ...paginasDeVotaciones(), ...paginasDeTemas()];
   for (const url of urls) {
     const visible = leer(url)
       .replace(/<(script|style)[\s\S]*?<\/\1>/g, " ")
@@ -643,7 +645,7 @@ test("el menú y la portada enlazan a cada vista de análisis", () => {
   const menu = (url) => leer(url).match(/<nav aria-label="Principal"[\s\S]*?<\/nav>/)?.[0] ?? "";
   const unaLey = rutas.ley(leyes()[0].numero);
   const unLegislador = rutas.legislador(legisladores()[0].slug);
-  for (const url of [rutas.inicio(), rutas.leyes(), unaLey, rutas.legisladores(), unLegislador, rutas.votacionesNominales(), rutas.coincidencia(), rutas.rankings(), ...paginasDeVotaciones(), rutas.buscar(), rutas.datosAbiertos(), rutas.metodologia()]) {
+  for (const url of [rutas.inicio(), rutas.leyes(), unaLey, rutas.legisladores(), unLegislador, rutas.votacionesNominales(), rutas.coincidencia(), rutas.rankings(), ...paginasDeVotaciones(), ...paginasDeTemas(), rutas.buscar(), rutas.datosAbiertos(), rutas.metodologia()]) {
     const nav = menu(url);
     for (const e of menuPrincipal()) assert.ok(nav.includes(`href="${e.url}"`), `El menú de ${url} no enlaza ${e.url}`);
     assert.ok((nav.match(/aria-current="page"/g) ?? []).length <= 1, `Más de una entrada actual en ${url}`);
@@ -654,6 +656,9 @@ test("el menú y la portada enlazan a cada vista de análisis", () => {
   assert.ok(!menu(rutas.inicio()).includes(rutas.votacionesNominales()), "La tabla comparativa sigue en el menú");
   for (const url of paginasDeVotaciones()) {
     assert.ok(menu(url).includes(`href="${rutas.votaciones()}" aria-current="page"`), `${url} no marca «Votaciones» en el menú`);
+  }
+  for (const url of paginasDeTemas()) {
+    assert.ok(menu(url).includes(`href="${rutas.votosPorTema()}" aria-current="page"`), `${url} no marca «Temas» en el menú`);
   }
   const portada = leer(rutas.inicio()).replace(/<header[\s\S]*?<\/header>/, " ");
   for (const v of vistasDeAnalisis()) {
@@ -682,4 +687,31 @@ test("el menú y la portada enlazan a cada vista de análisis", () => {
   const votaciones = posiciones.find(([clave]) => clave === "votaciones")[1];
   assert.ok(posiciones.every(([clave, n]) => clave === "votaciones" || n < votaciones), "La tarjeta de votaciones no está al final");
   assert.equal(html.match(/<li data-votos-distintos=/g)?.length ?? 0, previa.votosDistintos.reduce((n, c) => n + c.filas.length, 0));
+});
+
+test("votos por tema: índice, una página por tema con el reparto de cada grupo, avisos y lista de votaciones", () => {
+  const periodo = periodos().find((p) => p.vigente).id;
+  const lista = votosPorTema(periodo);
+  const indice = leer(rutas.votosPorTema());
+  for (const t of lista) assert.ok(indice.includes(`href="${t.url}"`), `El índice no enlaza ${t.url}`);
+  assert.ok(indice.includes(`href="${rutas.archivoCalculado(periodo, "votos-por-tema", "csv")}"`), "Falta la descarga en el índice");
+  const portada = leer(rutas.inicio());
+  for (const t of lista) assert.ok(portada.includes(`href="${t.url}"`), `La portada no enlaza ${t.url}`);
+  for (const t of lista) {
+    const html = texto(t.url);
+    assert.ok(html.includes(`href="${rutas.metodologia(rutas.anclasMetodologia.votosPorTema)}"`), t.url);
+    assert.ok(html.includes("objeción del Poder Ejecutivo") && html.includes("no necesariamente los de la fecha"), `Faltan los avisos en ${t.url}`);
+    for (const c of t.camaras) {
+      assert.ok(new RegExp(`<h2[^>]*>${c.camara}</h2>`).test(html), `${t.url} ${c.camara}`);
+      for (const f of [...c.partidos, ...c.bancadas]) {
+        c.categorias.forEach((cat, n) => {
+          if (f.celdas[n].cantidad > 0) assert.ok(html.includes(`<b>${cat}</b> ${f.celdas[n].texto}`), `${t.url} ${c.camara} ${f.texto} ${cat}`);
+        });
+      }
+      for (const v of c.votaciones) assert.ok(html.includes(v.etapa ?? "Sin dato"), `${t.url} etapa de ${v.id}`);
+      assert.equal(html.split(`<ol class="votaciones-tema chico">`).length - 1, t.camaras.length, `${t.url} listas de votaciones`);
+    }
+    const bytes = statSync(pagina(t.url)).size;
+    assert.ok(bytes < 900_000, `${t.url} pesa ${bytes} bytes`);
+  }
 });

@@ -9,6 +9,7 @@ import { periodos } from "./datos.js";
 import { COLUMNAS_COINCIDENCIA, tablaCoincidencia } from "./coincidencia.js";
 import { COLUMNAS_TABLA, tablaComparativa } from "./legisladores.js";
 import * as rutas from "./rutas.js";
+import { COLUMNAS_VOTOS_POR_TEMA, tablaVotosPorTema } from "./votosPorTema.js";
 
 const BOM = "﻿";
 
@@ -27,11 +28,13 @@ const json = (filas) => JSON.stringify(filas, null, 2) + "\n";
 
 export const NOMBRE_VOTACIONES_NOMINALES = "votaciones-nominales-por-legislador";
 export const NOMBRE_COINCIDENCIA = "coincidencia-de-votos-entre-grupos";
+export const NOMBRE_VOTOS_POR_TEMA = "votos-por-tema";
 
 /** Tablas calculadas: nombre del archivo, columnas y filas de un período. */
 const TABLAS = [
   { nombre: NOMBRE_VOTACIONES_NOMINALES, columnas: COLUMNAS_TABLA, filas: tablaComparativa },
   { nombre: NOMBRE_COINCIDENCIA, columnas: COLUMNAS_COINCIDENCIA, filas: tablaCoincidencia },
+  { nombre: NOMBRE_VOTOS_POR_TEMA, columnas: COLUMNAS_VOTOS_POR_TEMA, filas: tablaVotosPorTema },
 ];
 
 /** Archivos calculados de cada período: ruta publicada, formato y contenido. */
