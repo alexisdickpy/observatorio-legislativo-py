@@ -1,0 +1,62 @@
+---
+// Página propia de cada votación nominal sobre un proyecto de ley del período vigente (alcance acordado
+// en #45): el proyecto con su título oficial, el resultado, los totales, la posición de cada partido, el
+// desglose por partido y bancada y el voto de cada legislador (el mismo detalle de la ficha de la ley),
+// con botones para compartir y las imágenes de scripts/imagenes-votaciones.js.
+import Base from "../../layouts/Base.astro";
+import Compartir from "../../components/Compartir.astro";
+import EtiquetasTema from "../../components/EtiquetasTema.astro";
+import Votacion from "../../components/Votacion.astro";
+import { compartirVotacion, datosDeVotacion } from "../../lib/compartir.js";
+import { periodos } from "../../lib/datos.js";
+import { detalleDeVotacion } from "../../lib/ficha.js";
+import * as rutas from "../../lib/rutas.js";
+import { votacionesDelPeriodo } from "../../lib/votaciones.js";
+
+export function getStaticPaths() {
+  const periodo = periodos().find((p) => p.vigente).id;
+  return votacionesDelPeriodo(periodo).votaciones.map((v) => ({ params: { id: String(v.id) }, props: { periodo, v } }));
+}
+
+const { periodo, v } = Astro.props;
+const c = compartirVotacion(v);
+const detalle = detalleDeVotacion(periodo, v.id);
+const sinDato = "Sin dato";
+---
+
+<Base titulo={c.titulo} descripcion={c.descripcion} imagen={c.vistaPrevia} datos={datosDeVotacion(v, c)}>
+  {v.anio && <p class="chico"><a href={rutas.votaciones(v.anio)}>← Votaciones de {v.anio}</a></p>}
+  <h1>{c.titulo}</h1>
+  <p class="chico texto-suave">{v.camara ?? sinDato} · {v.etapa ?? sinDato}</p>
+  <div class="proyecto lectura">
+    {
+      v.leyes.length ? (
+        v.leyes.map((l: any) => (
+          <p>
+            <a href={rutas.ley(l.numero)}>Ley {l.numero}</a> <span class="titulo texto-suave">{l.titulo}</span>
+          </p>
+        ))
+      ) : (
+        <p>
+          {v.proyecto.url ? <a href={v.proyecto.url}>Expediente {v.proyecto.expediente ?? sinDato}</a> : `Expediente ${v.proyecto.expediente ?? sinDato}`}{" "}
+          <span class="titulo texto-suave">{v.proyecto.titulo}</span>
+        </p>
+      )
+    }
+    <EtiquetasTema clasificacion={v.temas} enlaces />
+    {v.autores.length > 0 && <p class="chico">Presentado por {v.autores.map((a: any) => `${a.sigla} ${a.cantidad}`).join(" · ")}</p>}
+    {!v.autores.length && v.iniciativa && <p class="chico">Iniciativa del {v.iniciativa}</p>}
+    <p class="chico">Estado del proyecto <strong>{v.proyecto.estado ?? sinDato}</strong></p>
+  </div>
+  <Compartir url={c.url} enlaces={c.enlaces} vertical={c.imagenes.vertical.url} />
+  <Votacion votacion={detalle} nivel={2} propia />
+</Base>
+
+<style>
+  .proyecto {
+    overflow-wrap: anywhere;
+  }
+  .proyecto p {
+    margin: var(--espacio-2) 0;
+  }
+</style>

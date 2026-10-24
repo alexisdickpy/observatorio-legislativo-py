@@ -2,3 +2,5 @@
 public/datos/
 # Fotos reducidas generadas en cada compilación (scripts/reducir-fotos.js)
 public/fotos/
+# Imágenes para compartir cada votación, generadas en cada compilación (scripts/imagenes-votaciones.js)
+public/votacion/

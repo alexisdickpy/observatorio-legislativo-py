@@ -72,6 +72,7 @@ function camaraDelTema(camara, votaciones, i) {
       proyecto: v.proyecto,
       leyes: v.leyes,
       url: v.url,
+      pagina: v.pagina,
     })),
     votos: votos.length,
     categorias,

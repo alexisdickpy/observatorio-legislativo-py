@@ -100,6 +100,8 @@ function prepararVotacion(v, i, valores) {
     // Iniciativa oficial, solo si no es parlamentaria (Poder Ejecutivo, Corte Suprema de Justicia…).
     iniciativa: valor(v.proyecto?.iniciativa) && v.proyecto.iniciativa !== PARLAMENTARIA ? v.proyecto.iniciativa : null,
     leyes,
+    // Página propia de la votación (#45).
+    pagina: rutas.votacion(v.idVotacion),
     // Con ley, la votación dentro de su ficha; sin ley, la votación oficial en SILpy.
     url: leyes[0]?.url ?? valor(v.appURL) ?? rutas.votacionSilpy(v.idVotacion),
     registrados: votos.length,

@@ -79,6 +79,18 @@ export const redireccionesPermanentes = () => [{ desde: "/legisladores/votos-dis
 
 /** Votaciones con la posición de cada partido (#44); con año, la página de ese año. */
 export const votaciones = (anio) => (anio ? `/votaciones/${encodeURIComponent(anio)}/` : "/votaciones/");
+/** Página propia de una votación nominal (#45), con el número oficial de la votación. */
+export const votacion = (idVotacion) => `${carpetaVotaciones()}${encodeURIComponent(idVotacion)}/`;
+/** Carpeta de las páginas propias de las votaciones, que marcan «Votaciones» en el menú. */
+export const carpetaVotaciones = () => "/votacion/";
+/**
+ * Imágenes para compartir una votación (scripts/imagenes-votaciones.js), junto a su página. "horizontal"
+ * para la vista previa del enlace; "vertical" para estados e historias.
+ */
+export const imagenVotacion = (idVotacion, formato) => `${votacion(idVotacion)}compartir-${formato}.png`;
+/** Enlaces para compartir en WhatsApp y en X, sin scripts de esos servicios. */
+export const compartirWhatsapp = (texto, url) => `https://wa.me/?text=${encodeURIComponent(`${texto} ${url}`)}`;
+export const compartirX = (texto, url) => `https://x.com/intent/post?text=${encodeURIComponent(texto)}&url=${encodeURIComponent(url)}`;
 /** Parámetros de la dirección de la página de un año de votaciones (?camara=…&estado=…&resultado=…&tema=…). */
 export const parametrosVotaciones = { camara: "camara", estado: "estado", resultado: "resultado", tema: "tema" };
 
