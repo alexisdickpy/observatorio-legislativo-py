@@ -1,0 +1,223 @@
+{
+  "estado": "preliminar",
+  "descripcion": "Preguntas del test de afinidad. Cada una se basa en una o dos votaciones nominales en general (una por cámara) de un proyecto que llegó a ser ley en el período. votoAFavor es el voto oficial que equivale a responder «A favor». Lista preliminar, en revisión editorial.",
+  "periodoLegislativo": "2023-2028",
+  "preguntas": [
+    {
+      "id": "organizaciones-sin-fines-de-lucro",
+      "numeroLey": "7363",
+      "tema": "estado",
+      "basico": true,
+      "pregunta": "¿Establecer un régimen de control, transparencia y rendición de cuentas para las organizaciones sin fines de lucro?",
+      "votaciones": [105345, 105845],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "alimentacion-escolar",
+      "numeroLey": "7264",
+      "tema": "educacion",
+      "basico": true,
+      "pregunta": "¿Universalizar la alimentación escolar en el sistema educativo con el programa «Hambre Cero en nuestras escuelas», modificando la ley de alimentación escolar?",
+      "votaciones": [104615],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "emergencia-violencia-contra-mujeres",
+      "numeroLey": "7239",
+      "tema": "derechos",
+      "basico": true,
+      "pregunta": "¿Declarar emergencia social ante la violencia contra las mujeres, niñas y adolescentes y establecer talleres y campañas de concientización sobre igualdad de género?",
+      "votaciones": [104343],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "acuerdo-estatuto-fuerzas-estados-unidos",
+      "numeroLey": "7630",
+      "tema": "relaciones-exteriores",
+      "basico": true,
+      "pregunta": "¿Aprobar el acuerdo con el Gobierno de los Estados Unidos relativo al estatuto de sus fuerzas en el Paraguay?",
+      "votaciones": [108215, 108235],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "registro-unificado-nacional",
+      "numeroLey": "7424",
+      "tema": "estado",
+      "basico": true,
+      "pregunta": "¿Crear el Registro Unificado Nacional, un sistema único para la información registral y catastral de los inmuebles?",
+      "votaciones": [106155, 106315],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "creditos-de-carbono",
+      "numeroLey": "7190",
+      "tema": "ambiente",
+      "basico": true,
+      "pregunta": "¿Establecer un régimen legal para los créditos de carbono, con reglas sobre su titularidad, registro y comercialización?",
+      "votaciones": [104366, 104376],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "direccion-nacional-de-ingresos-tributarios",
+      "numeroLey": "7143",
+      "tema": "presupuesto",
+      "basico": true,
+      "pregunta": "¿Crear la Dirección Nacional de Ingresos Tributarios, que reúne en un solo organismo la recaudación de impuestos y de aduanas?",
+      "votaciones": [104243],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "reforma-del-ips",
+      "numeroLey": "7446",
+      "tema": "trabajo",
+      "basico": true,
+      "pregunta": "¿Reformar varias disposiciones del régimen legal del Instituto de Previsión Social (IPS)?",
+      "votaciones": [106595],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "jubilaciones-de-legisladores",
+      "numeroLey": "7714",
+      "tema": "trabajo",
+      "basico": true,
+      "pregunta": "¿Modificar la ley del fondo de jubilaciones y pensiones de los miembros del Poder Legislativo?",
+      "votaciones": [108395, 108735],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "himno-nacional-semanal",
+      "numeroLey": "7427",
+      "tema": "cultura",
+      "basico": true,
+      "pregunta": "¿Hacer obligatorio entonar el Himno Nacional al menos una vez por semana en las escuelas y colegios públicos y privados?",
+      "votaciones": [105626, 105026],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "carne-cultivada-en-laboratorio",
+      "numeroLey": "7312",
+      "tema": "economia",
+      "basico": true,
+      "pregunta": "¿Prohibir la producción, la importación y la venta de carne cultivada en laboratorio para consumo humano?",
+      "votaciones": [104437],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "intereses-certificados-de-obra",
+      "numeroLey": "7699",
+      "tema": "presupuesto",
+      "basico": true,
+      "pregunta": "¿Autorizar el pago de intereses por atraso en los certificados de obras de infraestructura y la emisión de títulos de deuda pública?",
+      "votaciones": [109145],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "horario-oficial",
+      "numeroLey": "7354",
+      "tema": "estado",
+      "basico": false,
+      "pregunta": "¿Fijar por ley el horario oficial del país, sin cambio de hora entre verano e invierno?",
+      "votaciones": [105245, 105815],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "medidas-extraordinarias-finanzas-publicas",
+      "numeroLey": "7218",
+      "tema": "presupuesto",
+      "basico": false,
+      "pregunta": "¿Aprobar medidas extraordinarias de gestión de las finanzas públicas propuestas por el Poder Ejecutivo?",
+      "votaciones": [104395, 104421],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "funcion-publica",
+      "numeroLey": "7445",
+      "tema": "trabajo",
+      "basico": false,
+      "pregunta": "¿Aprobar una nueva ley de la función pública y del servicio civil, que regula el ingreso, la carrera y la evaluación de los funcionarios públicos?",
+      "votaciones": [106297, 106565],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "idioma-ingles",
+      "numeroLey": "7607",
+      "tema": "educacion",
+      "basico": false,
+      "pregunta": "¿Ampliar la enseñanza del idioma inglés en la educación pública, desde el preescolar hasta el tercer año de la media?",
+      "votaciones": [107635, 107275],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "especies-exoticas-en-cuerpos-de-agua",
+      "numeroLey": "7618",
+      "tema": "ambiente",
+      "basico": false,
+      "pregunta": "¿Establecer una licencia ambiental para el cultivo y la venta de especies exóticas en cuerpos de agua cerrados o semiabiertos?",
+      "votaciones": [108166, 107645],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "proteccion-de-datos-personales",
+      "numeroLey": "7593",
+      "tema": "derechos",
+      "basico": false,
+      "pregunta": "¿Aprobar una ley de protección de datos personales?",
+      "votaciones": [107138],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "sistema-nacional-de-pagos",
+      "numeroLey": "7503",
+      "tema": "economia",
+      "basico": false,
+      "pregunta": "¿Aprobar la ley del Sistema Nacional de Pagos propuesta por el Poder Ejecutivo?",
+      "votaciones": [107356],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "energia-electrica-independiente",
+      "numeroLey": "7299",
+      "tema": "obras",
+      "basico": false,
+      "pregunta": "¿Ampliar las reglas que permiten la producción y el transporte independiente de energía eléctrica?",
+      "votaciones": [105035, 104528],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "tren-de-cercanias",
+      "numeroLey": "7434",
+      "tema": "obras",
+      "basico": false,
+      "pregunta": "¿Aprobar la ley de reforma del tren de cercanías propuesta por el Poder Ejecutivo?",
+      "votaciones": [106596],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "reforma-de-la-policia-nacional",
+      "numeroLey": "7280",
+      "tema": "seguridad",
+      "basico": false,
+      "pregunta": "¿Aprobar la reforma y modernización de la Policía Nacional, con una nueva ley orgánica?",
+      "votaciones": [104945],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "integridad-y-prevencion-de-la-corrupcion",
+      "numeroLey": "7389",
+      "tema": "estado",
+      "basico": false,
+      "pregunta": "¿Establecer un régimen nacional de integridad, transparencia y prevención de la corrupción?",
+      "votaciones": [106285],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "emergencia-penitenciaria",
+      "numeroLey": "7420",
+      "tema": "seguridad",
+      "basico": false,
+      "pregunta": "¿Ampliar el plazo de la emergencia declarada en todos los establecimientos penitenciarios y centros educativos del país, y modificar parcialmente esa ley?",
+      "votaciones": [106547],
+      "votoAFavor": "SI"
+    }
+  ]
+}

@@ -45,6 +45,7 @@ export const anclasMetodologia = {
   observaciones: "observaciones-sobre-los-datos",
   temas: "temas-de-las-leyes",
   votosPorTema: "votos-de-partidos-y-bancadas-por-tema",
+  testAfinidad: "test-de-afinidad",
 };
 
 /** Repositorio público del proyecto: código, datos y licencias. */
@@ -101,6 +102,9 @@ export const parametroGrupoCoincidencia = "grupo";
 
 /** Votos de partidos y bancadas por tema (#37); con tema (identificador de temas.json), la página de ese tema. */
 export const votosPorTema = (tema) => (tema ? `/votos-por-tema/${encodeURIComponent(tema)}/` : "/votos-por-tema/");
+
+/** Test de afinidad (#63): preguntas basadas en votaciones nominales y coincidencia con partidos, bancadas y legisladores. */
+export const testAfinidad = () => "/test-de-afinidad/";
 
 /** Parámetros de la dirección del catálogo de leyes (?q=…&anio=…&camara=…&tema=…&orden=…). */
 export const parametrosCatalogo = { texto: "q", anio: "anio", camara: "camara", tema: "tema", orden: "orden" };

@@ -7,6 +7,7 @@ import { estado, periodos } from "./datos.js";
 import { descargas } from "./descargas.js";
 import { legisladores } from "./legisladores.js";
 import * as rutas from "./rutas.js";
+import { esPreliminar } from "./testAfinidad.js";
 import { recortar } from "./texto.js";
 import { votacionesDelPeriodo } from "./votaciones.js";
 import { votosPorTema } from "./votosPorTema.js";
@@ -149,6 +150,8 @@ export function direccionesDelSitemap() {
     ...votacionesDelPeriodo(periodos().find((p) => p.vigente).id).votaciones.map((v) => v.pagina),
     rutas.votosPorTema(),
     ...votosPorTema(periodos().find((p) => p.vigente).id).map((t) => t.url),
+    // El test de afinidad entra cuando sus preguntas dejan de ser preliminares (#64).
+    ...(esPreliminar() ? [] : [rutas.testAfinidad()]),
     ...legisladores().map((p) => p.url),
     rutas.datosAbiertos(),
     rutas.metodologia(),

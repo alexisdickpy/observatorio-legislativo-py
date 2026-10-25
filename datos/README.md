@@ -6,7 +6,7 @@ Copia propia de los datos del Congreso Nacional, generada por el [importador](..
 
 Todos estos archivos son **datos abiertos**, que se pueden descargar y reutilizar citando la fuente. El [diccionario de datos](diccionario.md) describe cada campo, su tipo y si es oficial o propio.
 
-No editar estos archivos a mano, salvo las notas manuales de `propios/notas.json`, la unión de personas de `propios/personas.json` (ver abajo), los partidos unificados y nombres conocidos de `propios/partidos.json`, los temas de `propios/temas.json`, las clasificaciones revisadas de `propios/clasificacion-temas.json` y las descripciones de `diccionario.json`. El resto lo reescribe el importador.
+No editar estos archivos a mano, salvo las notas manuales de `propios/notas.json`, la unión de personas de `propios/personas.json` (ver abajo), los partidos unificados y nombres conocidos de `propios/partidos.json`, los temas de `propios/temas.json`, las clasificaciones revisadas de `propios/clasificacion-temas.json`, las preguntas del test de afinidad de `propios/test-afinidad.json` y las descripciones de `diccionario.json`. El resto lo reescribe el importador.
 
 ## Archivos
 
@@ -27,6 +27,7 @@ No editar estos archivos a mano, salvo las notas manuales de `propios/notas.json
 | `propios/notas.json` | Problemas detectados en la fuente, como fechas mal formadas, totales que no coinciden o votos faltantes. |
 | `propios/partidos.json` | Una entrada por cada texto oficial de partido (`partidoPolitico`), con su partido unificado (los textos que corresponden al mismo partido comparten identificador) y el fundamento de la agrupación. Cada entrada lleva también una sigla corta y algunas, el nombre por el que se conoce al partido. Son agregados propios; el texto oficial no cambia. |
 | `propios/temas.json` | Temas de la clasificación temática propia, con la definición de cada uno y las palabras clave de sus reglas. |
+| `propios/test-afinidad.json` | Preguntas del test de afinidad, cada una con su ley, su tema y las votaciones nominales que compara, y el voto oficial que equivale a «A favor». Es un dato propio. |
 | `propios/clasificacion-temas.json` y `.csv` | Temas de cada proyecto de ley con ley o con votación nominal en el período, con la regla o la revisión que asignó cada uno, o «pendiente de clasificación». Es una clasificación propia, no oficial. |
 
 ## Convenciones

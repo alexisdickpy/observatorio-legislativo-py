@@ -1,0 +1,56 @@
+---
+// Test de afinidad (alcance acordado en #63). El visitante responde preguntas basadas en votaciones
+// nominales reales y ve con qué partidos, bancadas y legisladores coinciden sus respuestas. Durante el
+// test no se muestran autores ni votos. Todo se calcula en el navegador (lib/afinidad.js), sin guardar
+// nada. Mientras las preguntas estén en revisión (#64), la página no se indexa ni está en el menú.
+import Base from "../layouts/Base.astro";
+import PreguntasTest from "../components/PreguntasTest.astro";
+import ResultadoTest from "../components/ResultadoTest.astro";
+import { periodos } from "../lib/datos.js";
+import { datosDelTest } from "../lib/testAfinidad.js";
+import * as rutas from "../lib/rutas.js";
+
+const periodo = periodos().find((p) => p.vigente).id;
+const datos = datosDelTest(periodo);
+---
+
+<Base
+  titulo="Test de afinidad"
+  descripcion={`Preguntas sobre leyes votadas por el Congreso Nacional del Paraguay en el período ${periodo}, para comparar tus respuestas con los votos de partidos, bancadas y legisladores.`}
+  indexar={!datos.preliminar}
+>
+  <h1>Test de afinidad</h1>
+  {
+    datos.preliminar && (
+      <p class="aviso" data-preliminar>
+        Versión preliminar. Las preguntas todavía están en revisión y pueden cambiar.
+      </p>
+    )
+  }
+  <div class="lectura">
+    <p>
+      Cada pregunta corresponde a una votación nominal real sobre un proyecto que llegó a ser ley en el período
+      {periodo}. Al final se compara lo que respondiste con lo que votó cada legislador y con la mayoría de cada
+      partido y de cada bancada.
+    </p>
+    <p class="chico texto-suave">
+      Responder sobre una ley es responder sobre todo lo que se votó, aunque la pregunta resuma una parte.
+      Las respuestas se calculan en tu navegador y no se guardan ni se envían.{" "}
+      <a href={rutas.metodologia(rutas.anclasMetodologia.testAfinidad)}>Cómo funciona</a>
+    </p>
+  </div>
+  <noscript>
+    <p class="aviso">El test necesita JavaScript para calcular el resultado en tu navegador.</p>
+  </noscript>
+
+  <PreguntasTest preguntas={datos.preguntas} />
+  <ResultadoTest datos={datos} />
+</Base>
+
+<style>
+  .aviso {
+    padding: var(--espacio-3) var(--espacio-4);
+    background: var(--color-marca);
+    border-left: var(--foco-ancho) solid var(--color-foco);
+  }
+</style>
