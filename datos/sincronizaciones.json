@@ -2,6 +2,14 @@
   "sincronizaciones": [
     {
       "consultas": 0,
+      "error": "ErrorAPI: No se pudo obtener https://datosv2.congreso.gov.py/web/api/periodo: <urlopen error [Errno 110] Connection timed out>",
+      "fecha": "2026-10-25T12:03:39Z",
+      "modo": "completo",
+      "periodo": null,
+      "resultado": "error"
+    },
+    {
+      "consultas": 0,
       "error": "ErrorAPI: No se pudo obtener https://datosv2.congreso.gov.py/web/api/periodo: HTTP Error 503: Service Unavailable",
       "fecha": "2026-10-24T12:06:33Z",
       "modo": "incremental",
