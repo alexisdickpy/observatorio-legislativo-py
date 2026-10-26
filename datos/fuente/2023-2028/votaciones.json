@@ -90889,8 +90889,8 @@
         "appURL": "https://silpy.congreso.gov.py/sesion/112622",
         "camaraSesion": "CAMARA DE SENADORES",
         "fechaSesion": "14/10/2026",
-        "horaFin": "00:00",
-        "horaInicio": "09:00",
+        "horaFin": "14:10",
+        "horaInicio": "10:09",
         "idSesion": 112622,
         "numeroSesion": "187",
         "periodoParlamentarioDTO": {
