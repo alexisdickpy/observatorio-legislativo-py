@@ -2,10 +2,15 @@
 // Mapa de diputados por departamento (#65) y, debajo, la lista con los mismos datos, que es la
 // alternativa accesible y la vista de pantallas chicas. Cada zona es un enlace a su departamento en
 // la lista; con JavaScript, el detalle se muestra además junto al mapa.
+// Con soloMapa (portada), solo el dibujo: cada zona lleva a su departamento en la página del mapa.
+import * as rutas from "../lib/rutas.js";
+
 interface Props {
   mapa: any;
+  soloMapa?: boolean;
 }
-const { mapa } = Astro.props;
+const { mapa, soloMapa = false } = Astro.props;
+const enlace = (z: any) => (soloMapa ? `${rutas.mapaDiputados()}#${z.ancla}` : `#${z.ancla}`);
 // Asunción es muy chica para su cifra: su círculo va al costado, unido por una línea a su lugar real.
 const CAPITAL = "PY-ASU";
 const DESVIO_CAPITAL = [-32, -14];
@@ -14,12 +19,12 @@ const plural = (n: number) => (n === 1 ? "1 diputado" : `${n} diputados`);
 const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConocido})` : (d.partido ?? "Sin dato"));
 ---
 
-<div class="mapa-departamentos">
+<div class:list={["mapa-departamentos", { "solo-mapa": soloMapa }]}>
   <figure class="mapa-dibujo">
     <svg viewBox={`0 0 ${mapa.ancho} ${mapa.alto}`} role="group" aria-label="Mapa del Paraguay por departamento">
       {
         mapa.zonas.map((z: any) => (
-          <a href={`#${z.ancla}`} class="zona" data-ancla={z.ancla} aria-label={`${z.nombre}, ${plural(z.cantidad)}`}>
+          <a href={enlace(z)} class="zona" data-ancla={z.ancla} aria-label={`${z.nombre}, ${plural(z.cantidad)}`}>
             <title>{`${z.nombre}, ${plural(z.cantidad)}`}</title>
             <path d={z.ruta} class={`nivel-${z.nivel}`} />
             {z.codigo === CAPITAL && (
@@ -46,12 +51,17 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
       El color depende solo de la cantidad de diputados. El círculo es {mapa.zonas.find((z: any) => z.codigo === CAPITAL)?.nombre}.
     </figcaption>
   </figure>
-  <div class="mapa-detalle" id="mapa-detalle" aria-live="polite" hidden>
-    <p class="texto-suave">Elegí un departamento en el mapa.</p>
-  </div>
+  {
+    !soloMapa && (
+      <div class="mapa-detalle" id="mapa-detalle" aria-live="polite" hidden>
+        <p class="texto-suave">Elegí un departamento en el mapa.</p>
+      </div>
+    )
+  }
 </div>
 
-<h2>Diputados por departamento</h2>
+{!soloMapa && <h2>Diputados por departamento</h2>}
+{!soloMapa && (
 <div class="mapa-lista">
   {
     mapa.zonas.map((z: any) => (
@@ -62,7 +72,7 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
           <p class="chico">Sin diputados en ejercicio según la API.</p>
         ) : (
           <ul>
-            {z.diputados.map((d: any) => <li><a href={d.url}>{d.nombre}</a> <span class="chico texto-suave">{partido(d)}</span></li>)}
+            {z.diputados.map((d: any) => <li class="diputado">{d.foto ? <img src={d.foto} alt="" width="40" height="40" loading="lazy" /> : <span class="sin-foto" aria-hidden="true" />}<span><a href={d.url}>{d.nombre}</a><br /><span class="chico texto-suave">{partido(d)}</span></span></li>)}
           </ul>
         )}
       </section>
@@ -73,21 +83,22 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
       <section class="departamento">
         <h3>{g.departamento} <span class="texto-suave">· {plural(g.diputados.length)}, sin zona en el mapa</span></h3>
         <ul>
-          {g.diputados.map((d: any) => <li><a href={d.url}>{d.nombre}</a> <span class="chico texto-suave">{partido(d)}</span></li>)}
+          {g.diputados.map((d: any) => <li class="diputado">{d.foto ? <img src={d.foto} alt="" width="40" height="40" loading="lazy" /> : <span class="sin-foto" aria-hidden="true" />}<span><a href={d.url}>{d.nombre}</a><br /><span class="chico texto-suave">{partido(d)}</span></span></li>)}
         </ul>
       </section>
     ))
   }
 </div>
+)}
 
 <script>
-  const detalle = document.getElementById("mapa-detalle")!;
-  const zonas = [...document.querySelectorAll<SVGAElement>(".mapa-departamentos .zona")];
-  detalle.hidden = false;
+  const detalle = document.getElementById("mapa-detalle");
+  const zonas = detalle ? [...document.querySelectorAll<SVGAElement>(".mapa-departamentos .zona")] : [];
+  if (detalle) detalle.hidden = false;
 
   function mostrar(ancla: string) {
     const seccion = document.getElementById(ancla);
-    if (!seccion) return;
+    if (!seccion || !detalle) return;
     detalle.innerHTML = seccion.innerHTML;
     for (const z of zonas) z.classList.toggle("elegida", z.dataset.ancla === ancla);
   }
@@ -99,7 +110,7 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
       history.replaceState(null, "", `#${z.dataset.ancla}`);
     });
   }
-  if (location.hash) mostrar(decodeURIComponent(location.hash.slice(1)));
+  if (detalle && location.hash) mostrar(decodeURIComponent(location.hash.slice(1)));
 </script>
 
 <style is:global>
@@ -129,7 +140,7 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
     cursor: pointer;
   }
   .mapa-departamentos .guia {
-    stroke: var(--color-texto);
+    stroke: var(--color-mapa-cifra);
     stroke-width: 1;
   }
   .mapa-departamentos .zona:hover path,
@@ -153,8 +164,11 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
   .mapa-departamentos .nivel-3 { fill: var(--color-mapa-3); background: var(--color-mapa-3); }
   .mapa-departamentos .nivel-4 { fill: var(--color-mapa-4); background: var(--color-mapa-4); }
   .mapa-departamentos .nivel-5 { fill: var(--color-mapa-5); background: var(--color-mapa-5); }
+  .mapa-departamentos.solo-mapa {
+    grid-template-columns: minmax(0, var(--ancho-mapa));
+  }
   .mapa-departamentos .cifra {
-    fill: var(--color-texto);
+    fill: var(--color-mapa-cifra);
     font-size: var(--tamano-chico);
     font-weight: var(--peso-fuerte);
     text-anchor: middle;
@@ -162,7 +176,7 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
     pointer-events: none;
   }
   .mapa-departamentos .cifra.sobre-oscuro {
-    fill: var(--color-sobre-acento);
+    fill: var(--color-mapa-cifra-oscura);
   }
   .mapa-departamentos .leyenda {
     list-style: none;
@@ -195,8 +209,25 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
   }
   .mapa-detalle ul,
   .mapa-lista ul {
-    padding-left: var(--espacio-4);
+    list-style: none;
+    padding: 0;
     margin-bottom: 0;
+  }
+  .diputado {
+    display: grid;
+    grid-template-columns: var(--tamano-foto-mapa) 1fr;
+    gap: var(--espacio-3);
+    align-items: center;
+    padding-block: var(--espacio-1);
+  }
+  .diputado img,
+  .diputado .sin-foto {
+    display: block;
+    width: var(--tamano-foto-mapa);
+    height: var(--tamano-foto-mapa);
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--color-superficie);
   }
   .mapa-lista {
     display: grid;

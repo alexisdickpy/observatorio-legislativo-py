@@ -56,6 +56,9 @@
   --color-mapa-4: #4a80bb;
   --color-mapa-5: #1f5a99;
   --color-mapa-limite: #ffffff;
+  --color-mapa-cifra: #1d2125; /* sin cambio en modo oscuro: las zonas siguen siendo claras */
+  --color-mapa-cifra-oscura: #ffffff;
+  --tamano-foto-mapa: 2.5rem;
   --ancho-mapa: 36rem;
 
   /* Tipografía */

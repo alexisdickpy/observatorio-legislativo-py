@@ -296,8 +296,15 @@ test("mapa de diputados: una zona por departamento, la lista con cada diputado, 
   assert.equal((html.match(/class="zona"/g) ?? []).length, m.zonas.length);
   for (const z of m.zonas) {
     assert.ok(html.includes(`href="#${z.ancla}"`) && html.includes(`id="${z.ancla}"`), z.nombre);
-    for (const d of z.diputados) assert.ok(html.includes(`href="${d.url}"`), d.url);
+    for (const d of z.diputados) {
+      assert.ok(html.includes(`href="${d.url}"`), d.url);
+      if (d.foto) assert.ok(html.includes(`src="${d.foto}"`), d.foto);
+    }
   }
+  const portada = leer(rutas.inicio());
+  assert.equal((portada.match(/class="zona"/g) ?? []).length, m.zonas.length);
+  assert.ok(portada.includes(`href="${rutas.mapaDiputados()}#${m.zonas[0].ancla}"`));
+  assert.ok(!portada.includes('class="mapa-lista"') && !portada.includes('id="mapa-detalle"'), "La portada lleva solo el dibujo");
   assert.ok(texto(rutas.mapaDiputados()).includes(`${m.total} diputados en ejercicio`));
   assert.ok(html.includes("Natural Earth"));
   assert.ok(!/<script[^>]+src="https?:/.test(html), "Sin scripts de terceros");

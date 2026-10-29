@@ -69,7 +69,7 @@ export function agruparPorDepartamento(filas) {
   return { porZona, sinZona };
 }
 
-const diputado = (f) => ({ nombre: f.nombre, url: f.url, partido: f.partido, partidoConocido: f.partidoConocido });
+const diputado = (f) => ({ nombre: f.nombre, url: f.url, foto: f.foto, partido: f.partido, partidoConocido: f.partidoConocido });
 
 /** Datos de la página del mapa de un período. */
 export function mapaDeDiputados(periodo) {
