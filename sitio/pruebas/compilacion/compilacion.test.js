@@ -356,8 +356,9 @@ test("votaciones: una página por año con cada votación, sus totales, la posic
     }
     assert.ok(html.includes(`href="${rutas.metodologia(rutas.anclasMetodologia.posicionPartidos)}"`), a.url);
     assert.ok(html.includes("no necesariamente el de la fecha"), `Falta el aviso de afiliación en ${a.url}`);
+    // Con los autores de todos los proyectos votados (#58), 2024 pasa de 900 KB (unos 91 KB comprimida).
     const bytes = statSync(pagina(a.url)).size;
-    assert.ok(bytes < 900_000, `${a.url} pesa ${bytes} bytes`);
+    assert.ok(bytes < 1_000_000, `${a.url} pesa ${bytes} bytes`);
   }
   assert.equal(vistas, votaciones.length, "Cada votación figura una sola vez entre los años");
 });
