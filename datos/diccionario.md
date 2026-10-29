@@ -6,7 +6,7 @@
 
 | Período | Datos actualizados por última vez |
 |---|---|
-| 2023-2028 | 2026-10-29T19:22:10Z |
+| 2023-2028 | 2026-10-29T22:04:23Z |
 
 La última comprobación de la fuente (aunque no haya cambios) figura en [`estado.json`](estado.json).
 
@@ -250,6 +250,29 @@ Se publica en `fuente/{período}/expedientes.json` y `fuente/{período}/expedien
 | `urgencia` | oficial | texto | Tratamiento (ORDINARIO o con urgencia). |
 | `_propio.fechaIngreso` | propio | fecha | Fecha de ingreso en formato ISO (aaaa-mm-dd), convertida de fechaIngresoExpediente. |
 | `_propio.slug` | propio | texto | Slug de la persona (personas.json). |
+
+## comisiones
+
+Un registro por cada miembro de cada comisión en cada período parlamentario del período legislativo (comision?idCamara= y comision/{id}/miembros/{período}), de las dos cámaras y de todos los tipos (permanentes, bicamerales, especiales, nacionales y frentes parlamentarios). La API no publica el cargo de cada miembro dentro de la comisión ni las firmas de los dictámenes. Los períodos parlamentarios ya terminados no se vuelven a descargar.
+
+Se publica en `fuente/{período}/comisiones.json` y `fuente/{período}/comisiones.csv`, con 2864 registros en total.
+
+| Campo | Origen | Tipo | Descripción |
+|---|---|---|---|
+| `idComision` | oficial | entero | Identificador oficial de la comisión. |
+| `nombreComision` | oficial | texto | Nombre oficial de la comisión. |
+| `numeroComision` | oficial | texto | Número de la comisión en su cámara. |
+| `tipoComision` | oficial | texto | Tipo de comisión (PERMANENTE, BICAMERAL (A), ESPECIAL  (A), NACIONAL (A), FRENTE PARLAMENTARIO), tal como lo publica la API. |
+| `camaraComision` | oficial | texto | Cámara en cuyo listado figura la comisión. |
+| `esComisionActiva` | oficial | texto | SI o NO, según la API, en la fecha de la descarga. |
+| `appURL` | oficial | URL | Comisión en SILpy. |
+| `idPeriodoParlamentario` | oficial | entero | Período parlamentario de la integración consultada (periodos.json). |
+| `idLegislador` | oficial | entero | Legislador miembro (legisladores.json). |
+| `apellidos` | oficial | texto | Apellidos del miembro, tal como figuran en la lista de la comisión. |
+| `nombres` | oficial | texto | Nombres del miembro, tal como figuran en la lista de la comisión. |
+| `_propio.periodoParlamentario` | propio | texto | Nombre del período parlamentario (por ejemplo, 2025-2026), de periodos.json. |
+| `_propio.orden` | propio | entero | Posición del miembro en la lista que publica la API (1 = primero). No indica cargo. |
+| `_propio.slug` | propio | texto | Identificador estable de la persona (propios/personas.json). Vacío si el miembro no figura entre los legisladores del período. |
 
 ## personas
 

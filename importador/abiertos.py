@@ -32,6 +32,7 @@ TABLAS = {
     "legisladores": "idLegislador",
     "autores": "idProyecto",
     "expedientes": "idLegislador",
+    "comisiones": "idComision",
 }
 
 

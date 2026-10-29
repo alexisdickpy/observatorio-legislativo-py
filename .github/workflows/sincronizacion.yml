@@ -3,7 +3,7 @@
 # - Lunes a sábado, incremental: leyes del período completas, votaciones nuevas y detalle
 #   solo de los proyectos nuevos (unas 20 consultas). Reutiliza las respuestas guardadas en la
 #   caché de GitHub Actions; si la caché no está, descarga todo.
-# - Domingos, completa: vuelve a descargar todo (unas 1.400 consultas) para detectar
+# - Domingos, completa: vuelve a descargar todo (unas 1.500 consultas) para detectar
 #   correcciones en registros que ya existían.
 # - Martes, además, vuelve a descargar los expedientes de cada legislador (unas 140 consultas
 #   más, unos 20 minutos). Los demás días se reutiliza la copia guardada.

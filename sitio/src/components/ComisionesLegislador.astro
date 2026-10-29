@@ -1,0 +1,60 @@
+---
+// Comisiones de las que un legislador figura como miembro en cada período parlamentario, con su tipo y
+// enlace a SILpy. Recibe los valores de lib/comisiones.js. Estilos globales con prefijo de clase. El nombre
+// oficial va en <span class="titulo-…">, como los títulos oficiales, para que las pruebas de textos propios
+// no lo revisen (hay una comisión de «Asistencia, protección y bienestar animal»).
+import * as rutas from "../lib/rutas.js";
+
+interface Props {
+  comisiones: any;
+  periodo: string;
+}
+const { comisiones: c, periodo } = Astro.props;
+const sinDato = "Sin dato";
+---
+
+<div class="comisiones-legislador">
+  {
+    c.total === 0 ? (
+      <p class="lectura">No figura como miembro de ninguna comisión en las listas que publica el Congreso para el período {periodo}.</p>
+    ) : (
+      c.periodos.map((p: any) => (
+        <section aria-label={`Período parlamentario ${p.nombre ?? sinDato}`}>
+          <p class="comisiones-periodo">Período parlamentario {p.nombre ?? sinDato} ({p.comisiones.length})</p>
+          <ul>
+            {p.comisiones.map((x: any) => (
+              <li>
+                {x.url ? <a href={x.url}><span class="titulo-comision">{x.nombre ?? sinDato}</span></a> : <span class="titulo-comision">{x.nombre ?? sinDato}</span>}
+                <span class="texto-suave chico"> · {x.tipo ?? sinDato}</span>
+                {x.nota && <span class="nota chico texto-suave">{x.nota}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    )
+  }
+  <p class="chico texto-suave lectura">
+    Según las listas de miembros que publica el Congreso para cada período parlamentario, de julio a junio.
+    Incluye comisiones permanentes, bicamerales, especiales y nacionales y frentes parlamentarios. La fuente
+    no indica el cargo de cada miembro dentro de la comisión ni quién firmó cada dictamen.{" "}
+    <a href={rutas.metodologia(rutas.anclasMetodologia.comisiones)}>Más información</a>
+  </p>
+</div>
+
+<style is:global>
+  .comisiones-legislador .comisiones-periodo {
+    font-weight: bold;
+    margin-bottom: var(--espacio-1);
+  }
+  .comisiones-legislador ul {
+    margin-top: 0;
+    margin-bottom: var(--espacio-4);
+  }
+  .comisiones-legislador li {
+    margin-bottom: var(--espacio-1);
+  }
+  .comisiones-legislador .nota {
+    display: block;
+  }
+</style>

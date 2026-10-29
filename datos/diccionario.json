@@ -1101,6 +1101,99 @@
         }
       ]
     },
+    "comisiones": {
+      "descripcion": "Un registro por cada miembro de cada comisión en cada período parlamentario del período legislativo (comision?idCamara= y comision/{id}/miembros/{período}), de las dos cámaras y de todos los tipos (permanentes, bicamerales, especiales, nacionales y frentes parlamentarios). La API no publica el cargo de cada miembro dentro de la comisión ni las firmas de los dictámenes. Los períodos parlamentarios ya terminados no se vuelven a descargar.",
+      "archivos": [
+        "fuente/{período}/comisiones.json",
+        "fuente/{período}/comisiones.csv"
+      ],
+      "campos": [
+        {
+          "campo": "idComision",
+          "origen": "oficial",
+          "tipo": "entero",
+          "descripcion": "Identificador oficial de la comisión."
+        },
+        {
+          "campo": "nombreComision",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Nombre oficial de la comisión."
+        },
+        {
+          "campo": "numeroComision",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Número de la comisión en su cámara."
+        },
+        {
+          "campo": "tipoComision",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Tipo de comisión (PERMANENTE, BICAMERAL (A), ESPECIAL  (A), NACIONAL (A), FRENTE PARLAMENTARIO), tal como lo publica la API."
+        },
+        {
+          "campo": "camaraComision",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Cámara en cuyo listado figura la comisión."
+        },
+        {
+          "campo": "esComisionActiva",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "SI o NO, según la API, en la fecha de la descarga."
+        },
+        {
+          "campo": "appURL",
+          "origen": "oficial",
+          "tipo": "URL",
+          "descripcion": "Comisión en SILpy."
+        },
+        {
+          "campo": "idPeriodoParlamentario",
+          "origen": "oficial",
+          "tipo": "entero",
+          "descripcion": "Período parlamentario de la integración consultada (periodos.json)."
+        },
+        {
+          "campo": "idLegislador",
+          "origen": "oficial",
+          "tipo": "entero",
+          "descripcion": "Legislador miembro (legisladores.json)."
+        },
+        {
+          "campo": "apellidos",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Apellidos del miembro, tal como figuran en la lista de la comisión."
+        },
+        {
+          "campo": "nombres",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Nombres del miembro, tal como figuran en la lista de la comisión."
+        },
+        {
+          "campo": "_propio.periodoParlamentario",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Nombre del período parlamentario (por ejemplo, 2025-2026), de periodos.json."
+        },
+        {
+          "campo": "_propio.orden",
+          "origen": "propio",
+          "tipo": "entero",
+          "descripcion": "Posición del miembro en la lista que publica la API (1 = primero). No indica cargo."
+        },
+        {
+          "campo": "_propio.slug",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Identificador estable de la persona (propios/personas.json). Vacío si el miembro no figura entre los legisladores del período."
+        }
+      ]
+    },
     "personas": {
       "descripcion": "Capa propia con el identificador estable de cada persona y sus `idLegislador` por período.",
       "archivos": [

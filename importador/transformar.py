@@ -256,6 +256,30 @@ def filas_expedientes(id_legislador, respuesta, inicio, fin, slug, notas):
     return filas
 
 
+# Campos oficiales de cada comisión que se guardan en comisiones.json: sin los textos largos de
+# información y competencia (cambian con el tiempo y no se usan) ni la lista de miembros.
+CAMPOS_COMISION = ("idComision", "nombreComision", "numeroComision", "tipoComision", "camaraComision",
+                   "esComisionActiva", "appURL")
+# De cada miembro, solo su identificación: el resto de sus datos ya está en legisladores.json.
+CAMPOS_MIEMBRO = ("idLegislador", "apellidos", "nombres")
+
+
+def filas_comisiones(comision, periodo_parlamentario, respuesta, slugs):
+    """Registros de comisiones.json de una comisión en un período parlamentario: uno por miembro
+    (comision/{id}/miembros/{período}), en el orden que publica la API, con los valores oficiales sin cambios."""
+    filas = []
+    for detalle in respuesta or []:
+        for orden, miembro in enumerate(detalle.get("miembros") or [], 1):
+            filas.append({
+                **{c: comision.get(c) for c in CAMPOS_COMISION},
+                "idPeriodoParlamentario": periodo_parlamentario["idPeriodoParlamentario"],
+                **{c: miembro.get(c) for c in CAMPOS_MIEMBRO},
+                PROPIO: {"periodoParlamentario": periodo_parlamentario["periodoParlamentario"], "orden": orden,
+                         "slug": slugs.get(miembro.get("idLegislador"))},
+            })
+    return filas
+
+
 def verificar_numeros_ley(leyes_periodo, historico, inicio, fin, notas):
     """Comprueba que los números de ley del período no se repiten en otras legislaturas.
 

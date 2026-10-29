@@ -37,6 +37,11 @@ class ApiSimulada:
             "votacion": [votacion],
             f"legislador/{vigente['idLegislador']}/expedientes": [ejemplo("legislador_expedientes")],
         }
+        comision = ejemplo("comision_miembros")
+        comision["miembros"][0]["idLegislador"] = vigente["idLegislador"]
+        self.rutas["comision?idCamara=S"] = [{k: v for k, v in comision.items() if k != "miembros"}]
+        self.rutas["comision?idCamara=D"] = [{**self.rutas["comision?idCamara=S"][0], "idComision": 32}]
+        self.rutas["comision/5/miembros/100267"] = [comision]
         self.guardadas = []
 
     def datos(self, ruta, params=None, reutilizable=False, guardada=False):
@@ -129,7 +134,8 @@ class Importar(unittest.TestCase):
     def test_archivos_y_enlaces(self):
         resultado = self.correr()
         carpeta = "fuente/2023-2028/"
-        for tabla in ("leyes", "tramitaciones", "votaciones", "legisladores", "autores", "expedientes"):
+        for tabla in ("leyes", "tramitaciones", "votaciones", "legisladores", "autores", "expedientes",
+                      "comisiones"):
             for extension in (".json", ".csv"):
                 self.assertTrue((self.salida / carpeta / (tabla + extension)).exists(), tabla + extension)
         self.assertTrue((self.salida / carpeta / "votos.csv").exists())
@@ -145,14 +151,30 @@ class Importar(unittest.TestCase):
         expedientes = self.leer(carpeta + "expedientes.json")
         self.assertEqual([(e["idProyecto"], e["_propio"]["fechaIngreso"]) for e in expedientes], [(128408, "2023-07-13")])
         self.assertEqual(resultado["cantidades"]["expedientes"], 1)
+        comisiones = self.leer(carpeta + "comisiones.json")
+        self.assertEqual([(c["idComision"], c["idPeriodoParlamentario"], c["_propio"]["orden"], c["_propio"]["slug"] is not None)
+                          for c in comisiones], [(5, 100267, 1, True), (5, 100267, 2, False)])
+        self.assertNotIn("emailParlamentario", comisiones[0])
+        self.assertEqual(resultado["cantidades"]["comisiones"], 2)
+
+    def test_comisiones_de_periodos_terminados_guardadas(self):
+        api = ApiSimulada()
+        self.correr(api, ahora="2027-08-01T12:00:00Z")
+        self.assertIn("comision/5/miembros/100267", api.guardadas)
+
+    def test_sin_comisiones_es_un_error(self):
+        api = ApiSimulada()
+        del api.rutas["comision?idCamara=D"]
+        with self.assertRaises(ErrorAPI):
+            self.correr(api)
 
     def test_expedientes_guardados_salvo_que_se_pida_actualizar(self):
         api = ApiSimulada()
         self.correr(api)
-        self.assertEqual(len(api.guardadas), 4)  # una consulta por legislador
+        self.assertEqual(len([r for r in api.guardadas if r.endswith("/expedientes")]), 4)  # una consulta por legislador
         api = ApiSimulada()
         importar(api, self.salida, ahora="2026-10-23T12:00:00Z", progreso=silencio, actualizar_expedientes=True)
-        self.assertEqual(api.guardadas, [])
+        self.assertFalse([r for r in api.guardadas if r.endswith("/expedientes")])
         self.assertTrue(self.leer("sincronizaciones.json")["sincronizaciones"][0]["expedientesActualizados"])
 
     def test_autores_de_proyectos_de_ley_sin_ley(self):

@@ -52,6 +52,7 @@ export const anclasMetodologia = {
   testAfinidad: "test-de-afinidad",
   mapa: "mapa-de-diputados-por-departamento",
   expedientes: "expedientes-presentados",
+  comisiones: "comisiones",
 };
 
 /** Repositorio público del proyecto: código, datos y licencias. */
