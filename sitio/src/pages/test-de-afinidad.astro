@@ -2,7 +2,8 @@
 // Test de afinidad (alcance acordado en #63). El visitante responde, una por una, preguntas basadas en
 // votaciones nominales reales y ve con qué partidos coinciden sus respuestas. Durante el test no se
 // muestran autores ni votos. Todo se calcula en el navegador (lib/afinidad.js), sin guardar nada.
-// Mientras las preguntas estén en revisión (#64), la página no se indexa ni está en el menú.
+// Con `estado: preliminar` en los datos, la página no se indexa ni está en el sitemap y muestra un aviso.
+// Desde #64 las preguntas están publicadas y el test está en el menú y en la portada.
 import Base from "../layouts/Base.astro";
 import TestAfinidad from "../components/TestAfinidad.astro";
 import { periodos } from "../lib/datos.js";

@@ -6,9 +6,11 @@ import { leyes } from "../lib/catalogo.js";
 import { periodos } from "../lib/datos.js";
 import * as rutas from "../lib/rutas.js";
 import { datosDelSitio } from "../lib/seo.js";
+import { datosDelTest } from "../lib/testAfinidad.js";
 
 const vigente = periodos().find((p) => p.vigente);
 const cantidad = leyes().length;
+const test = datosDelTest(vigente.id);
 ---
 
 <Base
@@ -28,6 +30,14 @@ const cantidad = leyes().length;
       <li><a href={rutas.buscar()}>Buscar una ley</a></li>
       <li><a href={rutas.datosAbiertos()}>Descargar los datos abiertos</a></li>
     </ul>
+    <section aria-labelledby="test-portada">
+      <h2 id="test-portada">Test de afinidad</h2>
+      <p>
+        {test.preguntas.length} preguntas sobre leyes votadas en el período. Al final ves cuánto coinciden tus
+        respuestas con lo que votó cada partido.
+      </p>
+      <p><a href={rutas.testAfinidad()}>Hacer el test</a></p>
+    </section>
   </div>
   <CuadroTemas periodo={vigente.id} />
   <AnalisisPortada periodo={vigente.id} />

@@ -52,6 +52,7 @@ export const menuPrincipal = () => [
   { url: rutas.leyes(), texto: "Leyes" },
   { url: rutas.legisladores(), texto: "Legisladores" },
   ...vistasDeAnalisis().map((v) => ({ url: v.url, texto: v.menu, incluye: v.incluye ?? [] })),
+  { url: rutas.testAfinidad(), texto: "Test de afinidad" },
   { url: rutas.buscar(), texto: "Buscar" },
   { url: rutas.datosAbiertos(), texto: "Datos abiertos" },
 ];

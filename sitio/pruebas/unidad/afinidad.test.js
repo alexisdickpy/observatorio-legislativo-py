@@ -77,6 +77,26 @@ test("preguntas del archivo: 12, cortas, con enlace al proyecto, votaciones de s
   for (const x of datos.partidos) assert.equal(x.posiciones.length, 12);
 });
 
+test("criterios de selección (#64): votaciones divididas sobre la ley, publicado y fuentes de cada explicación", () => {
+  const archivo = leerJson("propios/test-afinidad.json");
+  assert.equal(archivo.estado, "publicado");
+  const votaciones = new Map(fuente(PERIODO, "votaciones.json").map((v) => [v.idVotacion, v]));
+  // Votaciones en las que SI y NO no son a favor o en contra de la ley: entre versiones o mociones, sobre
+  // un veto, un artículo o las modificaciones de la otra cámara.
+  const noSobreLaLey = /versi[oó]n|moci[oó]n|objeci[oó]n|veto|art[ií]culo \d|modificaciones introducidas|postergaci[oó]n/i;
+  for (const p of archivo.preguntas) {
+    for (const id of p.votaciones) {
+      const v = votaciones.get(id);
+      assert.ok(!noSobreLaLey.test(`${v.descripcion} ${v.observacion ?? ""}`), `La votación ${id} de ${p.id} no es sobre la ley en general`);
+      const { totalSI: si, totalNO: no } = v;
+      assert.ok(si > no, `En la votación ${id} de ${p.id} no ganó el SI`);
+      assert.ok(si / (si + no) <= 0.9 || p.justificacion, `La votación ${id} de ${p.id} supera el 90 % sin justificación`);
+    }
+    if (p.explicacion) assert.ok(p.fuentes.length > 0, `La explicación de ${p.id} no tiene fuentes`);
+    for (const f of p.fuentes) assert.match(f, /^https:\/\//);
+  }
+});
+
 test("recuento a mano de la mayoría de cada partido en una pregunta", () => {
   const datos = datosDelTest(PERIODO);
   const k = datos.preguntas.findIndex((p) => p.id === "alimentacion-escolar");
