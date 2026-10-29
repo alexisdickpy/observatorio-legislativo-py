@@ -20,6 +20,8 @@ export const legisladores = () => "/legisladores/";
 export const mapaDiputados = () => "/legisladores/mapa/";
 /** Ficha de una persona, con el slug de datos/propios/personas.json. */
 export const legislador = (slug) => `/legisladores/${encodeURIComponent(slug)}/`;
+/** Proyectos de ley presentados por un legislador (#27). */
+export const expedientesLegislador = (slug) => `${legislador(slug)}expedientes/`;
 export const buscar = () => "/buscar/";
 export const datosAbiertos = () => "/datos/";
 export const privacidad = () => "/privacidad/";
@@ -49,6 +51,7 @@ export const anclasMetodologia = {
   votosPorTema: "votos-de-partidos-y-bancadas-por-tema",
   testAfinidad: "test-de-afinidad",
   mapa: "mapa-de-diputados-por-departamento",
+  expedientes: "expedientes-presentados",
 };
 
 /** Repositorio público del proyecto: código, datos y licencias. */

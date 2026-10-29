@@ -35,9 +35,13 @@ class ApiSimulada:
             "legislador/camara/D": votantes[:2],
             "ley": [ley],
             "votacion": [votacion],
+            f"legislador/{vigente['idLegislador']}/expedientes": [ejemplo("legislador_expedientes")],
         }
+        self.guardadas = []
 
-    def datos(self, ruta, params=None, reutilizable=False):
+    def datos(self, ruta, params=None, reutilizable=False, guardada=False):
+        if guardada:
+            self.guardadas.append(ruta)
         if params:
             ruta += "?" + "&".join(f"{k}={v}" for k, v in params.items())
         return copy.deepcopy(self.rutas.get(ruta, []))
@@ -125,7 +129,7 @@ class Importar(unittest.TestCase):
     def test_archivos_y_enlaces(self):
         resultado = self.correr()
         carpeta = "fuente/2023-2028/"
-        for tabla in ("leyes", "tramitaciones", "votaciones", "legisladores", "autores"):
+        for tabla in ("leyes", "tramitaciones", "votaciones", "legisladores", "autores", "expedientes"):
             for extension in (".json", ".csv"):
                 self.assertTrue((self.salida / carpeta / (tabla + extension)).exists(), tabla + extension)
         self.assertTrue((self.salida / carpeta / "votos.csv").exists())
@@ -138,6 +142,18 @@ class Importar(unittest.TestCase):
         self.assertEqual(votacion["_propio"]["idLeyes"], [146644])
         self.assertEqual(votacion["_propio"]["enlaceLey"], "resuelto")
         self.assertEqual(resultado["cantidades"]["votos"], 3)
+        expedientes = self.leer(carpeta + "expedientes.json")
+        self.assertEqual([(e["idProyecto"], e["_propio"]["fechaIngreso"]) for e in expedientes], [(128408, "2023-07-13")])
+        self.assertEqual(resultado["cantidades"]["expedientes"], 1)
+
+    def test_expedientes_guardados_salvo_que_se_pida_actualizar(self):
+        api = ApiSimulada()
+        self.correr(api)
+        self.assertEqual(len(api.guardadas), 4)  # una consulta por legislador
+        api = ApiSimulada()
+        importar(api, self.salida, ahora="2026-10-23T12:00:00Z", progreso=silencio, actualizar_expedientes=True)
+        self.assertEqual(api.guardadas, [])
+        self.assertTrue(self.leer("sincronizaciones.json")["sincronizaciones"][0]["expedientesActualizados"])
 
     def test_autores_de_proyectos_de_ley_sin_ley(self):
         api = ApiSimulada()

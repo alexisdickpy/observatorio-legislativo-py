@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { leyes } from "../../src/lib/catalogo.js";
-import { ficha, legisladores } from "../../src/lib/legisladores.js";
+import { conProyectosDeLey, ficha, legisladores } from "../../src/lib/legisladores.js";
 import * as rutas from "../../src/lib/rutas.js";
 import { votacionesDelPeriodo } from "../../src/lib/votaciones.js";
 import { votosPorTema } from "../../src/lib/votosPorTema.js";
@@ -94,7 +94,9 @@ test("el sitemap tiene cada ley y cada legislador una vez, sin la búsqueda", ()
   assert.equal(new Set(urls).size, urls.length);
   const { anios, votaciones } = votacionesDelPeriodo("2023-2028");
   const temas = votosPorTema("2023-2028");
-  assert.equal(urls.length, leyes().length + legisladores().length + 13 + anios.length + temas.length + votaciones.length);
+  const conLista = conProyectosDeLey();
+  assert.equal(urls.length, leyes().length + legisladores().length + conLista.length + 13 + anios.length + temas.length + votaciones.length);
+  for (const p of conLista) assert.ok(urls.includes(rutas.absoluta(rutas.expedientesLegislador(p.slug))), p.slug);
   for (const v of votaciones) assert.ok(urls.includes(rutas.absoluta(rutas.votacion(v.id))), v.id);
   for (const t of temas) assert.ok(urls.includes(rutas.absoluta(t.url)), t.url);
   assert.ok(urls.includes(rutas.absoluta(rutas.votosPorTema())));

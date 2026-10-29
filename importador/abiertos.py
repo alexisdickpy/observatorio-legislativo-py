@@ -31,6 +31,7 @@ TABLAS = {
     "votaciones": "idVotacion",
     "legisladores": "idLegislador",
     "autores": "idProyecto",
+    "expedientes": "idLegislador",
 }
 
 

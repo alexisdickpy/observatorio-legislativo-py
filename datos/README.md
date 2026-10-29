@@ -15,13 +15,14 @@ No editar estos archivos a mano, salvo las notas manuales de `propios/notas.json
 | `periodos.json` | Períodos legislativos incluidos, con sus fechas y sus períodos parlamentarios anuales en la API. |
 | `estado.json` | Última comprobación correcta de la fuente, última vez que cambiaron los datos y cantidades por período. Una sincronización fallida no lo modifica. |
 | `diccionario.json`, `diccionario.md` | Diccionario de datos, con cada campo de cada tabla, su tipo, su origen (oficial o propio) y su descripción. El `.json` se edita a mano; el `.md` lo genera el importador, con la cita, la licencia y la fecha de actualización. |
-| `sincronizaciones.json` | Registro de las últimas 90 sincronizaciones, de la más nueva a la más vieja, con fecha, modo (`incremental` o `completo`), resultado (`correcta` o `error`), consultas, cantidades, leyes, votaciones y legisladores agregados, modificados y eliminados, leyes nuevas y archivos modificados. Las anteriores quedan en el historial de Git. |
+| `sincronizaciones.json` | Registro de las últimas 90 sincronizaciones, de la más nueva a la más vieja, con fecha, modo (`incremental` o `completo`), si se volvieron a descargar los expedientes (`expedientesActualizados`), resultado (`correcta` o `error`), consultas, cantidades, leyes, votaciones y legisladores agregados, modificados y eliminados, leyes nuevas y archivos modificados. Las anteriores quedan en el historial de Git. |
 | `fuente/{período}/leyes.json` y `.csv` | Un registro por ley sancionada en el período, con su proyecto, ministerios y archivos adjuntos. |
 | `fuente/{período}/tramitaciones.json` y `.csv` | Las tramitaciones del proyecto de cada ley (`idProyecto` + `tramitacion`). |
 | `fuente/{período}/votaciones.json` y `.csv` | Votaciones nominales del período, sin los votos individuales. |
 | `fuente/{período}/votos.csv` | Un voto individual por fila, con las columnas `idVotacion`, `idDetalleVotacion`, `idLegislador`, `idSentidoVotacion`, `sentidoVotacion`, `observacion`. |
 | `fuente/{período}/legisladores.json` y `.csv` | Legisladores del período, vigentes o no. |
 | `fuente/{período}/autores.json` y `.csv` | Autores de cada proyecto con ley y de cada proyecto de ley con votaciones en el período (`idProyecto` + `legislador`), en el orden que publica la API. |
+| `fuente/{período}/expedientes.json` y `.csv` | Un registro por cada expediente del período en que un legislador figura entre los autores (`idLegislador` + los campos oficiales del expediente), de todos los tipos. Se descarga los martes. |
 | `fotos/{período}/{idLegislador}.jpg` | Copia de la foto que publica el Congreso en el `fotoURL` de cada legislador, sin cambios. No figura en el diccionario porque no es una tabla. |
 | `propios/personas.json` | Identificador estable (slug) de cada persona y sus `idLegislador` por período. |
 | `propios/notas.json` | Problemas detectados en la fuente, como fechas mal formadas, totales que no coinciden o votos faltantes. |
