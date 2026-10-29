@@ -892,7 +892,7 @@
       ]
     },
     "autores": {
-      "descripcion": "Un registro por autor de cada proyecto con ley, en el orden que publica la API. El autor puede ser legislador de otra legislatura.",
+      "descripcion": "Un registro por autor de cada proyecto con ley y de cada proyecto de ley con votaciones en el período, en el orden que publica la API. El autor puede ser legislador de otra legislatura.",
       "archivos": [
         "fuente/{período}/autores.json",
         "fuente/{período}/autores.csv"

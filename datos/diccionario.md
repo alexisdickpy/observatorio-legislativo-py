@@ -6,7 +6,7 @@
 
 | Período | Datos actualizados por última vez |
 |---|---|
-| 2023-2028 | 2026-10-29T14:30:14Z |
+| 2023-2028 | 2026-10-29T16:23:24Z |
 
 La última comprobación de la fuente (aunque no haya cambios) figura en [`estado.json`](estado.json).
 
@@ -203,9 +203,9 @@ Se publica en `fuente/{período}/legisladores.json` y `fuente/{período}/legisla
 
 ## autores
 
-Un registro por autor de cada proyecto con ley, en el orden que publica la API. El autor puede ser legislador de otra legislatura.
+Un registro por autor de cada proyecto con ley y de cada proyecto de ley con votaciones en el período, en el orden que publica la API. El autor puede ser legislador de otra legislatura.
 
-Se publica en `fuente/{período}/autores.json` y `fuente/{período}/autores.csv`, con 1386 registros en total.
+Se publica en `fuente/{período}/autores.json` y `fuente/{período}/autores.csv`, con 2182 registros en total.
 
 | Campo | Origen | Tipo | Descripción |
 |---|---|---|---|

@@ -40,6 +40,11 @@ const TIPOS = [
   ],
   ["fecha_mal_formada", "Fechas no válidas", "La fecha publicada no es una fecha válida. Se muestra tal como viene."],
   ["proyecto_sin_tramitaciones", "Proyectos sin tramitaciones", "La API no devuelve las tramitaciones del proyecto de la ley."],
+  [
+    "proyecto_sin_autores",
+    "Proyectos de ley sin autores publicados",
+    "El proyecto es de iniciativa parlamentaria y tiene votaciones en el período, pero la API no publica sus autores. La página de votaciones no muestra «Presentado por».",
+  ],
   ["proyecto_sin_adjuntos", "Proyectos sin documentos adjuntos", "La API no devuelve los documentos adjuntos del proyecto de la ley, como el texto de la ley."],
   [
     "numero_ley_repetido_en_otro_periodo",
@@ -93,6 +98,17 @@ function registro({ entidad, id, periodoLegislativo }) {
       sitio: { url: rutas.ley(r._propio.numeroLey), texto: "Ficha de la ley" },
       fueraDelSitio: false,
       oficial: url ? { url, texto: "Ley en SILpy" } : null,
+    };
+  }
+  if (entidad === "proyecto") {
+    // Los datos del proyecto se toman de sus votaciones.
+    const p = [...i.votaciones.values()].find((v) => v.proyecto?.idProyecto === id)?.proyecto;
+    if (!p) return { ...sinRegistro, titulo: `Proyecto ${id}` };
+    return {
+      titulo: `Proyecto ${valor(p.expedienteCamara) ?? id}`,
+      sitio: null,
+      fueraDelSitio: false,
+      oficial: valor(p.appURL) ? { url: p.appURL, texto: "Expediente en SILpy" } : null,
     };
   }
   if (entidad === "legislador") {

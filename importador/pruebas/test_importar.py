@@ -139,6 +139,36 @@ class Importar(unittest.TestCase):
         self.assertEqual(votacion["_propio"]["enlaceLey"], "resuelto")
         self.assertEqual(resultado["cantidades"]["votos"], 3)
 
+    def test_autores_de_proyectos_de_ley_sin_ley(self):
+        api = ApiSimulada()
+        votacion = api.rutas["votacion"][0]
+        sin_ley = copy.deepcopy(votacion)
+        sin_ley["idVotacion"] += 1
+        sin_ley["proyecto"].update(idProyecto=777, iniciativa="PARLAMENTARIA")
+        resolucion = copy.deepcopy(sin_ley)
+        resolucion["idVotacion"] += 1
+        resolucion["proyecto"].update(idProyecto=778, tipoProyecto="RESOLUCIONES UNICAMERALES")
+        sin_autores = copy.deepcopy(sin_ley)
+        sin_autores["idVotacion"] += 2
+        sin_autores["proyecto"]["idProyecto"] = 779
+        api.rutas["votacion"] += [sin_ley, resolucion, sin_autores]
+        autor = {"idLegislador": votacion["votaciones"][0]["legislador"]["idLegislador"],
+                 "periodoLegislativo": "2023-2028", "emailParlamentario": "copia@congreso.gov.py"}
+        api.rutas["proyecto/777/tramitaciones"] = [{"autores": [autor], "tramitaciones": [votacion["tramitacion"]]}]
+        api.rutas["proyecto/778/tramitaciones"] = [{"autores": [autor], "tramitaciones": []}]
+        self.correr(api)
+        carpeta = "fuente/2023-2028/"
+        autores = [a for a in self.leer(carpeta + "autores.json") if a["idProyecto"] == 777]
+        self.assertEqual([a["legislador"]["idLegislador"] for a in autores], [autor["idLegislador"]])
+        self.assertTrue(autores[0]["_propio"]["delPeriodo"])
+        self.assertNotIn("emailParlamentario", autores[0]["legislador"])
+        # Solo proyectos de ley; las tramitaciones siguen siendo solo de los proyectos con ley.
+        self.assertFalse([a for a in self.leer(carpeta + "autores.json") if a["idProyecto"] == 778])
+        self.assertEqual({t["idProyecto"] for t in self.leer(carpeta + "tramitaciones.json")}, {150168})
+        # Proyecto de ley de iniciativa parlamentaria sin autores publicados: queda anotado.
+        notas = [n for n in self.leer("propios/notas.json")["notas"] if n["tipo"] == "proyecto_sin_autores"]
+        self.assertEqual([(n["entidad"], n["id"]) for n in notas], [("proyecto", 779)])
+
     def test_periodos_parlamentarios_se_completan_desde_la_api(self):
         resultado = self.correr()
         periodo = self.leer("periodos.json")["periodos"][0]

@@ -8,7 +8,7 @@
   "periodos": {
     "2023-2028": {
       "cantidades": {
-        "autores": 1386,
+        "autores": 2182,
         "legisladores": 143,
         "legisladoresVigentes": 127,
         "leyes": 556,
@@ -17,10 +17,10 @@
         "votaciones": 1165,
         "votos": 82680
       },
-      "ultimaComprobacion": "2026-10-29T14:30:14Z",
-      "ultimaModificacion": "2026-10-29T14:30:14Z"
+      "ultimaComprobacion": "2026-10-29T16:23:24Z",
+      "ultimaModificacion": "2026-10-29T16:23:24Z"
     }
   },
-  "ultimaComprobacion": "2026-10-29T14:30:14Z",
-  "ultimaModificacion": "2026-10-29T14:30:14Z"
+  "ultimaComprobacion": "2026-10-29T16:23:24Z",
+  "ultimaModificacion": "2026-10-29T16:23:24Z"
 }

@@ -12,9 +12,8 @@
 //   (ficha.js, posicionesDePartidos), con la sigla propia. Partido = texto oficial dentro de la cámara
 //   de la votación, que equivale al partido unificado (#42).
 // - Autores por partido: los autores legisladores del proyecto (autores.json) contados por partido
-//   unificado, con la sigla propia. Solo hay autores en la fuente para parte de los proyectos (sobre
-//   todo los que llegaron a ser ley); sin autores, se muestra la iniciativa oficial si no es
-//   parlamentaria. El título oficial no cambia.
+//   unificado, con la sigla propia (#58, también de los proyectos que no llegaron a ser ley). Sin
+//   autores, se muestra la iniciativa oficial si no es parlamentaria. El título oficial no cambia.
 // - Portada: las votaciones más recientes de las dos cámaras.
 // - Más ajustadas: por cámara, de menor a mayor diferencia entre los totales oficiales de SI y NO; a
 //   igual diferencia, la más reciente primero. Fuera las votaciones sin votos SI ni NO.

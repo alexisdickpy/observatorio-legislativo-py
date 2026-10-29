@@ -11,7 +11,7 @@ python -m importador
 ```
 
 - Importa el período marcado como vigente en `datos/periodos.json`. Otro período: `--periodo 2023-2028`.
-- Por defecto hace una importación **completa**: unas 1.160 consultas a la API, con una pausa de 0,3 s entre ellas. Tarda unos 40 minutos.
+- Por defecto hace una importación **completa**: unas 1.400 consultas a la API, con una pausa de 0,3 s entre ellas. Tarda unos 50 minutos.
 - Guarda cada respuesta cruda en `tmp/importador/crudo/` (no se sube al repositorio). Una respuesta que no es JSON válido no se guarda.
 - `--modo incremental` reutiliza las respuestas guardadas de lo que no cambia y hace unas 20 consultas (ver abajo).
 - `--sin-red` repite la importación con esas respuestas guardadas, sin consultar la API.
@@ -57,7 +57,7 @@ python -m unittest discover -s importador/pruebas -t .
 | `periodo` | Períodos parlamentarios anuales del período legislativo |
 | `ley/periodo/{id}` | Leyes sancionadas en cada período parlamentario |
 | `ley` (paginado) | Histórico completo, para verificar que los números de ley no se repiten en otras legislaturas |
-| `proyecto/{id}/tramitaciones` | Autores, ministerios y tramitaciones del proyecto de cada ley |
+| `proyecto/{id}/tramitaciones` | Autores, ministerios y tramitaciones del proyecto de cada ley; solo autores de los demás proyectos de ley con votaciones en el período |
 | `proyecto/{id}/adjuntos` | Archivos adjuntos (texto de la ley, iniciativa, sanción) |
 | `fotoURL` de cada legislador | Copia propia de su foto en `datos/fotos/{período}/` (fuera de la API, en el servidor de SILpy). La incremental descarga solo las que faltan; la completa, todas, y reescribe las que cambiaron. Si una falla, se conserva la anterior y se avisa |
 | `legislador?idCamara=A` | Legisladores del período, vigentes o no |

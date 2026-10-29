@@ -6,7 +6,7 @@ Uso (desde la raíz del repositorio):
     python -m importador --sin-red           # repite la importación con los crudos guardados
     python -m importador --modo incremental  # sincronización diaria: solo lo nuevo
 
-La descarga completa hace unas 1.160 consultas y tarda unos 40 minutos. La incremental
+La descarga completa hace unas 1.400 consultas y tarda unos 50 minutos. La incremental
 reutiliza las respuestas guardadas de lo que no cambia y hace unas 20 consultas.
 """
 
@@ -48,6 +48,9 @@ FUENTE = {
 # Si alguna cantidad baja más que esto respecto de la importación anterior, se asume que la
 # API devolvió datos incompletos y no se escribe nada.
 DISMINUCION_MAXIMA = 0.05
+# Tipo de proyecto de las votaciones cuyos autores se guardan aunque el proyecto no sea ley.
+PROYECTO_DE_LEY = "PROYECTO DE LEY"
+PARLAMENTARIA = "PARLAMENTARIA"
 # Ejecuciones que se conservan en datos/sincronizaciones.json (las anteriores quedan en el historial de Git).
 REGISTROS_MAXIMOS = 90
 
@@ -205,6 +208,18 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
     if not votaciones:
         raise ErrorAPI("La API no devolvió ninguna votación del período")
 
+    # --- Autores de los proyectos de ley votados que no llegaron a ser ley ---------------
+    # Solo se guardan sus autores (autores.json); tramitaciones.json sigue siendo de los proyectos con ley.
+    de_ley = [v["proyecto"] for v in votaciones if (v.get("proyecto") or {}).get("tipoProyecto") == PROYECTO_DE_LEY]
+    proyectos_sin_ley = sorted({p["idProyecto"] for p in de_ley if p["idProyecto"] not in proyectos_con_ley})
+    # Los que deberían tener autores legisladores; si la API no los publica, queda una nota.
+    parlamentarios_votados = {p["idProyecto"] for p in de_ley if p.get("iniciativa") == PARLAMENTARIA}
+    for i, id_proyecto in enumerate(proyectos_sin_ley, 1):
+        tramitaciones = cliente.datos(f"proyecto/{id_proyecto}/tramitaciones", reutilizable=True)
+        detalle[id_proyecto] = (tramitaciones[0] if tramitaciones else None, None)
+        if i % 100 == 0 or i == len(proyectos_sin_ley):
+            progreso(f"  autores de proyectos de ley sin ley: {i}/{len(proyectos_sin_ley)}")
+
     for id_legislador in sorted(set(embebidos) - set(por_id)):
         por_id[id_legislador] = (embebidos[id_legislador], "votacion")
         notas.agregar("legislador_solo_en_votaciones", "legislador", id_legislador,
@@ -267,11 +282,16 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
 
     # --- Tramitaciones y autores de cada proyecto ------------------------------------
     tramitaciones_salida, autores = [], []
-    for id_proyecto in proyectos:
+    for id_proyecto in sorted(detalle):
         tramitaciones = detalle[id_proyecto][0]
         if tramitaciones:
-            tramitaciones_salida.extend(filas_tramitaciones(id_proyecto, tramitaciones.get("tramitaciones"), notas))
+            if id_proyecto in proyectos_con_ley:
+                tramitaciones_salida.extend(filas_tramitaciones(id_proyecto, tramitaciones.get("tramitaciones"), notas))
             autores.extend(filas_autores(id_proyecto, tramitaciones.get("autores"), nombre, slugs))
+        if id_proyecto in parlamentarios_votados and not (tramitaciones or {}).get("autores"):
+            notas.agregar("proyecto_sin_autores", "proyecto", id_proyecto,
+                          "La API no publica los autores de este proyecto de ley de iniciativa parlamentaria"
+                          + (" (no devolvió sus tramitaciones)." if tramitaciones is None else "."))
 
     # --- Notas: se reemplazan las del importador para este período y se conservan las demás
     ruta_notas = salida / "propios" / "notas.json"

@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { fuente, partidosConocidos } from "../../src/lib/datos.js";
+import { fuente, notas, partidosConocidos } from "../../src/lib/datos.js";
 import { CLASE_SIN_POSICION, indice, porSentido, posicionesDePartidos } from "../../src/lib/ficha.js";
 import { escribirFiltrosVotaciones, filtrarVotaciones, leerFiltrosVotaciones } from "../../src/lib/filtroVotaciones.js";
 import { esDeProyectoDeLey } from "../../src/lib/legisladores.js";
@@ -243,4 +243,15 @@ test("autores por partido: cada legislador una vez, por partido unificado, con s
   const { votaciones } = votacionesDelPeriodo(PERIODO);
   assert.ok(votaciones.some((v) => v.autores.length) && votaciones.some((v) => !v.autores.length && v.iniciativa === "PODER EJECUTIVO"));
   assert.ok(votaciones.every((v) => v.iniciativa !== "PARLAMENTARIA"));
+});
+
+test("toda votación de un proyecto de iniciativa parlamentaria tiene autores o una nota de que la fuente no los publica", () => {
+  const sinAutores = new Set(notas().filter((n) => n.tipo === "proyecto_sin_autores").map((n) => n.id));
+  const proyectos = new Map(fuente(PERIODO, "votaciones.json").map((v) => [v.idVotacion, v.proyecto]));
+  const { votaciones } = votacionesDelPeriodo(PERIODO);
+  const faltan = votaciones
+    .filter((v) => proyectos.get(v.id).iniciativa === "PARLAMENTARIA" && !v.autores.length)
+    .filter((v) => !sinAutores.has(proyectos.get(v.id).idProyecto))
+    .map((v) => proyectos.get(v.id).expedienteCamara);
+  assert.deepEqual(faltan, []);
 });

@@ -21,7 +21,7 @@ const TABLAS = {
   votaciones: "Una fila por votación nominal, con sus totales. El voto de cada legislador está en votos.",
   votos: "El voto de cada legislador en cada votación nominal.",
   legisladores: "Legisladores del período, vigentes o no.",
-  autores: "Autores del proyecto de cada ley.",
+  autores: "Autores del proyecto de cada ley y de los proyectos de ley votados en el período.",
   personas: "Identificador propio de cada legislador, que se mantiene igual entre legislaturas y se usa en las direcciones del sitio.",
   partidos: "Partido unificado de cada texto oficial de partido, que dice qué textos corresponden al mismo partido, con el fundamento de cada caso y los nombres conocidos. Los textos oficiales no cambian.",
   temas: "Temas de la clasificación propia de las leyes, con la definición de cada uno y las palabras clave de sus reglas.",
