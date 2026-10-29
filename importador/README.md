@@ -11,7 +11,7 @@ python -m importador
 ```
 
 - Importa el período marcado como vigente en `datos/periodos.json`. Otro período: `--periodo 2023-2028`.
-- Por defecto hace una importación **completa**: unas 1.400 consultas a la API, con una pausa de 0,3 s entre ellas. Tarda unos 50 minutos.
+- Por defecto hace una importación **completa**: unas 1.500 consultas a la API, con una pausa de 0,3 s entre ellas. Tarda unos 50 minutos.
 - Guarda cada respuesta cruda en `tmp/importador/crudo/` (no se sube al repositorio). Una respuesta que no es JSON válido no se guarda.
 - `--modo incremental` reutiliza las respuestas guardadas de lo que no cambia y hace unas 20 consultas (ver abajo).
 - Los expedientes de cada legislador (`legislador/{id}/expedientes`, una consulta por legislador) se reutilizan de la copia guardada en cualquier modo. `--actualizar-expedientes` los vuelve a descargar; también se descargan si no hay copia.
@@ -65,6 +65,8 @@ python -m unittest discover -s importador/pruebas -t .
 | `legislador?idCamara=A` | Legisladores del período, vigentes o no |
 | `legislador/camara/{S\|D}` | Legisladores en ejercicio |
 | `votacion` (paginado) | Votaciones nominales con sus votos individuales |
+| `comision?idCamara={S\|D}` | Comisiones de cada cámara, de todos los tipos |
+| `comision/{id}/miembros/{idPeriodoParlamentario}` | Miembros de cada comisión en cada período parlamentario. Los de períodos parlamentarios ya terminados se reutilizan de la copia guardada |
 | `legislador/{id}/expedientes` | Expedientes en que cada legislador del período figura entre los autores, de todos los tipos. Se guardan los que ingresaron dentro del período |
 
 No usa `votacion/parlamentario/{id}`, que devuelve siempre la misma votación (ver la [auditoría](../docs/auditoria-datos.md)).

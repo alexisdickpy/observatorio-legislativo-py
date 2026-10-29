@@ -9,6 +9,7 @@
     "2023-2028": {
       "cantidades": {
         "autores": 2182,
+        "comisiones": 2864,
         "expedientes": 17664,
         "legisladores": 143,
         "legisladoresVigentes": 127,
@@ -18,10 +19,10 @@
         "votaciones": 1165,
         "votos": 82680
       },
-      "ultimaComprobacion": "2026-10-29T19:22:10Z",
-      "ultimaModificacion": "2026-10-29T19:22:10Z"
+      "ultimaComprobacion": "2026-10-29T22:04:23Z",
+      "ultimaModificacion": "2026-10-29T22:04:23Z"
     }
   },
-  "ultimaComprobacion": "2026-10-29T19:22:10Z",
-  "ultimaModificacion": "2026-10-29T19:22:10Z"
+  "ultimaComprobacion": "2026-10-29T22:04:23Z",
+  "ultimaModificacion": "2026-10-29T22:04:23Z"
 }

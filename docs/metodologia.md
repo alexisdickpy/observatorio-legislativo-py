@@ -105,6 +105,16 @@ La cantidad de expedientes no mide la calidad ni el esfuerzo de un legislador. L
 
 Los expedientes se descargan una vez por semana, los martes, con una consulta por legislador. Los demás días se usa la copia guardada.
 
+## Comisiones
+
+La ficha de cada legislador lista las comisiones de las que figura como miembro en cada período parlamentario (`comisiones.json`, de las consultas `comision?idCamara={S|D}` y `comision/{id}/miembros/{idPeriodoParlamentario}`), de las dos cámaras y de todos los tipos que publica la API (`tipoComision`): permanentes, bicamerales, especiales, nacionales y frentes parlamentarios. Se agrupan por período parlamentario, del más reciente al más antiguo, y dentro de cada uno por tipo y por nombre oficial. El tipo se muestra sin el agregado `(A)` ni los espacios de más del texto oficial, que se conserva en los datos. Cada comisión enlaza a su página en SILpy (`appURL`).
+
+**Cobertura verificada (octubre de 2026).** La API lista 47 comisiones en el Senado y 43 en Diputados. Para los cuatro períodos parlamentarios de 2023-2028 hay miembros en 31 a 34 comisiones del Senado y en 33 a 39 de Diputados, con 2.864 integraciones en total. Las comisiones creadas durante el período no tienen miembros en los años anteriores a su creación, y algunas comisiones bicamerales, nacionales y especiales no tienen miembros en ningún período. La cantidad de miembros por período coincide con la página de SILpy en las seis comisiones comparadas (Senado 5, 6 y 10; Diputados 33, 35 y 47), y en la comisión 33 coinciden también los nombres.
+
+**Límites.** La API no publica el cargo de cada miembro dentro de la comisión (presidencia, vicepresidencia, secretaría): el único cargo que trae cada miembro es el de su bancada (`cargoBancada`), que no se usa aquí. La página de cada comisión en SILpy sí muestra la presidencia, la vicepresidencia y la secretaría, pero ese dato no está en la API, y el orden de la lista de la API no coincide con el de SILpy. Los dictámenes (`proyecto/{id}/dictamenes`) indican comisión, fecha y sentido, pero no quién los firmó ni cómo votó cada miembro. Por eso el sitio no muestra cargos ni calcula indicadores del trabajo en comisiones. El campo propio `_propio.orden` es solo la posición en la lista de la API. En Diputados, la entrada `COMISIONES ESPECIALES` no dice a qué comisión especial corresponde: se muestra con esa aclaración. `esComisionActiva` es el valor del día de la descarga, no del período parlamentario.
+
+Los períodos parlamentarios ya terminados no se vuelven a descargar (se reutiliza la copia guardada). El período en curso se reutiliza en la sincronización diaria y se descarga de nuevo en la completa de los domingos.
+
 ## Ausencias en votaciones nominales
 
 La API no publica listas de presencia en las sesiones ([auditoría](auditoria-datos.md), sección 7). Lo único disponible es la categoría `AUSENTE` de cada votación nominal, que indica que el legislador no registró su voto en ese momento, aunque pudiera estar en la sesión. Por eso la métrica se llama siempre **ausencias en votaciones nominales**, cuenta votaciones y no días, y nunca se presenta como asistencia, faltas o inasistencias.

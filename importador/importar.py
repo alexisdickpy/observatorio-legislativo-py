@@ -7,7 +7,7 @@ Uso (desde la raíz del repositorio):
     python -m importador --modo incremental  # sincronización diaria: solo lo nuevo
     python -m importador --actualizar-expedientes  # vuelve a descargar los expedientes de cada legislador
 
-La descarga completa hace unas 1.400 consultas y tarda unos 50 minutos. La incremental
+La descarga completa hace unas 1.500 consultas y tarda unos 50 minutos. La incremental
 reutiliza las respuestas guardadas de lo que no cambia y hace unas 20 consultas.
 Los expedientes de cada legislador (una consulta por legislador) se descargan solo con
 --actualizar-expedientes o si no hay copia guardada; si no, se reutiliza la guardada.
@@ -32,6 +32,7 @@ from .transformar import (
     PROPIO,
     Notas,
     filas_autores,
+    filas_comisiones,
     filas_expedientes,
     filas_tramitaciones,
     numero_ley,
@@ -307,6 +308,24 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
             progreso(f"  expedientes de legisladores: {i}/{len(por_id)}")
     expedientes.sort(key=lambda e: (e["idLegislador"], e["idProyecto"]))
 
+    # --- Miembros de cada comisión por período parlamentario (#30) ----------------------------
+    # Los períodos parlamentarios ya terminados no cambian: se reutiliza la copia guardada. Los demás
+    # se reutilizan en la incremental y se descargan de nuevo en la completa.
+    comisiones = []
+    hoy = ahora[:10]
+    for camara in ("S", "D"):
+        listado = cliente.datos("comision", {"idCamara": camara})
+        if not listado:
+            raise ErrorAPI(f"La API no devolvió las comisiones de la cámara {camara}")
+        for comision in listado:
+            for parlamentario in periodo["periodosParlamentarios"]:
+                terminado = bool(parlamentario.get("fechaFin")) and parlamentario["fechaFin"] < hoy
+                respuesta = cliente.datos(f"comision/{comision['idComision']}/miembros/{parlamentario['idPeriodoParlamentario']}",
+                                          reutilizable=not terminado, guardada=terminado)
+                comisiones.extend(filas_comisiones(comision, parlamentario, respuesta, slugs))
+        progreso(f"  comisiones de la cámara {camara}: {len(listado)}")
+    comisiones.sort(key=lambda c: (c["idPeriodoParlamentario"], c["idComision"], c[PROPIO]["orden"]))
+
     # --- Notas: se reemplazan las del importador para este período y se conservan las demás
     ruta_notas = salida / "propios" / "notas.json"
     anteriores = (leer_json(ruta_notas) or {"notas": []})["notas"]
@@ -325,6 +344,7 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
         "legisladoresVigentes": len(ids_vigentes),
         "autores": len(autores),
         "expedientes": len(expedientes),
+        "comisiones": len(comisiones),
     }
     ruta_estado = salida / "estado.json"
     estado = leer_json(ruta_estado) or {}
@@ -348,6 +368,7 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
         carpeta / "legisladores.json": json_bytes(legisladores),
         carpeta / "autores.json": json_bytes(autores),
         carpeta / "expedientes.json": json_bytes(expedientes),
+        carpeta / "comisiones.json": json_bytes(comisiones),
         ruta_personas: json_bytes({"personas": personas}),
         ruta_notas: json_bytes({"notas": todas_las_notas}),
         salida / "periodos.json": json_bytes(documento_periodos),

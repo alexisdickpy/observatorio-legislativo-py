@@ -27,6 +27,8 @@
 //   registros con _propio.delPeriodo).
 // - Expedientes presentados (alcance acordado en #27, lib/expedientes.js): totales por tipo oficial y, de
 //   los proyectos de ley, cantidad y porcentaje por estado oficial. La lista va en una página aparte.
+// - Comisiones (alcance acordado en #30, lib/comisiones.js): las comisiones de las que figura como miembro
+//   en cada período parlamentario, sin cargo, porque la API no lo publica.
 // - Partido y bancada: los que la API registra para el período, no por fecha.
 // - Partido unificado (alcance acordado en #42, lib/partidos.js): dato propio que dice qué textos
 //   oficiales de partido son el mismo partido. Lo usa el filtro "Partido" del listado, con un solo
@@ -48,6 +50,7 @@ import {
   proporcion,
   valor,
 } from "./ficha.js";
+import { comisionesDe } from "./comisiones.js";
 import { expedientesDe } from "./expedientes.js";
 import { esVotoEmitido, mayoriaDe } from "./mayoria.js";
 import { partidoUnificado } from "./partidos.js";
@@ -498,6 +501,7 @@ export function ficha(persona) {
       mayoria: votosDistintosDe(r.id, todas, r.periodo),
       autoria: leyesDeSuAutoria(r.id, r.periodo, i),
       expedientes: expedientesDe(r.id, r.periodo),
+      comisiones: comisionesDe(r.id, r.periodo),
     };
   });
   return {

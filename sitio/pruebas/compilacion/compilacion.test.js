@@ -144,6 +144,21 @@ test("expedientes presentados: totales en la ficha y lista de proyectos de ley e
   }
 });
 
+test("comisiones en cada ficha, por período parlamentario, con enlace oficial y sin cargos", () => {
+  const metodologia = `href="${rutas.metodologia(rutas.anclasMetodologia.comisiones)}"`;
+  assert.ok(leer(rutas.metodologia()).includes(`id="${rutas.anclasMetodologia.comisiones}"`));
+  for (const persona of legisladores()) {
+    const html = texto(persona.url);
+    const b = ficha(persona).bloques[0];
+    assert.ok(html.includes("ni quién firmó cada dictamen"), persona.url);
+    assert.ok(html.includes(metodologia), persona.url);
+    for (const p of b.comisiones.periodos) {
+      assert.ok(html.includes(`Período parlamentario ${p.nombre} (${p.comisiones.length})`), `${persona.url} ${p.nombre}`);
+      for (const x of p.comisiones) assert.ok(html.includes(`href="${x.url}"`), `${persona.url} ${x.id}`);
+    }
+  }
+});
+
 test("ausencias en votaciones nominales en cada ficha, con su denominador y su lista", () => {
   const enlace = `href="${rutas.metodologia(rutas.anclasMetodologia.ausencias)}"`;
   for (const persona of legisladores()) {

@@ -1,0 +1,49 @@
+{
+  "idComision": 5,
+  "email": "",
+  "nombreComision": "ASUNTOS CONSTITUCIONALES, DEFENSA NACIONAL Y FUERZA PÚBLICA",
+  "numeroComision": "1",
+  "informacionComision": "Director de Comisión: Abg. Humberto Fernández Día de reunión: martes, 13:00 Ubicación: Planta Baja Email: constitu@senad",
+  "competenciaComision": "Compete a la Comisión de Asuntos Constitucionales, Defensa Nacional y Fuerza Pública: dictaminar sobre todo proyecto o a",
+  "esComisionActiva": "SI",
+  "tipoComision": "PERMANENTE",
+  "camaraComision": "CAMARA DE SENADORES",
+  "appURL": "https://silpy.congreso.gov.py/comision/5",
+  "appURLProyectos": "https://silpy.congreso.gov.py/comision/5",
+  "miembros": [
+    {
+      "idLegislador": 101373,
+      "apellidos": "Amarilla Guirland",
+      "nombres": "Dionisio Oswaldo",
+      "emailParlamentario": "damarill@economistas.com",
+      "telefonoParlamentario": "59521 414 5134",
+      "camaraParlamentario": "CAMARA DE SENADORES",
+      "departamento": "NACIONAL",
+      "partidoPolitico": "Partido Liberal Radical Auténtico PLRA",
+      "periodoLegislativo": "2023-2028",
+      "tipoParlamentario": "TITULAR",
+      "bancada": "PARTIDO LIBERAL RADICAL AUTÉNTICO (PLRA) – ELIGIO AYALA",
+      "cargoBancada": "LIDER",
+      "appURL": "https://silpy.congreso.gov.py/legislador/101373",
+      "fotoURL": "https://silpy.congreso.gov.py/images/101373.jpg",
+      "activo": true
+    },
+    {
+      "idLegislador": 101377,
+      "apellidos": "Amarilla Ríos",
+      "nombres": "Lider Santiago",
+      "emailParlamentario": "despachosenadorlideramarilla@gmail.com",
+      "telefonoParlamentario": "59521 414 5115",
+      "camaraParlamentario": "CAMARA DE SENADORES",
+      "departamento": "NACIONAL",
+      "partidoPolitico": "Partido Liberal Radical Auténtico PLRA",
+      "periodoLegislativo": "2023-2028",
+      "tipoParlamentario": "TITULAR",
+      "bancada": "PARTIDO LIBERAL RADICAL AUTÉNTICO (PLRA) - 18 DE OCTUBRE",
+      "cargoBancada": "LIDER",
+      "appURL": "https://silpy.congreso.gov.py/legislador/101377",
+      "fotoURL": "https://silpy.congreso.gov.py/images/101377.jpg",
+      "activo": true
+    }
+  ]
+}
