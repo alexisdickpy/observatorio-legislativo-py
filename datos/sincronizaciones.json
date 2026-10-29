@@ -3,6 +3,48 @@
     {
       "archivosModificados": [
         "fuente/2023-2028/votaciones.json",
+        "fuente/2023-2028/legisladores.json",
+        "fuente/2023-2028/votaciones.csv",
+        "fuente/2023-2028/legisladores.csv",
+        "diccionario.md"
+      ],
+      "cambios": {
+        "legisladores": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 3
+        },
+        "leyes": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 0
+        },
+        "votaciones": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 7
+        }
+      },
+      "cantidades": {
+        "autores": 1386,
+        "legisladores": 143,
+        "legisladoresVigentes": 127,
+        "leyes": 556,
+        "numerosDeLey": 541,
+        "tramitaciones": 13601,
+        "votaciones": 1165,
+        "votos": 82680
+      },
+      "consultas": 19,
+      "fecha": "2026-10-29T14:30:14Z",
+      "leyesNuevas": [],
+      "modo": "incremental",
+      "periodo": "2023-2028",
+      "resultado": "correcta"
+    },
+    {
+      "archivosModificados": [
+        "fuente/2023-2028/votaciones.json",
         "fuente/2023-2028/votaciones.csv",
         "diccionario.md"
       ],
