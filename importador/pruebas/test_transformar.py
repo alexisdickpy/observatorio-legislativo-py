@@ -16,6 +16,7 @@ from importador.transformar import (
     Notas,
     con_fechas_iso,
     filas_autores,
+    filas_expedientes,
     filas_tramitaciones,
     sin_contacto,
     transformar_ley,
@@ -175,6 +176,32 @@ class Privacidad(unittest.TestCase):
         self.assertEqual([f["_propio"]["slug"] for f in filas], ["b", None])
         self.assertNotIn("emailParlamentario", json.dumps(filas))
         self.assertNotIn("telefonoParlamentario", json.dumps(filas))
+
+
+class Expedientes(unittest.TestCase):
+    def test_solo_los_del_periodo_con_valores_oficiales(self):
+        respuesta = [ejemplo("legislador_expedientes")]
+        oficial = respuesta[0]["proyectos"][1]
+        notas = Notas()
+        filas = filas_expedientes(101344, respuesta, "2023-07-01", "2028-06-30", "b", notas)
+        # El primero ingresó en 2022, antes del período.
+        self.assertEqual(len(filas), 1)
+        self.assertEqual({k: v for k, v in filas[0].items() if k not in ("idLegislador", "_propio")}, oficial)
+        self.assertEqual(filas[0]["idLegislador"], 101344)
+        self.assertEqual(filas[0]["_propio"], {"fechaIngreso": "2023-07-13", "slug": "b"})
+        self.assertNotIn("emailParlamentario", json.dumps(filas))
+        self.assertEqual(notas.lista, [])
+
+    def test_fecha_invalida_queda_fuera_con_nota(self):
+        notas = Notas()
+        filas = filas_expedientes(1, [{"proyectos": [{"idProyecto": 9, "fechaIngresoExpediente": "31/02/2024"}]}],
+                                  "2023-07-01", "2028-06-30", None, notas)
+        self.assertEqual(filas, [])
+        self.assertEqual([(n["tipo"], n["id"], n["valorOriginal"]) for n in notas.lista],
+                         [("fecha_ingreso_invalida", 9, "31/02/2024")])
+
+    def test_sin_expedientes(self):
+        self.assertEqual(filas_expedientes(1, [], "2023-07-01", "2028-06-30", None, Notas()), [])
 
 
 class Personas(unittest.TestCase):

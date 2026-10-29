@@ -25,6 +25,8 @@
 //   los empates, las votaciones en que fue el único votante del grupo y AUSENTE y NO VOTA.
 // - Autoría: leyes sancionadas del período de cuyo proyecto figura como autor (autores.json,
 //   registros con _propio.delPeriodo).
+// - Expedientes presentados (alcance acordado en #27, lib/expedientes.js): totales por tipo oficial y, de
+//   los proyectos de ley, cantidad y porcentaje por estado oficial. La lista va en una página aparte.
 // - Partido y bancada: los que la API registra para el período, no por fecha.
 // - Partido unificado (alcance acordado en #42, lib/partidos.js): dato propio que dice qué textos
 //   oficiales de partido son el mismo partido. Lo usa el filtro "Partido" del listado, con un solo
@@ -46,6 +48,7 @@ import {
   proporcion,
   valor,
 } from "./ficha.js";
+import { expedientesDe } from "./expedientes.js";
 import { esVotoEmitido, mayoriaDe } from "./mayoria.js";
 import { partidoUnificado } from "./partidos.js";
 import * as rutas from "./rutas.js";
@@ -494,6 +497,7 @@ export function ficha(persona) {
       ...participacionDe(todas),
       mayoria: votosDistintosDe(r.id, todas, r.periodo),
       autoria: leyesDeSuAutoria(r.id, r.periodo, i),
+      expedientes: expedientesDe(r.id, r.periodo),
     };
   });
   return {
@@ -503,6 +507,10 @@ export function ficha(persona) {
     bloques,
   };
 }
+
+/** Personas con al menos un proyecto de ley presentado en algún período: tienen página de expedientes. */
+export const conProyectosDeLey = () =>
+  legisladores().filter((p) => p.registros.some((r) => expedientesDe(r.id, r.periodo).proyectosDeLey.total > 0));
 
 /** Cifras de la vista comparativa, en el orden de sus columnas. */
 export const CIFRAS_COMPARATIVAS = [

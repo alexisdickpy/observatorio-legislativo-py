@@ -1,0 +1,47 @@
+{
+  "idLegislador": 101344,
+  "apellidos": "Paredes",
+  "nombres": "Ramona Yolanda",
+  "emailParlamentario": "paredesyolanda77@gmail.com",
+  "telefonoParlamentario": "59521 414 5049",
+  "camaraParlamentario": "CAMARA DE SENADORES",
+  "departamento": "NACIONAL",
+  "partidoPolitico": "Partido Cruzada Nacional",
+  "periodoLegislativo": "2023-2028",
+  "tipoParlamentario": "TITULAR",
+  "bancada": "CRUZADA NACIONAL",
+  "cargoBancada": "LIDER",
+  "appURL": "https://silpy.congreso.gov.py/legislador/101344",
+  "fotoURL": "https://silpy.congreso.gov.py/images/101344.jpg",
+  "proyectos": [
+    {
+      "idProyecto": 126692,
+      "appURL": "https://silpy.congreso.gov.py/expediente/126692",
+      "acapite": "Proyecto de Ley \"QUE DECLARA DE INTERÉS SOCIAL SUJETO A EXPROPIACIÓN DE VARIAS FINCAS DEL DISTRITO DE LIMPIO, 11372, 11769, 9871, 652, 5212, 33230, 12301, CON SUS CUENTAS CORRIENTES CATASTRALES Y VARIAS OTRAS CUENTAS CATASTRALES SIN NÚMERO DE FINCA QUE FUE OCUPADA POR LA COMISIÓN VECINAL \"ASENTAMIENTO DIVINO NIÑO JESÚS 1\" CON 90 FAMILIAS\", presentado por el Senador Sixto Pereira Galeano y la Senadora Ramona Yolanda Paredes, de fecha 20 de setiembre de 2022.",
+      "expedienteCamara": "S-2211135",
+      "fechaIngresoExpediente": "21/09/2022",
+      "origenProyecto": "CAMARA DE SENADORES",
+      "tipoProyecto": "PROYECTO DE LEY",
+      "descripcionEtapa": "SEGUNDO TRÁMITE CONSTITUCIONAL",
+      "descripcionSubEtapa": "RESOLUCIÓN DE SANCIÓN AUTOMÁTICA EN 2T",
+      "iniciativa": "PARLAMENTARIA",
+      "urgencia": "ORDINARIO",
+      "estadoProyecto": "EN TRAMITE"
+    },
+    {
+      "idProyecto": 128408,
+      "appURL": "https://silpy.congreso.gov.py/expediente/128408",
+      "acapite": "Proyecto de Resolución “QUE CREA EL FRENTE PARLAMENTARIO CONTRA LA CORRUPCIÓN E IMPUNIDAD EN LA CÁMARA DE SENADORES DE LA REPÚBLICA DEL PARAGUAY”, presentado por los Senadores Líder Santiago Amarilla Ríos, Celeste Josefina Amarilla Vda. de Boccia, Ever Federico Villalba Benítez, Kattya Mabel González Villanueva, Esperanza Martínez de Portillo, Yolanda Ramona Paredes, Antonio Rubén Velázquez Chamorro, Rafael Augusto Filizzola Serra y Eduardo Hirohito Nakayama Rojas, de fecha 12 de julio de 2023.",
+      "expedienteCamara": "S-2300032",
+      "fechaIngresoExpediente": "13/07/2023",
+      "origenProyecto": "CAMARA DE SENADORES",
+      "tipoProyecto": "RESOLUCIONES UNICAMERALES - (Art. 107-CS y 104-CD REGLAMENTO INTERNO)",
+      "descripcionEtapa": "FINALIZACIÓN DE TRAMITACIÓN",
+      "descripcionSubEtapa": "SE COMUNICA A QUIEN CORRESPONDA",
+      "iniciativa": "PARLAMENTARIA",
+      "urgencia": "ORDINARIO",
+      "estadoProyecto": "COMUNICADO"
+    }
+  ],
+  "activo": true
+}

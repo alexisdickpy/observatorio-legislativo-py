@@ -5,7 +5,7 @@
 import { leyes } from "./catalogo.js";
 import { estado, periodos } from "./datos.js";
 import { descargas } from "./descargas.js";
-import { legisladores } from "./legisladores.js";
+import { conProyectosDeLey, legisladores } from "./legisladores.js";
 import * as rutas from "./rutas.js";
 import { esPreliminar } from "./testAfinidad.js";
 import { recortar } from "./texto.js";
@@ -154,6 +154,7 @@ export function direccionesDelSitemap() {
     // El test de afinidad entra cuando sus preguntas dejan de ser preliminares (#64).
     ...(esPreliminar() ? [] : [rutas.testAfinidad()]),
     ...legisladores().map((p) => p.url),
+    ...conProyectosDeLey().map((p) => rutas.expedientesLegislador(p.slug)),
     rutas.datosAbiertos(),
     rutas.metodologia(),
     rutas.privacidad(),

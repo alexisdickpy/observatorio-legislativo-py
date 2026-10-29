@@ -8,6 +8,9 @@ En modo incremental (sincronización diaria), las consultas marcadas como reutil
 se leen de esa carpeta si ya están guardadas: el detalle de los proyectos ya conocidos y las
 páginas completas del listado de votaciones. Todo lo demás se descarga de nuevo.
 
+Las consultas marcadas como `guardada` se leen de esa carpeta en cualquier modo, si ya están:
+los expedientes de cada legislador solo se descargan de nuevo el día de su actualización.
+
 Los nombres de archivo siguen el mismo formato que la caché de la auditoría
 (scripts/auditoria/api.py), así que esa caché también sirve como carpeta de crudos.
 """
@@ -56,18 +59,18 @@ class Cliente:
         self.incremental = False
         self._memoria = {}
 
-    def obtener(self, ruta, params=None, reutilizable=False):
+    def obtener(self, ruta, params=None, reutilizable=False, guardada=False):
         """Devuelve el envoltorio completo ({codigoEstado, mensaje, datos}) de una ruta.
 
         Una respuesta 404 con cuerpo JSON ("Dato/s no encontrado/s") se devuelve como
         cualquier otra: `datos` vale None. Dentro de una misma ejecución, cada ruta se
         consulta una sola vez. Con `reutilizable` y modo incremental, si la respuesta ya
-        está guardada se usa esa en lugar de consultar la API.
+        está guardada se usa esa en lugar de consultar la API; con `guardada`, en cualquier modo.
         """
         archivo = self.crudo / nombre_archivo(ruta, params)
         if archivo in self._memoria:
             return self._memoria[archivo]
-        if self.sin_red or (self.incremental and reutilizable and archivo.exists()):
+        if self.sin_red or ((guardada or self.incremental and reutilizable) and archivo.exists()):
             if not archivo.exists():
                 raise ErrorAPI(f"Falta {archivo.name} en {self.crudo} (modo sin red)")
             respuesta = self._validar(ruta, archivo.read_bytes())
@@ -82,9 +85,9 @@ class Cliente:
         self._memoria[archivo] = respuesta
         return respuesta
 
-    def datos(self, ruta, params=None, reutilizable=False):
+    def datos(self, ruta, params=None, reutilizable=False, guardada=False):
         """Atajo: solo la lista `datos` (vacía si la API respondió 404)."""
-        return self.obtener(ruta, params, reutilizable).get("datos") or []
+        return self.obtener(ruta, params, reutilizable, guardada).get("datos") or []
 
     def paginar(self, ruta, tam_pagina, reutilizable=False, clave=None):
         """Recorre un listado paginado. En esta API `offset` es el número de página (desde 1).

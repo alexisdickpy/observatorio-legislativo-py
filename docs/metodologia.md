@@ -97,6 +97,14 @@ Las leyes de su autoría son las leyes sancionadas del período en cuyo proyecto
 
 Tienen ficha todos los legisladores del período, también los que ya no ejercen (`_propio.vigente = false`: no figuran en el listado de legisladores en ejercicio de la API). Su ficha lo indica.
 
+## Expedientes presentados
+
+La ficha de cada legislador cuenta los expedientes del período en que figura entre los autores (`expedientes.json`, de la consulta `legislador/{id}/expedientes`), por tipo oficial (`tipoProyecto`), sin fusionar tipos y en orden alfabético. Se incluyen los que ingresaron desde el inicio del período (`_propio.fechaIngreso`). De los proyectos de ley (`PROYECTO DE LEY`) muestra además cuántos hay en cada estado oficial (`estadoProyecto`), cada uno con su porcentaje sobre el total de sus proyectos de ley. La lista de esos proyectos, con fecha de ingreso, título, estado y enlace al expediente en SILpy, va en una página aparte de cada legislador. Los demás tipos se cuentan, pero no se listan.
+
+La cantidad de expedientes no mide la calidad ni el esfuerzo de un legislador. Los pedidos de informe son control al Poder Ejecutivo, no producción de leyes. Un expediente con varios autores cuenta para cada uno, porque la API no distingue al autor principal. El estado es el de la última actualización, y muchos proyectos siguen en trámite. Por eso el sitio no calcula una cifra única de proyectos aprobados ni ordena a los legisladores por cantidad de expedientes.
+
+Los expedientes se descargan una vez por semana, los martes, con una consulta por legislador. Los demás días se usa la copia guardada.
+
 ## Ausencias en votaciones nominales
 
 La API no publica listas de presencia en las sesiones ([auditoría](auditoria-datos.md), sección 7). Lo único disponible es la categoría `AUSENTE` de cada votación nominal, que indica que el legislador no registró su voto en ese momento, aunque pudiera estar en la sesión. Por eso la métrica se llama siempre **ausencias en votaciones nominales**, cuenta votaciones y no días, y nunca se presenta como asistencia, faltas o inasistencias.

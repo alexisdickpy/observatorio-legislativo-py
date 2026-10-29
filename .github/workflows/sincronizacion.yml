@@ -5,6 +5,8 @@
 #   caché de GitHub Actions; si la caché no está, descarga todo.
 # - Domingos, completa: vuelve a descargar todo (unas 1.400 consultas) para detectar
 #   correcciones en registros que ya existían.
+# - Martes, además, vuelve a descargar los expedientes de cada legislador (unas 140 consultas
+#   más, unos 20 minutos). Los demás días se reutiliza la copia guardada.
 # - También se puede lanzar a mano desde la pestaña Actions ("Run workflow").
 #
 # Si la API falla o devuelve datos incompletos, no se confirma ningún dato: el sitio sigue con
@@ -24,6 +26,10 @@ on:
         type: choice
         options: [incremental, completo]
         default: incremental
+      expedientes:
+        description: "Volver a descargar los expedientes de cada legislador (se hace solo los martes)"
+        type: boolean
+        default: false
       permitir_disminucion:
         description: "Aceptar que alguna cantidad baje más de un 5 % (solo si se comprobó que la baja es real)"
         type: boolean
@@ -56,10 +62,14 @@ jobs:
         env:
           MODO: ${{ github.event.schedule == '41 6 * * 0' && 'completo' || inputs.modo || 'incremental' }}
           PERMITIR: ${{ inputs.permitir_disminucion && '--permitir-disminucion' || '' }}
+          EXPEDIENTES: ${{ inputs.expedientes && '--actualizar-expedientes' || '' }}
         run: |
           set -o pipefail
           mkdir -p tmp
-          python3 -m importador --modo "$MODO" $PERMITIR 2>&1 | tee tmp/resumen.txt
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(TZ=America/Asuncion date +%u)" = "2" ]; then
+            EXPEDIENTES=--actualizar-expedientes
+          fi
+          python3 -m importador --modo "$MODO" $PERMITIR $EXPEDIENTES 2>&1 | tee tmp/resumen.txt
 
       - name: Resumen
         if: ${{ !cancelled() }}

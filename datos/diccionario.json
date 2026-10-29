@@ -1002,6 +1002,105 @@
         }
       ]
     },
+    "expedientes": {
+      "descripcion": "Un registro por cada expediente del que un legislador del período figura como autor (legislador/{id}/expedientes), con fecha de ingreso dentro del período. Incluye todos los tipos de expediente. Un expediente con varios autores aparece una vez por cada uno; la API no distingue autor principal. Se descarga una vez por semana.",
+      "archivos": [
+        "fuente/{período}/expedientes.json",
+        "fuente/{período}/expedientes.csv"
+      ],
+      "campos": [
+        {
+          "campo": "idLegislador",
+          "origen": "oficial",
+          "tipo": "entero",
+          "descripcion": "Legislador autor del expediente (legisladores.json)."
+        },
+        {
+          "campo": "idProyecto",
+          "origen": "oficial",
+          "tipo": "entero",
+          "descripcion": "Identificador oficial del expediente."
+        },
+        {
+          "campo": "acapite",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Título oficial del expediente."
+        },
+        {
+          "campo": "appURL",
+          "origen": "oficial",
+          "tipo": "URL",
+          "descripcion": "Expediente en SILpy."
+        },
+        {
+          "campo": "descripcionEtapa",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Etapa del trámite en la última actualización."
+        },
+        {
+          "campo": "descripcionSubEtapa",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Subetapa del trámite en la última actualización."
+        },
+        {
+          "campo": "estadoProyecto",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Estado oficial en la última actualización (EN TRAMITE, PUBLICADO, ARCHIVADO, RETIRADO, COMUNICADO, CONTESTADO…)."
+        },
+        {
+          "campo": "expedienteCamara",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Número de expediente en la cámara de origen."
+        },
+        {
+          "campo": "fechaIngresoExpediente",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Fecha de ingreso (dd/mm/aaaa), tal como la publica la API."
+        },
+        {
+          "campo": "iniciativa",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Origen de la iniciativa (PARLAMENTARIA, PODER EJECUTIVO…)."
+        },
+        {
+          "campo": "origenProyecto",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Cámara de origen."
+        },
+        {
+          "campo": "tipoProyecto",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Tipo de expediente (PROYECTO DE LEY, PEDIDO DE INFORMES, DECLARACIONES, RESOLUCIONES…)."
+        },
+        {
+          "campo": "urgencia",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Tratamiento (ORDINARIO o con urgencia)."
+        },
+        {
+          "campo": "_propio.fechaIngreso",
+          "origen": "propio",
+          "tipo": "fecha",
+          "descripcion": "Fecha de ingreso en formato ISO (aaaa-mm-dd), convertida de fechaIngresoExpediente."
+        },
+        {
+          "campo": "_propio.slug",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Slug de la persona (personas.json)."
+        }
+      ]
+    },
     "personas": {
       "descripcion": "Capa propia con el identificador estable de cada persona y sus `idLegislador` por período.",
       "archivos": [

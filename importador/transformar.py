@@ -237,6 +237,25 @@ def filas_autores(id_proyecto, autores, periodo_legislativo, slugs):
     return filas
 
 
+def filas_expedientes(id_legislador, respuesta, inicio, fin, slug, notas):
+    """Registros de expedientes.json de un legislador: los expedientes de los que figura como autor
+    (legislador/{id}/expedientes) con fecha de ingreso dentro del período, con los valores oficiales sin cambios."""
+    filas = []
+    for legislador in respuesta or []:
+        for proyecto in legislador.get("proyectos") or []:
+            iso, problema = a_iso(proyecto.get("fechaIngresoExpediente"))
+            if iso is None:
+                notas.agregar("fecha_ingreso_invalida", "expediente", proyecto.get("idProyecto"),
+                              f"Del legislador {id_legislador}: la fecha de ingreso no es válida "
+                              f"({problema or 'vacía'}); el expediente queda fuera de expedientes.json.",
+                              ruta="fechaIngresoExpediente", valor_original=proyecto.get("fechaIngresoExpediente"))
+                continue
+            if not inicio <= iso <= fin:
+                continue
+            filas.append({"idLegislador": id_legislador, **proyecto, PROPIO: {"fechaIngreso": iso, "slug": slug}})
+    return filas
+
+
 def verificar_numeros_ley(leyes_periodo, historico, inicio, fin, notas):
     """Comprueba que los números de ley del período no se repiten en otras legislaturas.
 

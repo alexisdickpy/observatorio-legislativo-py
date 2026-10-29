@@ -5,9 +5,12 @@ Uso (desde la raíz del repositorio):
     python -m importador --periodo 2023-2028
     python -m importador --sin-red           # repite la importación con los crudos guardados
     python -m importador --modo incremental  # sincronización diaria: solo lo nuevo
+    python -m importador --actualizar-expedientes  # vuelve a descargar los expedientes de cada legislador
 
 La descarga completa hace unas 1.400 consultas y tarda unos 50 minutos. La incremental
 reutiliza las respuestas guardadas de lo que no cambia y hace unas 20 consultas.
+Los expedientes de cada legislador (una consulta por legislador) se descargan solo con
+--actualizar-expedientes o si no hay copia guardada; si no, se reutiliza la guardada.
 """
 
 import argparse
@@ -29,6 +32,7 @@ from .transformar import (
     PROPIO,
     Notas,
     filas_autores,
+    filas_expedientes,
     filas_tramitaciones,
     numero_ley,
     periodo_parlamentario_de_votacion,
@@ -127,7 +131,8 @@ def registrar(salida, entrada):
     escribir_si_cambia(ruta, json_bytes({"sincronizaciones": ([entrada] + anteriores)[:REGISTROS_MAXIMOS]}))
 
 
-def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permitir_disminucion=False):
+def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permitir_disminucion=False,
+             actualizar_expedientes=False):
     salida = Path(salida)
     ahora = ahora or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     avisos = []
@@ -293,6 +298,15 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
                           "La API no publica los autores de este proyecto de ley de iniciativa parlamentaria"
                           + (" (no devolvió sus tramitaciones)." if tramitaciones is None else "."))
 
+    # --- Expedientes de los que cada legislador figura como autor (#27) ----------------------
+    expedientes = []
+    for i, id_legislador in enumerate(sorted(por_id), 1):
+        respuesta = cliente.datos(f"legislador/{id_legislador}/expedientes", guardada=not actualizar_expedientes)
+        expedientes.extend(filas_expedientes(id_legislador, respuesta, inicio, fin, slugs.get(id_legislador), notas))
+        if i % 20 == 0 or i == len(por_id):
+            progreso(f"  expedientes de legisladores: {i}/{len(por_id)}")
+    expedientes.sort(key=lambda e: (e["idLegislador"], e["idProyecto"]))
+
     # --- Notas: se reemplazan las del importador para este período y se conservan las demás
     ruta_notas = salida / "propios" / "notas.json"
     anteriores = (leer_json(ruta_notas) or {"notas": []})["notas"]
@@ -310,6 +324,7 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
         "legisladores": len(legisladores),
         "legisladoresVigentes": len(ids_vigentes),
         "autores": len(autores),
+        "expedientes": len(expedientes),
     }
     ruta_estado = salida / "estado.json"
     estado = leer_json(ruta_estado) or {}
@@ -332,6 +347,7 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
         carpeta / "votos.csv": csv_bytes(COLUMNAS_VOTOS, filas_votos),
         carpeta / "legisladores.json": json_bytes(legisladores),
         carpeta / "autores.json": json_bytes(autores),
+        carpeta / "expedientes.json": json_bytes(expedientes),
         ruta_personas: json_bytes({"personas": personas}),
         ruta_notas: json_bytes({"notas": todas_las_notas}),
         salida / "periodos.json": json_bytes(documento_periodos),
@@ -381,6 +397,7 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
             "fecha": ahora,
             "periodo": nombre,
             "modo": "incremental" if getattr(cliente, "incremental", False) else "completo",
+            "expedientesActualizados": actualizar_expedientes,
             "resultado": "correcta",
             "consultas": cliente.consultas,
             "cantidades": cantidades,
@@ -449,6 +466,9 @@ def main(argv=None):
     parser.add_argument("--permitir-disminucion", action="store_true",
                         help=f"aceptar que alguna cantidad baje más de un {DISMINUCION_MAXIMA:.0%} "
                              "respecto de la importación anterior")
+    parser.add_argument("--actualizar-expedientes", action="store_true",
+                        help="volver a descargar los expedientes de cada legislador (por defecto se reutiliza "
+                             "la copia guardada, si existe)")
     parser.add_argument("--salida", default=RAIZ / "datos", type=Path, help="carpeta de datos (por defecto datos/)")
     parser.add_argument("--crudo", default=RAIZ / "tmp" / "importador" / "crudo", type=Path,
                         help="carpeta de respuestas crudas de la API (por defecto tmp/importador/crudo/)")
@@ -459,11 +479,13 @@ def main(argv=None):
     cliente = Cliente(args.crudo, sin_red=args.sin_red, incremental=args.modo == "incremental")
     try:
         try:
-            resultado = importar(cliente, args.salida, args.periodo, permitir_disminucion=args.permitir_disminucion)
+            resultado = importar(cliente, args.salida, args.periodo, permitir_disminucion=args.permitir_disminucion,
+                                 actualizar_expedientes=args.actualizar_expedientes)
         except ListadoCambiado as e:
             print(f"AVISO: {e}. Se repite la importación en modo completo.", file=sys.stderr)
             cliente.pasar_a_completo()
-            resultado = importar(cliente, args.salida, args.periodo, permitir_disminucion=args.permitir_disminucion)
+            resultado = importar(cliente, args.salida, args.periodo, permitir_disminucion=args.permitir_disminucion,
+                                 actualizar_expedientes=args.actualizar_expedientes)
     except Exception as e:  # cualquier falla queda anotada en el registro de sincronizaciones
         if not isinstance(e, (ErrorAPI, ValueError)):
             traceback.print_exc()

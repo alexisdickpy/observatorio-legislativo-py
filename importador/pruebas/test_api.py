@@ -80,6 +80,15 @@ class Incremental(unittest.TestCase):
         cliente.datos("periodo")
         self.assertEqual(cliente.descargas[-1], ("periodo", None))
 
+    def test_guardada_se_reutiliza_en_cualquier_modo(self):
+        self.servidor[("legislador/1/expedientes", None)] = [{"proyectos": []}]
+        ClienteSimulado(self.crudo, self.servidor).datos("legislador/1/expedientes")
+        cliente = ClienteSimulado(self.crudo, self.servidor)
+        self.assertEqual(cliente.datos("legislador/1/expedientes", guardada=True), [{"proyectos": []}])
+        self.assertEqual(cliente.datos("legislador/2/expedientes", guardada=True), [])
+        # Solo se descarga la que no estaba guardada.
+        self.assertEqual(cliente.descargas, [("legislador/2/expedientes", None)])
+
     def test_incremental_detecta_un_listado_que_cambio_por_el_medio(self):
         # Se borró la votación 2: todo se corre un lugar y la página testigo ya no coincide.
         self.servidor[("votacion", 1)] = [{"idVotacion": i} for i in (1, 3, 4)]

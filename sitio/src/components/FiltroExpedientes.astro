@@ -1,0 +1,74 @@
+---
+// Filtro de la lista de proyectos de ley de un legislador por estado oficial. Sin JavaScript queda
+// oculto y se ve la lista completa. Con JavaScript, dentro del mismo contenedor [data-expedientes],
+// oculta las filas de otros estados y refleja el filtro en la dirección (como FiltroVotos).
+import { parametroEstadoVotos } from "../lib/rutas.js";
+
+interface Props {
+  porEstado: { estado: string | null; filtro: string; cantidad: number }[];
+  total: number;
+  periodo: string;
+}
+const { porEstado, total, periodo } = Astro.props;
+const id = `filtro-expedientes-${periodo}`;
+---
+
+<form class="filtro-expedientes" data-filtro-expedientes role="search" hidden>
+  <label for={id}>Estado oficial del proyecto</label>
+  <select id={id} name={parametroEstadoVotos}>
+    <option value="">Todos ({total} proyectos de ley)</option>
+    {porEstado.map((e) => <option value={e.filtro}>{e.estado ?? "Sin estado oficial"} ({e.cantidad})</option>)}
+  </select>
+  <p class="resultado chico" data-filtro-expedientes-resultado aria-live="polite"></p>
+</form>
+
+<script>
+  import { escribirEstado, filtrarPorEstado, leerEstado } from "../lib/filtroVotos.js";
+  import { parametroEstadoVotos as nombre } from "../lib/rutas.js";
+
+  for (const form of document.querySelectorAll<HTMLFormElement>("form[data-filtro-expedientes]")) {
+    const contenedor = form.closest<HTMLElement>("[data-expedientes]")!;
+    const select = form.querySelector("select")!;
+    const resultado = form.querySelector<HTMLElement>("[data-filtro-expedientes-resultado]")!;
+    const filas = [...contenedor.querySelectorAll<HTMLTableRowElement>("tr[data-estado]")];
+    const entradas = filas.map((fila) => ({ fila, estado: fila.dataset.estado }));
+    const opciones = [...select.options].map((o) => o.value).filter(Boolean);
+
+    const aplicar = (estado: string, actualizarDireccion: boolean) => {
+      const visibles = new Set(filtrarPorEstado(entradas, estado).map((e) => e.fila));
+      for (const fila of filas) fila.hidden = !visibles.has(fila);
+      resultado.textContent = `Se muestran ${visibles.size} de ${filas.length} proyectos de ley.`;
+      if (actualizarDireccion) {
+        const consulta = escribirEstado(new URLSearchParams(location.search), nombre, estado).toString();
+        history.replaceState(null, "", consulta ? `?${consulta}` : location.pathname);
+      }
+    };
+
+    select.value = leerEstado(new URLSearchParams(location.search), nombre, opciones);
+    form.hidden = false;
+    aplicar(select.value, false);
+    select.addEventListener("change", () => aplicar(select.value, true));
+    form.addEventListener("submit", (e) => e.preventDefault());
+  }
+</script>
+
+<style>
+  .filtro-expedientes {
+    display: grid;
+    gap: var(--espacio-1);
+    padding: var(--espacio-4);
+    margin-bottom: var(--espacio-4);
+    background: var(--color-superficie);
+    border: var(--borde-ancho) solid var(--color-borde);
+    border-radius: var(--radio);
+  }
+  .filtro-expedientes[hidden] {
+    display: none;
+  }
+  select {
+    max-width: 100%;
+  }
+  .resultado {
+    margin: 0;
+  }
+</style>

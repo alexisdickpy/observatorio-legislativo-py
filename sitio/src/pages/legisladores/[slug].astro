@@ -1,10 +1,11 @@
 ---
 // Ficha de un legislador: datos oficiales del cargo, resumen e historial de sus votos en las
 // votaciones nominales sobre proyectos de ley, ausencias, NO VOTA, abstenciones y votos distintos a la
-// mayoría de su bancada y de su partido en todas las votaciones nominales y leyes de su autoría
-// (preparado por lib/legisladores.js).
+// mayoría de su bancada y de su partido en todas las votaciones nominales, leyes de su autoría y
+// expedientes presentados (preparado por lib/legisladores.js).
 import Base from "../../layouts/Base.astro";
 import AusenciasVotaciones from "../../components/AusenciasVotaciones.astro";
+import ExpedientesPresentados from "../../components/ExpedientesPresentados.astro";
 import FiltroVotos from "../../components/FiltroVotos.astro";
 import HistorialVotos from "../../components/HistorialVotos.astro";
 import NoVotaAbstencion from "../../components/NoVotaAbstencion.astro";
@@ -135,6 +136,9 @@ const descripcion = descripcionDeLegislador(f, sinDato);
                 </Fragment>
               )
             }
+
+            <Titulo>Expedientes presentados en el período ({b.expedientes.total})</Titulo>
+            <ExpedientesPresentados expedientes={b.expedientes} periodo={b.periodo} urlLista={rutas.expedientesLegislador(persona.slug)} />
 
             {
               b.votos.total > 0 && (

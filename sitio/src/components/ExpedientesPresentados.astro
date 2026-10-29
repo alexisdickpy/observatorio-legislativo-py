@@ -1,0 +1,85 @@
+---
+// Expedientes de los que un legislador figura como autor en el período: totales por tipo oficial y, de
+// sus proyectos de ley, cantidad y porcentaje por estado oficial, con enlace a la lista en su página
+// aparte. Recibe los valores de lib/expedientes.js. Estilos globales con prefijo de clase.
+import * as rutas from "../lib/rutas.js";
+
+interface Props {
+  expedientes: any;
+  periodo: string;
+  urlLista: string;
+}
+const { expedientes: e, periodo, urlLista } = Astro.props;
+const sinDato = "Sin dato";
+const leyes = e.proyectosDeLey;
+---
+
+<div class="expedientes-presentados">
+  {
+    e.total === 0 ? (
+      <p class="lectura">No figura entre los autores de ningún expediente ingresado en el período {periodo}.</p>
+    ) : (
+      <Fragment>
+        <table>
+          <caption class="solo-lectores">Expedientes presentados por tipo</caption>
+          <thead>
+            <tr><th scope="col">Tipo de expediente</th><th scope="col">Cantidad</th></tr>
+          </thead>
+          <tbody>
+            {e.porTipo.map((t: any) => <tr><td>{t.tipo ?? sinDato}</td><td class="numero">{t.cantidad}</td></tr>)}
+          </tbody>
+        </table>
+        {
+          leyes.total > 0 && (
+            <Fragment>
+              <table>
+                <caption>Sus {leyes.total} proyectos de ley, por estado oficial</caption>
+                <thead>
+                  <tr><th scope="col">Estado</th><th scope="col">Proyectos de ley</th></tr>
+                </thead>
+                <tbody>
+                  {leyes.porEstado.map((x: any) => <tr><td>{x.estado ?? sinDato}</td><td class="numero">{x.texto}</td></tr>)}
+                </tbody>
+              </table>
+              <p><a href={urlLista}>Ver la lista de sus {leyes.total} proyectos de ley</a></p>
+            </Fragment>
+          )
+        }
+      </Fragment>
+    )
+  }
+  <p class="chico texto-suave lectura">
+    Expedientes ingresados desde el inicio del período en que figura entre los autores. La cantidad no mide
+    la calidad ni el esfuerzo. Los pedidos de informe son control al Poder Ejecutivo, no proyectos de ley.
+    Un expediente con varios autores cuenta para cada uno, y el estado es el de la última actualización,
+    así que muchos proyectos siguen en trámite.{" "}
+    <a href={rutas.metodologia(rutas.anclasMetodologia.expedientes)}>Más información</a>
+  </p>
+</div>
+
+<style is:global>
+  .expedientes-presentados table {
+    border-collapse: collapse;
+    font-size: var(--tamano-chico);
+    margin-bottom: var(--espacio-4);
+  }
+  .expedientes-presentados caption {
+    text-align: left;
+    font-weight: bold;
+    margin-bottom: var(--espacio-1);
+  }
+  .expedientes-presentados th,
+  .expedientes-presentados td {
+    text-align: left;
+    vertical-align: top;
+    padding: var(--espacio-1) var(--espacio-2);
+    border-bottom: var(--borde-ancho) solid var(--color-borde);
+  }
+  .expedientes-presentados thead th {
+    border-bottom-width: var(--foco-ancho);
+  }
+  .expedientes-presentados .numero {
+    white-space: nowrap;
+    text-align: right;
+  }
+</style>

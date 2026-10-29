@@ -6,7 +6,7 @@
 
 | Período | Datos actualizados por última vez |
 |---|---|
-| 2023-2028 | 2026-10-29T16:23:24Z |
+| 2023-2028 | 2026-10-29T19:22:10Z |
 
 La última comprobación de la fuente (aunque no haya cambios) figura en [`estado.json`](estado.json).
 
@@ -226,6 +226,30 @@ Se publica en `fuente/{período}/autores.json` y `fuente/{período}/autores.csv`
 | `_propio.delPeriodo` | propio | booleano | Si el autor es legislador de este período legislativo. |
 | `_propio.orden` | propio | entero | Posición en la lista de autores, en el orden que publica la API. |
 | `_propio.slug` | propio | texto | Slug de la persona, si es legisladora de un período incluido. Vacío si no. |
+
+## expedientes
+
+Un registro por cada expediente del que un legislador del período figura como autor (legislador/{id}/expedientes), con fecha de ingreso dentro del período. Incluye todos los tipos de expediente. Un expediente con varios autores aparece una vez por cada uno; la API no distingue autor principal. Se descarga una vez por semana.
+
+Se publica en `fuente/{período}/expedientes.json` y `fuente/{período}/expedientes.csv`, con 17664 registros en total.
+
+| Campo | Origen | Tipo | Descripción |
+|---|---|---|---|
+| `idLegislador` | oficial | entero | Legislador autor del expediente (legisladores.json). |
+| `idProyecto` | oficial | entero | Identificador oficial del expediente. |
+| `acapite` | oficial | texto | Título oficial del expediente. |
+| `appURL` | oficial | URL | Expediente en SILpy. |
+| `descripcionEtapa` | oficial | texto | Etapa del trámite en la última actualización. |
+| `descripcionSubEtapa` | oficial | texto | Subetapa del trámite en la última actualización. |
+| `estadoProyecto` | oficial | texto | Estado oficial en la última actualización (EN TRAMITE, PUBLICADO, ARCHIVADO, RETIRADO, COMUNICADO, CONTESTADO…). |
+| `expedienteCamara` | oficial | texto | Número de expediente en la cámara de origen. |
+| `fechaIngresoExpediente` | oficial | texto | Fecha de ingreso (dd/mm/aaaa), tal como la publica la API. |
+| `iniciativa` | oficial | texto | Origen de la iniciativa (PARLAMENTARIA, PODER EJECUTIVO…). |
+| `origenProyecto` | oficial | texto | Cámara de origen. |
+| `tipoProyecto` | oficial | texto | Tipo de expediente (PROYECTO DE LEY, PEDIDO DE INFORMES, DECLARACIONES, RESOLUCIONES…). |
+| `urgencia` | oficial | texto | Tratamiento (ORDINARIO o con urgencia). |
+| `_propio.fechaIngreso` | propio | fecha | Fecha de ingreso en formato ISO (aaaa-mm-dd), convertida de fechaIngresoExpediente. |
+| `_propio.slug` | propio | texto | Slug de la persona (personas.json). |
 
 ## personas
 

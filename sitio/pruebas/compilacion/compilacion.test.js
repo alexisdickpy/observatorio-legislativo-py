@@ -9,7 +9,7 @@ import { archivosDeDatos, estado, periodos } from "../../src/lib/datos.js";
 import { detalleDeRegistro } from "../../src/lib/ficha.js";
 import { archivosCalculados } from "../../src/lib/calculados.js";
 import { coincidencia, textoDeCoincidencia } from "../../src/lib/coincidencia.js";
-import { comparativa, ficha, legisladores, listado } from "../../src/lib/legisladores.js";
+import { comparativa, conProyectosDeLey, ficha, legisladores, listado } from "../../src/lib/legisladores.js";
 import { mapaDeDiputados } from "../../src/lib/mapa.js";
 import { observacionesDeLosDatos } from "../../src/lib/metodologia.js";
 import { menuPrincipal, vistasDeAnalisis } from "../../src/lib/navegacion.js";
@@ -112,6 +112,35 @@ test("una ficha por legislador, con su historial enlazado a las fichas de ley", 
     }
     const bytes = statSync(pagina(persona.url)).size;
     assert.ok(bytes < 500_000, `${persona.url} pesa ${bytes} bytes`);
+  }
+});
+
+test("expedientes presentados: totales en la ficha y lista de proyectos de ley en su página, sin calificar", () => {
+  const metodologia = `href="${rutas.metodologia(rutas.anclasMetodologia.expedientes)}"`;
+  assert.ok(leer(rutas.metodologia()).includes(`id="${rutas.anclasMetodologia.expedientes}"`));
+  const conLista = new Set(conProyectosDeLey().map((p) => p.slug));
+  for (const persona of legisladores()) {
+    const html = texto(persona.url);
+    const b = ficha(persona).bloques[0];
+    assert.ok(html.includes(`Expedientes presentados en el período (${b.expedientes.total})`), persona.url);
+    assert.ok(html.includes("La cantidad no mide la calidad ni el esfuerzo"), persona.url);
+    assert.ok(html.includes(metodologia), persona.url);
+    for (const t of b.expedientes.porTipo) assert.ok(html.includes(`<td>${t.tipo}</td><td class="numero">${t.cantidad}</td>`), `${persona.url} ${t.tipo}`);
+    for (const e of b.expedientes.proyectosDeLey.porEstado) assert.ok(html.includes(e.texto), `${persona.url} ${e.estado}`);
+    const lista = rutas.expedientesLegislador(persona.slug);
+    assert.equal(html.includes(`href="${lista}"`), conLista.has(persona.slug), persona.url);
+    assert.equal(existsSync(pagina(lista)), conLista.has(persona.slug), lista);
+    if (!conLista.has(persona.slug)) continue;
+    const sub = leer(lista);
+    const filas = sub.match(/<tr data-estado=/g)?.length ?? 0;
+    assert.equal(filas, ficha(persona).bloques.reduce((s, x) => s + x.expedientes.proyectosDeLey.total, 0), lista);
+    for (const x of b.expedientes.proyectosDeLey.lista) assert.ok(sub.includes(`href="${x.url}"`), `${lista} ${x.id}`);
+    assert.ok(sub.includes(`href="${persona.url}"`), lista);
+    assert.ok(statSync(pagina(lista)).size < 300_000, `${lista} pesa ${statSync(pagina(lista)).size} bytes`);
+  }
+  const sitemap = readFileSync(join(dist, rutas.sitemap()), "utf-8");
+  for (const persona of conProyectosDeLey()) {
+    assert.ok(sitemap.includes(rutas.absoluta(rutas.expedientesLegislador(persona.slug))), persona.slug);
   }
 });
 
