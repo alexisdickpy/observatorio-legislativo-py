@@ -1,0 +1,362 @@
+---
+// Test de afinidad (#63): una pregunta por vez, en una tarjeta con su tema, una explicación breve, el
+// número de ley y el enlace oficial al proyecto, y los botones A favor, En contra y Sin posición. No
+// muestra autores ni votos hasta el final. El resultado es la coincidencia con cada partido, de mayor a
+// menor, calculada en el navegador con lib/afinidad.js a partir de los datos de lib/testAfinidad.js.
+// No guarda nada ni hace pedidos a ningún servidor. Sin JavaScript se ven las preguntas y un aviso.
+import EtiquetasTema from "./EtiquetasTema.astro";
+import { MINIMO_COMPARADAS, RESPUESTAS } from "../lib/afinidad.js";
+import * as rutas from "../lib/rutas.js";
+
+interface Props {
+  datos: any;
+}
+const { datos } = Astro.props;
+const total = datos.preguntas.length;
+// "<" escapado para que ningún texto pueda cerrar la etiqueta <script>.
+const json = JSON.stringify(datos).replace(/</g, "\\u003c");
+---
+
+<script type="application/json" id="datos-test-afinidad" set:html={json} />
+
+<div class="test" id="test-afinidad">
+  <div class="progreso" data-progreso hidden>
+    <p class="chico texto-suave" aria-live="polite"><span data-numero>1</span> de {total}</p>
+    <div class="barra-progreso" aria-hidden="true"><span data-barra></span></div>
+  </div>
+
+  {
+    datos.preguntas.map((p: any, n: number) => (
+      <section class="tarjeta" data-pregunta={n} aria-labelledby={`pregunta-${n}`}>
+        <EtiquetasTema clasificacion={{ temas: [p.tema], pendiente: false }} />
+        <h2 id={`pregunta-${n}`}>{p.pregunta}</h2>
+        {p.explicacion && <p class="explicacion">{p.explicacion}</p>}
+        <p class="chico">
+          Ley N° {p.numeroLey}
+          {p.proyecto && (
+            <Fragment>
+              {" · "}
+              <a href={p.proyecto} target="_blank" rel="noopener">Ver el proyecto de ley</a>
+            </Fragment>
+          )}
+        </p>
+        <p class="que-votarias">¿Qué habrías votado?</p>
+        <div class="opciones">
+          {RESPUESTAS.map((r) => (
+            <button type="button" data-respuesta={r.valor} disabled>
+              {r.texto}
+            </button>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+
+  <p class="navegacion" data-navegacion hidden>
+    <button type="button" class="enlace" data-anterior>← Pregunta anterior</button>
+  </p>
+</div>
+
+<section class="resultado" id="resultado-test" tabindex="-1" hidden aria-labelledby="titulo-resultado">
+  <h2 id="titulo-resultado">Tu afinidad con los partidos</h2>
+  <p class="texto-suave" data-resumen></p>
+  <ol class="ranking" data-ranking></ol>
+  <p class="chico texto-suave">
+    Coincidencia con la posición de la mayoría de cada partido en esas votaciones, sobre las preguntas que se
+    pudieron comparar. Con menos de {MINIMO_COMPARADAS} no se muestra porcentaje. Coincidir no es bueno ni
+    malo. <a href={rutas.metodologia(rutas.anclasMetodologia.testAfinidad)}>Cómo se calcula</a>
+  </p>
+  <details class="detalle">
+    <summary>Tus respuestas y las votaciones</summary>
+    <ol data-detalle></ol>
+  </details>
+  <p><button type="button" class="secundario" data-reiniciar>Volver a empezar</button></p>
+</section>
+
+<script>
+  import { calcularAfinidad, POSICION, RESPUESTAS } from "../lib/afinidad.js";
+
+  const datos = JSON.parse(document.getElementById("datos-test-afinidad")!.textContent!);
+  const test = document.getElementById("test-afinidad")!;
+  const resultado = document.getElementById("resultado-test")!;
+  const tarjetas = [...test.querySelectorAll<HTMLElement>("[data-pregunta]")];
+  const progreso = test.querySelector<HTMLElement>("[data-progreso]")!;
+  const navegacion = test.querySelector<HTMLElement>("[data-navegacion]")!;
+  const anterior = test.querySelector<HTMLButtonElement>("[data-anterior]")!;
+  const textoRespuesta = Object.fromEntries(RESPUESTAS.map((r) => [r.valor, r.texto]));
+  const textoPosicion: Record<string, string> = {
+    [POSICION.favor]: "a favor",
+    [POSICION.contra]: "en contra",
+    [POSICION.sinMayoria]: "sin mayoría a favor o en contra",
+    [POSICION.dividido]: "distinta en cada cámara",
+  };
+  let respuestas: (string | undefined)[] = [];
+  let actual = 0;
+
+  function elemento(etiqueta: string, clase?: string, texto?: string) {
+    const e = document.createElement(etiqueta);
+    if (clase) e.className = clase;
+    if (texto !== undefined) e.textContent = texto;
+    return e;
+  }
+
+  function mostrar(n: number) {
+    actual = n;
+    tarjetas.forEach((t, i) => (t.hidden = i !== n));
+    for (const b of tarjetas[n].querySelectorAll<HTMLButtonElement>("[data-respuesta]")) {
+      b.setAttribute("aria-pressed", String(respuestas[n] === b.dataset.respuesta));
+    }
+    progreso.querySelector("[data-numero]")!.textContent = String(n + 1);
+    progreso.querySelector<HTMLElement>("[data-barra]")!.style.width = `${(n / tarjetas.length) * 100}%`;
+    anterior.hidden = n === 0;
+    tarjetas[n].querySelector("h2")!.focus();
+  }
+
+  function mostrarResultado() {
+    const r = calcularAfinidad(datos, respuestas);
+    test.hidden = true;
+    resultado.hidden = false;
+    resultado.querySelector("[data-resumen]")!.textContent =
+      r.respondidas === 0
+        ? "No respondiste ninguna pregunta A favor o En contra, así que no hay nada para comparar."
+        : `Resultado basado en las ${r.respondidas} preguntas que respondiste A favor o En contra.`;
+    resultado.querySelector("[data-ranking]")!.replaceChildren(
+      ...r.partidos.map((x: any) => {
+        const li = elemento("li");
+        const nombre = elemento("span", "nombre");
+        nombre.append(elemento("strong", undefined, x.sigla ?? x.nombre));
+        nombre.append(elemento("span", "chico texto-suave", x.conocido ? `${x.nombre} (${x.conocido})` : x.nombre));
+        const barra = elemento("span", "barra");
+        barra.setAttribute("aria-hidden", "true");
+        if (x.c.suficiente) barra.style.setProperty("--ancho", `${Math.round(x.c.porcentaje * 100)}%`);
+        const cifra = elemento("span", "cifra");
+        cifra.append(elemento("strong", undefined, x.c.porcentajeTexto ?? "—"));
+        cifra.append(elemento("span", "chico texto-suave", `${x.c.coinciden} de ${x.c.comparadas}`));
+        li.append(nombre, barra, cifra);
+        return li;
+      }),
+    );
+    resultado.querySelector("[data-detalle]")!.replaceChildren(
+      ...datos.preguntas.map((p: any, n: number) => {
+        const li = elemento("li");
+        li.append(elemento("p", "pregunta", p.pregunta));
+        li.append(elemento("p", "chico", respuestas[n] ? `Respondiste ${textoRespuesta[respuestas[n]!]}.` : "Sin responder."));
+        const enlaces = elemento("p", "chico");
+        const ley = elemento("a", undefined, `Ley N° ${p.numeroLey}`) as HTMLAnchorElement;
+        ley.href = p.ley;
+        enlaces.append(ley);
+        for (const v of p.votaciones) {
+          const a = elemento("a", undefined, `Votación, ${v.camara}, ${v.fechaTexto ?? "sin fecha"}`) as HTMLAnchorElement;
+          a.href = v.url;
+          enlaces.append(" · ", a);
+        }
+        li.append(enlaces);
+        const posiciones = datos.partidos
+          .filter((x: any) => x.posiciones[n] !== POSICION.noCorresponde)
+          .map((x: any) => `${x.sigla ?? x.nombre} ${textoPosicion[x.posiciones[n]]}`);
+        if (posiciones.length) li.append(elemento("p", "chico texto-suave", `Mayoría de cada partido. ${posiciones.join("; ")}.`));
+        return li;
+      }),
+    );
+    resultado.focus();
+    resultado.scrollIntoView({ block: "start" });
+  }
+
+  function responder(valor: string) {
+    respuestas[actual] = valor;
+    if (actual + 1 < tarjetas.length) mostrar(actual + 1);
+    else mostrarResultado();
+  }
+
+  for (const t of tarjetas) {
+    t.querySelector("h2")!.tabIndex = -1;
+    for (const b of t.querySelectorAll<HTMLButtonElement>("[data-respuesta]")) {
+      b.disabled = false;
+      b.addEventListener("click", () => responder(b.dataset.respuesta!));
+    }
+  }
+  anterior.addEventListener("click", () => mostrar(Math.max(0, actual - 1)));
+  resultado.querySelector("[data-reiniciar]")!.addEventListener("click", () => {
+    respuestas = [];
+    resultado.hidden = true;
+    test.hidden = false;
+    mostrar(0);
+    test.scrollIntoView({ block: "start" });
+  });
+  progreso.hidden = false;
+  navegacion.hidden = false;
+  tarjetas.forEach((t, i) => (t.hidden = i !== 0));
+  anterior.hidden = true;
+  actual = 0;
+</script>
+
+<style>
+  .test,
+  .resultado {
+    max-width: var(--ancho-lectura);
+    margin: var(--espacio-5) auto 0;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  .progreso p {
+    margin: 0 0 var(--espacio-1);
+    text-align: center;
+  }
+  .barra-progreso {
+    height: 0.25rem;
+    margin-bottom: var(--espacio-4);
+    background: var(--color-superficie);
+    border-radius: var(--radio);
+    overflow: hidden;
+  }
+  .barra-progreso span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--color-acento);
+  }
+  .tarjeta {
+    padding: var(--espacio-5) var(--espacio-4);
+    margin-bottom: var(--espacio-4);
+    text-align: center;
+    background: var(--color-superficie);
+    border: var(--borde-ancho) solid var(--color-borde);
+    border-radius: var(--radio);
+  }
+  .tarjeta :global(.temas) {
+    justify-content: center;
+  }
+  .tarjeta h2 {
+    margin: var(--espacio-3) 0;
+  }
+  .tarjeta h2:focus {
+    outline: none;
+  }
+  .explicacion {
+    margin: 0 auto var(--espacio-3);
+    max-width: 36rem;
+  }
+  .que-votarias {
+    margin: var(--espacio-5) 0 var(--espacio-3);
+    font-weight: var(--peso-fuerte);
+  }
+  .opciones {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espacio-2);
+    max-width: 18rem;
+    margin: 0 auto;
+  }
+  button {
+    padding: var(--espacio-3) var(--espacio-4);
+    font: inherit;
+    font-weight: var(--peso-fuerte);
+    border-radius: var(--radio);
+    border: var(--borde-ancho) solid var(--color-acento);
+    background: var(--color-fondo);
+    color: var(--color-acento);
+    cursor: pointer;
+  }
+  button:hover,
+  button[aria-pressed="true"] {
+    background: var(--color-acento);
+    color: var(--color-sobre-acento);
+  }
+  button:focus-visible {
+    outline: var(--foco-ancho) solid var(--color-foco);
+    outline-offset: 2px;
+  }
+  button:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+  button.enlace {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-enlace);
+    font-weight: var(--peso-normal);
+    text-decoration: underline;
+  }
+  .ranking {
+    list-style: none;
+    margin: var(--espacio-4) 0;
+    padding: var(--espacio-2) var(--espacio-4);
+    counter-reset: puesto;
+    background: var(--color-superficie);
+    border: var(--borde-ancho) solid var(--color-borde);
+    border-radius: var(--radio);
+  }
+  .ranking :global(li) {
+    display: grid;
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) auto;
+    gap: var(--espacio-3);
+    align-items: center;
+    padding: var(--espacio-3) 0;
+    border-bottom: var(--borde-ancho) solid var(--color-borde);
+    counter-increment: puesto;
+  }
+  .ranking :global(li:last-child) {
+    border-bottom: 0;
+  }
+  .ranking :global(.nombre) {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .ranking :global(.nombre strong)::before {
+    content: counter(puesto) ". ";
+    color: var(--color-texto-suave);
+    font-weight: var(--peso-normal);
+  }
+  .ranking :global(.barra) {
+    height: 0.5rem;
+    background: var(--color-fondo);
+    border-radius: var(--radio);
+    overflow: hidden;
+  }
+  .ranking :global(.barra)::before {
+    content: "";
+    display: block;
+    height: 100%;
+    width: var(--ancho, 0);
+    background: var(--color-acento);
+  }
+  .ranking :global(.cifra) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  @media (max-width: 30rem) {
+    .ranking :global(li) {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .ranking :global(.barra) {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+  .detalle {
+    margin: var(--espacio-4) 0;
+  }
+  .detalle summary {
+    cursor: pointer;
+    color: var(--color-enlace);
+  }
+  .detalle ol {
+    padding-left: var(--espacio-5);
+  }
+  .detalle :global(li) {
+    margin-top: var(--espacio-3);
+  }
+  .detalle :global(p) {
+    margin: 0 0 var(--espacio-1);
+  }
+  .detalle :global(.pregunta) {
+    font-weight: var(--peso-fuerte);
+  }
+  .resultado:focus {
+    outline: none;
+  }
+</style>

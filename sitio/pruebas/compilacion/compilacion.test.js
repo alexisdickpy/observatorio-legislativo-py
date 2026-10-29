@@ -19,6 +19,7 @@ import { MINIMO_VOTACIONES_AUSENCIAS, masAusentes } from "../../src/lib/rankings
 import { votosDistintosAlPartido } from "../../src/lib/votosDistintos.js";
 import { votosPorTema } from "../../src/lib/votosPorTema.js";
 import { compartirVotacion } from "../../src/lib/compartir.js";
+import { datosDelTest, esPreliminar } from "../../src/lib/testAfinidad.js";
 
 const dist = resolve(process.cwd(), "dist");
 const pagina = (url) => join(dist, decodeURIComponent(url), "index.html");
@@ -576,9 +577,14 @@ test("cada página tiene título y descripción únicos, URL canónica e imagen 
     assert.ok(!descripciones.has(descripcion), `Descripción repetida en ${url} y ${descripciones.get(descripcion)}`);
     titulos.set(titulo, url);
     descripciones.set(descripcion, url);
-    assert.equal(etiqueta(html, /<link rel="canonical" href="([^"]*)"/), rutas.absoluta(url));
+    // Las páginas fuera de los buscadores (el test de afinidad preliminar) no llevan canónica ni og:url.
+    const indexable = !html.includes('<meta name="robots" content="noindex">');
+    assert.ok(indexable || (esPreliminar() && url === rutas.testAfinidad()), `${url} no se indexa`);
+    if (indexable) {
+      assert.equal(etiqueta(html, /<link rel="canonical" href="([^"]*)"/), rutas.absoluta(url));
+      assert.equal(metaPropiedad(html, "og:url"), rutas.absoluta(url));
+    }
     assert.equal(metaPropiedad(html, "og:title"), titulo);
-    assert.equal(metaPropiedad(html, "og:url"), rutas.absoluta(url));
     const imagen = metaPropiedad(html, "og:image");
     assert.ok(imagen?.startsWith(rutas.sitio) && existsSync(archivoDe(imagen)), `Imagen inexistente en ${url}`);
   }
@@ -604,7 +610,9 @@ test("datos estructurados válidos en leyes, legisladores, datos abiertos e inic
 test("sitemap.xml con todas las páginas indexables y robots.txt que lo anuncia", () => {
   const sitemap = readFileSync(join(dist, "sitemap.xml"), "utf-8");
   const enSitemap = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  const paginas = todasLasPaginas().filter((u) => u !== rutas.buscar()).map(rutas.absoluta);
+  // El buscador y, mientras sus preguntas sean preliminares, el test de afinidad no se indexan.
+  const fuera = [rutas.buscar(), ...(esPreliminar() ? [rutas.testAfinidad()] : [])];
+  const paginas = todasLasPaginas().filter((u) => !fuera.includes(u)).map(rutas.absoluta);
   assert.deepEqual([...enSitemap].sort(), [...paginas].sort());
   const robots = readFileSync(join(dist, "robots.txt"), "utf-8");
   assert.ok(robots.includes(`Sitemap: ${rutas.absoluta(rutas.sitemap())}`));
@@ -631,7 +639,7 @@ test("los textos propios de las páginas generales no usan dos puntos", () => {
   // Solo páginas sin valores oficiales; la cita obligatoria se mantiene textual.
   const { cita } = estado().fuente;
   // En las páginas de votaciones, los títulos oficiales de proyectos y leyes van en <span class="titulo">.
-  const urls = [rutas.inicio(), rutas.metodologia(), rutas.privacidad(), rutas.datosAbiertos(), rutas.buscar(), rutas.votacionesNominales(), rutas.coincidencia(), rutas.rankings(), ...paginasDeVotaciones(), ...paginasDeTemas()];
+  const urls = [rutas.inicio(), rutas.metodologia(), rutas.privacidad(), rutas.datosAbiertos(), rutas.buscar(), rutas.votacionesNominales(), rutas.coincidencia(), rutas.rankings(), rutas.testAfinidad(), ...paginasDeVotaciones(), ...paginasDeTemas()];
   for (const url of urls) {
     const visible = leer(url)
       .replace(/<(script|style)[\s\S]*?<\/\1>/g, " ")
@@ -764,4 +772,33 @@ test("una página por votación con su imagen para compartir, botones sin servic
   };
   recorrer(dist);
   assert.ok(archivos < 15_000, `El sitio tiene ${archivos} archivos`);
+});
+
+test("test de afinidad: preguntas sin votos ni autores, enlace al proyecto, datos para el cálculo y nada externo", () => {
+  const datos = datosDelTest(periodos().find((p) => p.vigente).id);
+  const html = leer(rutas.testAfinidad());
+  const test_ = html.match(/<div class="test[^"]*" id="test-afinidad"[\s\S]*?<section class="resultado/)?.[0] ?? "";
+  assert.equal((test_.match(/data-pregunta=/g) ?? []).length, datos.preguntas.length);
+  for (const p of datos.preguntas) {
+    assert.ok(test_.includes(`Ley N° ${p.numeroLey}`), `Falta el número de ley de ${p.id}`);
+    assert.ok(test_.includes(`href="${p.proyecto}"`), `Falta el enlace al proyecto de ${p.id}`);
+    // Durante el test no se enlaza a la ficha de la ley ni a las votaciones, que muestran los votos.
+    assert.ok(!test_.includes(`href="${rutas.ley(p.numeroLey)}"`));
+    for (const v of p.votaciones) assert.ok(!test_.includes(rutas.votacion(v.id)));
+  }
+  for (const n of [">SI<", ">NO<", "AUSENTE", "presentado por"]) assert.ok(!test_.includes(n), `El test muestra «${n}»`);
+  assert.ok(html.includes('id="datos-test-afinidad"'), "Faltan los datos del cálculo");
+  // Sin recursos de otros sitios ni almacenamiento: solo scripts propios.
+  for (const m of html.matchAll(/<script[^>]*src="([^"]+)"/g)) assert.ok(m[1].startsWith("/"), `Script externo ${m[1]}`);
+  assert.ok(!/localStorage|sessionStorage|document\.cookie|fetch\(/.test(html), "El test no debe guardar ni pedir datos");
+  // Las páginas de las votaciones y las fichas de ley del resultado existen.
+  for (const p of datos.preguntas) {
+    assert.ok(existsSync(pagina(p.ley)), `Falta ${p.ley}`);
+    for (const v of p.votaciones) assert.ok(existsSync(pagina(v.url)), `Falta ${v.url}`);
+  }
+  if (esPreliminar()) {
+    assert.ok(html.includes('<meta name="robots" content="noindex">') && html.includes("data-preliminar"));
+    const menu = leer(rutas.inicio()).match(/<nav aria-label="Principal"[\s\S]*?<\/nav>/)?.[0] ?? "";
+    assert.ok(!menu.includes(rutas.testAfinidad()), "El test preliminar no va en el menú");
+  }
 });

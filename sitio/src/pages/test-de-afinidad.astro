@@ -1,0 +1,55 @@
+---
+// Test de afinidad (alcance acordado en #63). El visitante responde, una por una, preguntas basadas en
+// votaciones nominales reales y ve con qué partidos coinciden sus respuestas. Durante el test no se
+// muestran autores ni votos. Todo se calcula en el navegador (lib/afinidad.js), sin guardar nada.
+// Mientras las preguntas estén en revisión (#64), la página no se indexa ni está en el menú.
+import Base from "../layouts/Base.astro";
+import TestAfinidad from "../components/TestAfinidad.astro";
+import { periodos } from "../lib/datos.js";
+import { datosDelTest } from "../lib/testAfinidad.js";
+import * as rutas from "../lib/rutas.js";
+
+const periodo = periodos().find((p) => p.vigente).id;
+const datos = datosDelTest(periodo);
+---
+
+<Base
+  titulo="Test de afinidad"
+  descripcion={`Preguntas sobre leyes votadas por el Congreso Nacional del Paraguay en el período ${periodo}, para comparar tus respuestas con los votos de cada partido.`}
+  indexar={!datos.preliminar}
+>
+  <div class="encabezado-test">
+    <h1>Test de afinidad</h1>
+    {
+      datos.preliminar && (
+        <p class="aviso" data-preliminar>
+          Versión preliminar. Las preguntas todavía están en revisión y pueden cambiar.
+        </p>
+      )
+    }
+    <p class="texto-suave">
+      {datos.preguntas.length} preguntas sobre leyes votadas por el Congreso en el período {periodo}. Al final ves
+      cuánto coinciden tus respuestas con lo que votó cada partido. Nada se guarda ni se envía.{" "}
+      <a href={rutas.metodologia(rutas.anclasMetodologia.testAfinidad)}>Cómo funciona</a>
+    </p>
+    <noscript>
+      <p class="aviso">El test necesita JavaScript para calcular el resultado en tu navegador.</p>
+    </noscript>
+  </div>
+
+  <TestAfinidad datos={datos} />
+</Base>
+
+<style>
+  .encabezado-test {
+    max-width: var(--ancho-lectura);
+    margin: 0 auto;
+    text-align: center;
+  }
+  .aviso {
+    padding: var(--espacio-3) var(--espacio-4);
+    background: var(--color-marca);
+    border-left: var(--foco-ancho) solid var(--color-foco);
+    text-align: left;
+  }
+</style>
