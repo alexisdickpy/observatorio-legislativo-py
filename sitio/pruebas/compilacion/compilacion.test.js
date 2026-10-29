@@ -304,7 +304,10 @@ test("mapa de diputados: una zona por departamento, la lista con cada diputado, 
   const portada = leer(rutas.inicio());
   assert.equal((portada.match(/class="zona"/g) ?? []).length, m.zonas.length);
   assert.ok(portada.includes(`href="${rutas.mapaDiputados()}#${m.zonas[0].ancla}"`));
-  assert.ok(!portada.includes('class="mapa-lista"') && !portada.includes('id="mapa-detalle"'), "La portada lleva solo el dibujo");
+  assert.ok(portada.includes('class="mapa-lista" hidden') && portada.includes('id="mapa-detalle"'), "En la portada, la lista oculta alimenta el detalle");
+  // Orden de la portada: análisis, test, leyes por tema, votos por tema, mapa y votaciones.
+  const orden = ['id="titulo-analisis"', 'id="test-portada"', 'id="titulo-cuadro-temas"', 'data-analisis="temas"', 'id="mapa-portada"', 'data-analisis="votaciones"'].map((m) => portada.indexOf(m));
+  assert.ok(orden.every((n, i) => n >= 0 && (i === 0 || n > orden[i - 1])), `Orden de la portada ${orden}`);
   assert.ok(texto(rutas.mapaDiputados()).includes(`${m.total} diputados en ejercicio`));
   assert.ok(html.includes("Natural Earth"));
   assert.ok(!/<script[^>]+src="https?:/.test(html), "Sin scripts de terceros");

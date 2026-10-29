@@ -2,15 +2,16 @@
 // Mapa de diputados por departamento (#65) y, debajo, la lista con los mismos datos, que es la
 // alternativa accesible y la vista de pantallas chicas. Cada zona es un enlace a su departamento en
 // la lista; con JavaScript, el detalle se muestra además junto al mapa.
-// Con soloMapa (portada), solo el dibujo: cada zona lleva a su departamento en la página del mapa.
+// Con sinLista (portada), la lista queda oculta y solo alimenta el detalle; sin JavaScript, cada zona
+// lleva a su departamento en la página del mapa.
 import * as rutas from "../lib/rutas.js";
 
 interface Props {
   mapa: any;
-  soloMapa?: boolean;
+  sinLista?: boolean;
 }
-const { mapa, soloMapa = false } = Astro.props;
-const enlace = (z: any) => (soloMapa ? `${rutas.mapaDiputados()}#${z.ancla}` : `#${z.ancla}`);
+const { mapa, sinLista = false } = Astro.props;
+const enlace = (z: any) => (sinLista ? `${rutas.mapaDiputados()}#${z.ancla}` : `#${z.ancla}`);
 // Asunción es muy chica para su cifra: su círculo va al costado, unido por una línea a su lugar real.
 const CAPITAL = "PY-ASU";
 const DESVIO_CAPITAL = [-32, -14];
@@ -19,7 +20,7 @@ const plural = (n: number) => (n === 1 ? "1 diputado" : `${n} diputados`);
 const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConocido})` : (d.partido ?? "Sin dato"));
 ---
 
-<div class:list={["mapa-departamentos", { "solo-mapa": soloMapa }]}>
+<div class:list={["mapa-departamentos", { "sin-lista": sinLista }]}>
   <figure class="mapa-dibujo">
     <svg viewBox={`0 0 ${mapa.ancho} ${mapa.alto}`} role="group" aria-label="Mapa del Paraguay por departamento">
       {
@@ -51,18 +52,13 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
       El color depende solo de la cantidad de diputados. El círculo es {mapa.zonas.find((z: any) => z.codigo === CAPITAL)?.nombre}.
     </figcaption>
   </figure>
-  {
-    !soloMapa && (
-      <div class="mapa-detalle" id="mapa-detalle" aria-live="polite" hidden>
-        <p class="texto-suave">Elegí un departamento en el mapa.</p>
-      </div>
-    )
-  }
+  <div class="mapa-detalle" id="mapa-detalle" aria-live="polite" hidden>
+    <p class="texto-suave">Elegí un departamento en el mapa.</p>
+  </div>
 </div>
 
-{!soloMapa && <h2>Diputados por departamento</h2>}
-{!soloMapa && (
-<div class="mapa-lista">
+{!sinLista && <h2>Diputados por departamento</h2>}
+<div class="mapa-lista" hidden={sinLista}>
   {
     mapa.zonas.map((z: any) => (
       <section id={z.ancla} class="departamento">
@@ -89,7 +85,6 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
     ))
   }
 </div>
-)}
 
 <script>
   const detalle = document.getElementById("mapa-detalle");
@@ -164,9 +159,6 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
   .mapa-departamentos .nivel-3 { fill: var(--color-mapa-3); background: var(--color-mapa-3); }
   .mapa-departamentos .nivel-4 { fill: var(--color-mapa-4); background: var(--color-mapa-4); }
   .mapa-departamentos .nivel-5 { fill: var(--color-mapa-5); background: var(--color-mapa-5); }
-  .mapa-departamentos.solo-mapa {
-    grid-template-columns: minmax(0, var(--ancho-mapa));
-  }
   .mapa-departamentos .cifra {
     fill: var(--color-mapa-cifra);
     font-size: var(--tamano-chico);
@@ -228,6 +220,9 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
     border-radius: 50%;
     object-fit: cover;
     background: var(--color-superficie);
+  }
+  .mapa-lista[hidden] {
+    display: none;
   }
   .mapa-lista {
     display: grid;

@@ -1,6 +1,7 @@
 ---
-// Apartado de la portada con cada vista de análisis (lib/navegacion.js) que no lleva `portada: false`
-// (las de `portadaAlFinal`, a lo ancho debajo de las demás; hoy, los temas y, al final, las últimas votaciones):
+// Apartado de la portada con cada vista de análisis (lib/navegacion.js) que no lleva `portada: false`.
+// Con parte="tarjetas", el apartado «Análisis» con las tarjetas; con la clave de una vista de
+// `portadaAlFinal` (hoy, "temas" y "votaciones"), solo esa vista a lo ancho, donde la ponga la portada:
 // su enlace, una línea sobre qué muestra y una vista previa con datos por cámara (lib/portada.js,
 // alcance acordado en #51). Solo la de rankings lleva nombres de personas, los primeros de más
 // «rebeldes» (#54, #57). Una vista sin vista previa propia muestra solo el enlace y la línea. En
@@ -14,13 +15,15 @@ import { vistaPrevia } from "../lib/portada.js";
 
 interface Props {
   periodo: string;
+  parte: string;
 }
-const { periodo } = Astro.props;
+const { periodo, parte } = Astro.props;
 const previa = vistaPrevia(periodo);
 const numero = (n: number) => n.toLocaleString("es-PY");
 const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${n === 1 ? singular : varios}`;
 ---
 
+{parte === "tarjetas" && (
 <section class="analisis" aria-labelledby="titulo-analisis">
   <h2 id="titulo-analisis">Análisis</h2>
   <div class="tarjetas">
@@ -83,16 +86,16 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
       ))
     }
   </div>
+</section>
+)}
   {
     vistasDeAnalisis()
-      .filter((v) => v.portada !== false && v.portadaAlFinal)
-      // Las votaciones van siempre al final.
-      .sort((a, b) => Number(a.clave === "votaciones") - Number(b.clave === "votaciones"))
+      .filter((v) => v.portada !== false && v.portadaAlFinal && v.clave === parte)
       .map((v) => (
         <article class="tarjeta al-final" data-analisis={v.clave}>
-          <h3>
+          <h2>
             <a href={v.url}>{v.titulo}</a>
-          </h3>
+          </h2>
           <p class="chico">{v.descripcion}</p>
           {v.clave === "temas" && <EtiquetasTema clasificacion={{ temas: previa.temas, pendiente: false }} enlaces />}
           {v.clave === "votaciones" && <ListaVotaciones votaciones={previa.votaciones} />}
@@ -102,7 +105,6 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
         </article>
       ))
   }
-</section>
 
 <script>
   // Sin JavaScript el selector queda oculto y se ve el gráfico del primer partido (el de más
@@ -161,7 +163,10 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
     margin-top: var(--espacio-4);
   }
   .al-final {
-    margin-top: var(--espacio-4);
+    margin-top: var(--espacio-6);
+  }
+  .tarjeta h2 {
+    margin-top: 0;
   }
   .camara h4 {
     margin: 0 0 var(--espacio-2);
