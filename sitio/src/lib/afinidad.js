@@ -5,9 +5,9 @@
 // Criterios (ver docs/metodologia.md):
 // - Respuestas "favor", "contra" o "sin" (sin posición). Solo cuentan "favor" y "contra"; "sin" no es
 //   coincidencia ni diferencia.
-// - Cada grupo o legislador tiene, por pregunta, una posición codificada en una letra (POSICION). Se
-//   compara solo si es A favor o En contra. Las demás (abstención, NO VOTA, AUSENTE, otra cámara, sin
-//   posición del grupo) quedan sin comparar y se cuentan aparte.
+// - Cada partido tiene, por pregunta, una posición codificada en una letra (POSICION). Se compara solo
+//   si es A favor o En contra. Las demás (sin mayoría a favor o en contra, posiciones distintas en cada
+//   cámara) quedan sin comparar y se cuentan aparte.
 // - Coincidencia = preguntas en que la posición fue la misma que la respuesta ÷ preguntas comparadas.
 //   Con menos de MINIMO_COMPARADAS preguntas comparadas se muestran las cantidades sin porcentaje.
 
@@ -15,14 +15,11 @@
 export const POSICION = {
   favor: "F",
   contra: "C",
-  abstencion: "A",
-  noVota: "N",
-  ausente: "U",
-  /** El grupo emitió votos, pero no tuvo una mayoría A favor o En contra (empate u otra opción). */
+  /** Sin mayoría A favor o En contra: empate, mayoría de abstenciones o de otra opción, o ningún voto emitido. */
   sinMayoria: "E",
-  /** Las dos cámaras tuvieron posiciones distintas (solo partidos). */
+  /** Las dos cámaras tuvieron posiciones distintas. */
   dividido: "D",
-  /** Sin votación de su cámara o sin registro en ella. */
+  /** Sin legisladores en las votaciones de esa pregunta. */
   noCorresponde: "-",
 };
 
@@ -35,16 +32,6 @@ export const RESPUESTAS = [
 
 /** Preguntas comparadas por debajo de las cuales no se muestra el porcentaje. */
 export const MINIMO_COMPARADAS = 4;
-
-/** Modos del test. El básico usa las preguntas marcadas como básicas. */
-export const MODOS = {
-  basico: { valor: "basico", texto: "Básico" },
-  avanzado: { valor: "avanzado", texto: "Avanzado" },
-};
-
-/** Índices de las preguntas de un modo. */
-export const preguntasDelModo = (preguntas, modo) =>
-  preguntas.map((p, n) => (modo === MODOS.avanzado.valor || p.basico ? n : -1)).filter((n) => n >= 0);
 
 const formatoPorcentaje = new Intl.NumberFormat("es-PY", { style: "percent", maximumFractionDigits: 0 });
 
@@ -92,26 +79,20 @@ const porCoincidencia = (a, b) =>
   b.c.comparadas - a.c.comparadas ||
   a.nombre.localeCompare(b.nombre, "es");
 
-/** Cantidad de preguntas respondidas A favor o En contra entre las del modo. */
-export const respondidas = (respuestas, indices) => indices.filter((n) => respuestas[n] === "favor" || respuestas[n] === "contra").length;
+/** Cantidad de preguntas respondidas A favor o En contra. */
+export const respondidas = (respuestas) => respuestas.filter((r) => r === "favor" || r === "contra").length;
 
 /**
- * Resultado del test. `datos` son los de lib/testAfinidad.js (partidos, bancadas, legisladores, cada
- * uno con su cadena `posiciones`). Devuelve cada lista ordenada, sin los que no tuvieron ninguna pregunta
- * comparada.
+ * Resultado del test. `datos` son los de lib/testAfinidad.js (preguntas y partidos, cada partido con su
+ * cadena `posiciones`). Devuelve los partidos ordenados, sin los que no tuvieron ninguna pregunta comparada.
  */
-export function calcularAfinidad(datos, respuestas, modo) {
-  const indices = preguntasDelModo(datos.preguntas, modo);
-  const ordenar = (lista) =>
-    lista
+export function calcularAfinidad(datos, respuestas) {
+  const indices = datos.preguntas.map((_, n) => n);
+  return {
+    respondidas: respondidas(respuestas),
+    partidos: datos.partidos
       .map((x) => ({ ...x, c: coincidenciaDe(x.posiciones, respuestas, indices) }))
       .filter((x) => x.c.comparadas > 0)
-      .sort(porCoincidencia);
-  return {
-    indices,
-    respondidas: respondidas(respuestas, indices),
-    partidos: ordenar(datos.partidos),
-    bancadas: ordenar(datos.bancadas),
-    legisladores: ordenar(datos.legisladores),
+      .sort(porCoincidencia),
   };
 }

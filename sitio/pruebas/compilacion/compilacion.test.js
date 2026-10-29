@@ -774,25 +774,28 @@ test("una página por votación con su imagen para compartir, botones sin servic
   assert.ok(archivos < 15_000, `El sitio tiene ${archivos} archivos`);
 });
 
-test("test de afinidad: preguntas sin votos ni autores, datos para el cálculo y nada externo", () => {
+test("test de afinidad: preguntas sin votos ni autores, enlace al proyecto, datos para el cálculo y nada externo", () => {
   const datos = datosDelTest(periodos().find((p) => p.vigente).id);
   const html = leer(rutas.testAfinidad());
-  const formulario = html.match(/<form[^>]*id="test-afinidad"[\s\S]*?<\/form>/)?.[0] ?? "";
-  assert.equal((formulario.match(/data-pregunta=/g) ?? []).length, datos.preguntas.length);
+  const test_ = html.match(/<div class="test[^"]*" id="test-afinidad"[\s\S]*?<section class="resultado/)?.[0] ?? "";
+  assert.equal((test_.match(/data-pregunta=/g) ?? []).length, datos.preguntas.length);
   for (const p of datos.preguntas) {
-    assert.ok(formulario.includes(`name="p-${p.id}"`), `Falta la pregunta ${p.id}`);
-    // Durante el test no se ve el número de ley ni se enlaza a votaciones o fichas.
-    assert.ok(!formulario.includes(`Ley N° ${p.numeroLey}`) && !formulario.includes(rutas.ley(p.numeroLey)));
-    for (const v of p.votaciones) assert.ok(!formulario.includes(rutas.votacion(v.id)));
+    assert.ok(test_.includes(`Ley N° ${p.numeroLey}`), `Falta el número de ley de ${p.id}`);
+    assert.ok(test_.includes(`href="${p.proyecto}"`), `Falta el enlace al proyecto de ${p.id}`);
+    // Durante el test no se enlaza a la ficha de la ley ni a las votaciones, que muestran los votos.
+    assert.ok(!test_.includes(`href="${rutas.ley(p.numeroLey)}"`));
+    for (const v of p.votaciones) assert.ok(!test_.includes(rutas.votacion(v.id)));
   }
-  for (const n of ["SI", "NO", "AUSENTE", "presentado por"]) assert.ok(!formulario.includes(n), `El formulario muestra «${n}»`);
+  for (const n of [">SI<", ">NO<", "AUSENTE", "presentado por"]) assert.ok(!test_.includes(n), `El test muestra «${n}»`);
   assert.ok(html.includes('id="datos-test-afinidad"'), "Faltan los datos del cálculo");
   // Sin recursos de otros sitios ni almacenamiento: solo scripts propios.
   for (const m of html.matchAll(/<script[^>]*src="([^"]+)"/g)) assert.ok(m[1].startsWith("/"), `Script externo ${m[1]}`);
   assert.ok(!/localStorage|sessionStorage|document\.cookie|fetch\(/.test(html), "El test no debe guardar ni pedir datos");
-  // Las páginas de las votaciones del resultado existen.
-  for (const p of datos.preguntas) for (const v of p.votaciones) assert.ok(existsSync(pagina(v.url)), `Falta ${v.url}`);
-  for (const l of datos.legisladores) if (l.ficha) assert.ok(existsSync(pagina(l.ficha)), `Falta ${l.ficha}`);
+  // Las páginas de las votaciones y las fichas de ley del resultado existen.
+  for (const p of datos.preguntas) {
+    assert.ok(existsSync(pagina(p.ley)), `Falta ${p.ley}`);
+    for (const v of p.votaciones) assert.ok(existsSync(pagina(v.url)), `Falta ${v.url}`);
+  }
   if (esPreliminar()) {
     assert.ok(html.includes('<meta name="robots" content="noindex">') && html.includes("data-preliminar"));
     const menu = leer(rutas.inicio()).match(/<nav aria-label="Principal"[\s\S]*?<\/nav>/)?.[0] ?? "";

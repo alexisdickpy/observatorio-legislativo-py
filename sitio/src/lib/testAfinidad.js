@@ -4,17 +4,15 @@
 // Criterios (ver docs/metodologia.md):
 // - Preguntas en datos/propios/test-afinidad.json: cada una con una votación nominal por cámara como
 //   máximo, de un proyecto que llegó a ser la ley indicada. La compilación falla si una votación no
-//   existe, no es de esa ley o repite cámara.
-// - Legislador: su voto oficial en la votación de su cámara. SI o NO se comparan según votoAFavor;
-//   ABSTENCIÓN/BLANCO, NO VOTA y AUSENTE quedan sin comparar.
-// - Bancada: su mayoría en la votación de su cámara (mayoriaDe, la misma regla de la coincidencia de
-//   votos y de la posición de cada partido). Partido: su mayoría en cada cámara, con el partido
-//   unificado; si las dos cámaras tuvieron posiciones distintas, la pregunta no se compara. Un grupo sin
-//   mayoría (empate, otra opción o ningún voto emitido) queda sin comparar en esa votación.
-// - Partido y bancada: los que la API registra para el período, no por fecha.
+//   existe, no es de esa ley o repite cámara. Cada pregunta enlaza al expediente oficial del proyecto.
+// - Partido: su mayoría en la votación de cada cámara (mayoriaDe, la misma regla de la coincidencia de
+//   votos y de la posición de cada partido), con el partido unificado. SI o NO se comparan según
+//   votoAFavor. Si las dos cámaras tuvieron posiciones distintas, la pregunta no se compara. Sin mayoría
+//   SI o NO (empate, abstención u otra opción, o ningún voto emitido) queda sin comparar en esa votación.
+// - Partido: el que la API registra para el período, no por fecha.
 
-import { leerJson, personas } from "./datos.js";
-import { indice, nombreDe, posicionCamara, valor } from "./ficha.js";
+import { leerJson } from "./datos.js";
+import { indice, posicionCamara, valor } from "./ficha.js";
 import { mayoriasDelPeriodo } from "./legisladores.js";
 import { posicionDe } from "./coincidencia.js";
 import { POSICION } from "./afinidad.js";
@@ -23,13 +21,12 @@ import { temas } from "./temas.js";
 import * as rutas from "./rutas.js";
 
 const OPUESTO = { SI: "NO", NO: "SI" };
-const LETRA_DE_VOTO = { "ABSTENCIÓN/BLANCO": POSICION.abstencion, "NO VOTA": POSICION.noVota, AUSENTE: POSICION.ausente };
 
-/** Posición (letra) que corresponde a un voto oficial o a una mayoría, según el voto que equivale a «A favor». */
+/** Posición (letra) que corresponde a una mayoría, según el voto que equivale a «A favor». */
 export function letraDe(sentido, votoAFavor) {
   if (sentido === votoAFavor) return POSICION.favor;
   if (sentido === OPUESTO[votoAFavor]) return POSICION.contra;
-  return LETRA_DE_VOTO[sentido] ?? POSICION.sinMayoria;
+  return POSICION.sinMayoria;
 }
 
 /** Posición de un partido en una pregunta, a partir de sus posiciones en cada cámara (letras). */
@@ -48,9 +45,9 @@ const porTexto = (a, b) => a.localeCompare(b, "es");
 const cache = new Map();
 
 /**
- * Preguntas y posiciones del test para un período. Cada pregunta lleva su ley, su tema (de lib/temas.js) y sus votaciones
- * (con cámara, fecha y página propia). Partidos, bancadas y legisladores llevan una cadena `posiciones`
- * con una letra por pregunta (POSICION de lib/afinidad.js).
+ * Preguntas y posiciones del test para un período. Cada pregunta lleva su ley, el enlace oficial a su
+ * proyecto, su tema (de lib/temas.js), su explicación y sus votaciones (con cámara, fecha y página propia).
+ * Cada partido lleva una cadena `posiciones` con una letra por pregunta (POSICION de lib/afinidad.js).
  */
 export function datosDelTest(periodo) {
   if (cache.has(periodo)) return cache.get(periodo);
@@ -67,6 +64,7 @@ export function datosDelTest(periodo) {
     if (!OPUESTO[p.votoAFavor]) throw new Error(`votoAFavor debe ser SI o NO en la pregunta ${p.id}`);
     if (!temasPorId.has(p.tema)) throw new Error(`Tema desconocido en la pregunta ${p.id}: ${p.tema}`);
     const camaras = new Set();
+    let proyecto = null;
     const votaciones = p.votaciones.map((id) => {
       const v = i.votaciones.get(id);
       if (!v) throw new Error(`La pregunta ${p.id} usa la votación ${id}, que no está en los datos`);
@@ -75,6 +73,7 @@ export function datosDelTest(periodo) {
       const camara = valor(v.tramitacion?.camaraTramite);
       if (!camara || camaras.has(camara)) throw new Error(`La pregunta ${p.id} tiene más de una votación de ${camara ?? "una cámara sin nombre"}`);
       camaras.add(camara);
+      proyecto ??= valor(v.proyecto?.appURL);
       return {
         id,
         camara,
@@ -88,63 +87,27 @@ export function datosDelTest(periodo) {
     return {
       id: p.id,
       pregunta: p.pregunta,
-      basico: Boolean(p.basico),
+      explicacion: valor(p.explicacion),
       votoAFavor: p.votoAFavor,
       numeroLey: p.numeroLey,
       ley: rutas.ley(p.numeroLey),
+      proyecto,
       tema: temasPorId.get(p.tema),
       votaciones,
     };
   });
 
-  const n = preguntas.length;
-  const cadena = () => Array(n).fill(POSICION.noCorresponde);
-
   // Partidos (unificados): letras por cámara de cada pregunta, combinadas después.
   const partidos = new Map();
-  // Bancadas: por cámara y texto oficial.
-  const bancadas = new Map();
   preguntas.forEach((p, k) => {
     for (const v of p.votaciones) {
-      const m = mayorias.get(v.id);
-      for (const [texto, mayoria] of m.partido) {
+      for (const [texto, mayoria] of mayorias.get(v.id).partido) {
         const u = partidoUnificado(texto);
         if (!partidos.has(u.id)) {
           partidos.set(u.id, { id: u.id, nombre: u.nombre, sigla: siglaDe(texto), conocido: nombreConocido(texto), letras: preguntas.map(() => []) });
         }
         const posicion = posicionDe(mayoria);
         partidos.get(u.id).letras[k].push(posicion ? letraDe(posicion, p.votoAFavor) : POSICION.sinMayoria);
-      }
-      for (const [texto, mayoria] of m.bancada) {
-        const clave = `${v.camara}|${texto}`;
-        if (!bancadas.has(clave)) bancadas.set(clave, { nombre: texto, camara: v.camara, posiciones: cadena() });
-        const posicion = posicionDe(mayoria);
-        bancadas.get(clave).posiciones[k] = posicion ? letraDe(posicion, p.votoAFavor) : POSICION.sinMayoria;
-      }
-    }
-  });
-
-  // Legisladores: su voto en la votación de su cámara.
-  const slugs = new Map(
-    personas().flatMap((x) => x.legisladores.filter((r) => r.periodoLegislativo === periodo).map((r) => [r.idLegislador, x.slug])),
-  );
-  const legisladores = new Map();
-  preguntas.forEach((p, k) => {
-    for (const v of p.votaciones) {
-      for (const voto of i.votos.get(v.id) ?? []) {
-        const id = Number(voto.idLegislador);
-        const l = i.legisladores.get(id);
-        if (!legisladores.has(id)) {
-          const slug = slugs.get(id);
-          legisladores.set(id, {
-            nombre: (l && nombreDe(l)) ?? `Legislador ${id}`,
-            sigla: l ? siglaDe(l.partidoPolitico) : null,
-            camara: valor(l?.camaraParlamentario) ?? v.camara,
-            ficha: slug ? rutas.legislador(slug) : null,
-            posiciones: cadena(),
-          });
-        }
-        legisladores.get(id).posiciones[k] = letraDe(voto.sentidoVotacion, p.votoAFavor);
       }
     }
   });
@@ -155,12 +118,6 @@ export function datosDelTest(periodo) {
     preguntas,
     partidos: [...partidos.values()]
       .map(({ letras, ...x }) => ({ ...x, posiciones: letras.map(posicionCombinada).join("") }))
-      .sort((a, b) => porTexto(a.nombre, b.nombre)),
-    bancadas: [...bancadas.values()]
-      .map((b) => ({ ...b, posiciones: b.posiciones.join("") }))
-      .sort((a, b) => posicionCamara(a.camara) - posicionCamara(b.camara) || porTexto(a.nombre, b.nombre)),
-    legisladores: [...legisladores.values()]
-      .map((l) => ({ ...l, posiciones: l.posiciones.join("") }))
       .sort((a, b) => porTexto(a.nombre, b.nombre)),
   };
   cache.set(periodo, datos);

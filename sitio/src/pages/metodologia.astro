@@ -23,7 +23,6 @@ const observaciones = observacionesDeLosDatos();
 const anclas = rutas.anclasMetodologia;
 const preguntasTest = datosDelTest(vigente.id).preguntas;
 const TOTAL_PREGUNTAS = preguntasTest.length;
-const PREGUNTAS_BASICO = preguntasTest.filter((p) => p.basico).length;
 ---
 
 <Base
@@ -387,26 +386,27 @@ const PREGUNTAS_BASICO = preguntasTest.filter((p) => p.basico).length;
 
     <h2 id={anclas.testAfinidad}>Test de afinidad</h2>
     <p>
-      El <a href={rutas.testAfinidad()}>test de afinidad</a> tiene preguntas basadas en votaciones
-      nominales en general de proyectos que llegaron a ser ley en el período. Cada pregunta usa como máximo
-      una votación por cámara. El modo básico tiene {PREGUNTAS_BASICO} preguntas y el avanzado,
-      {TOTAL_PREGUNTAS}. Durante el test no se muestran autores ni votos.
+      El <a href={rutas.testAfinidad()}>test de afinidad</a> tiene {TOTAL_PREGUNTAS} preguntas basadas en
+      votaciones nominales en general de proyectos que llegaron a ser ley en el período. Cada pregunta usa
+      como máximo una votación por cámara y muestra el número de la ley y el enlace al proyecto en el sitio
+      oficial del Congreso. Durante el test no se muestran autores ni votos.
+    </p>
+    <p>
+      La pregunta y la explicación breve que la acompaña son textos propios de este sitio, escritos a partir
+      del texto oficial y de información pública, sin valoraciones. Responder sobre una ley es responder
+      sobre todo lo que se votó en esa votación, aunque la pregunta resuma una parte.
     </p>
     <p>
       Las respuestas posibles son A favor, En contra y Sin posición. Sin posición no cuenta como
-      coincidencia ni como diferencia. Responder sobre una ley es responder sobre todo lo que se votó en esa
-      votación, aunque la pregunta resuma una parte.
+      coincidencia ni como diferencia. La posición de un partido en una votación es su mayoría, con la misma
+      regla de la <a href={`#${anclas.coincidencia}`}>coincidencia de votos</a>. Si la mayoría no es SI ni NO,
+      o hay empate, la pregunta queda sin comparar para ese partido. Un partido con posiciones distintas en
+      las dos cámaras tampoco se compara en esa pregunta. El partido es el que la API registra para el
+      período, sin fecha.
     </p>
     <p>
-      Cada legislador se compara con su voto en la votación de su cámara. Solo se comparan SI y NO;
-      ABSTENCIÓN/BLANCO, NO VOTA y AUSENTE quedan sin comparar y se cuentan aparte. La posición de una
-      bancada o de un partido es su mayoría, con la misma regla de la <a href={`#${anclas.coincidencia}`}>coincidencia
-      de votos</a>. Si la mayoría no es SI ni NO, o hay empate, la pregunta queda sin comparar. Un partido
-      con posiciones distintas en las dos cámaras tampoco se compara en esa pregunta. Partido y bancada son
-      los que la API registra para el período, sin fecha.
-    </p>
-    <p>
-      Coincidencia = preguntas en que la posición fue igual a la respuesta ÷ preguntas comparadas × 100
+      Coincidencia = preguntas en que la posición del partido fue igual a la respuesta ÷ preguntas
+      comparadas × 100
     </p>
     <p>
       Con menos de {MINIMO_COMPARADAS} preguntas comparadas se muestran las cantidades sin porcentaje. El

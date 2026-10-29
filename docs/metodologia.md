@@ -283,22 +283,21 @@ Comprobación. Las pruebas recalculan a mano, con un recuento aparte de `votacio
 
 ## Test de afinidad
 
-Decisión de alcance (#63). La página `/test-de-afinidad/` tiene preguntas basadas en votaciones nominales reales y compara las respuestas del visitante con los votos de partidos, bancadas y legisladores.
+Decisión de alcance (#63). La página `/test-de-afinidad/` tiene 12 preguntas basadas en votaciones nominales reales, una por vez, y al final compara las respuestas del visitante con la posición de cada partido.
 
-- **Preguntas.** En `datos/propios/test-afinidad.json`, un archivo propio que se edita a mano. Cada pregunta indica la ley (`numeroLey`), su tema (de `temas.json`), si es del modo básico, el texto de la pregunta, una votación nominal por cámara como máximo (`votaciones`) y qué voto oficial equivale a responder «A favor» (`votoAFavor`, `SI` o `NO`). La compilación falla si una votación no existe, no está enlazada a esa ley o repite cámara. La selección y los textos de la lista actual son preliminares; la revisión editorial y los criterios definitivos de selección son parte de #64. Mientras `estado` sea `preliminar`, la página lleva `noindex`, no está en el sitemap ni en el menú y muestra un aviso.
-- **Modos.** Básico (las preguntas con `basico: true`, 12) y avanzado (todas, 24).
-- **Respuestas.** A favor, En contra y Sin posición. Sin posición no cuenta como coincidencia ni como diferencia. Durante el test no se muestran autores, votos ni el número de la ley.
-- **Legisladores.** Cada uno se compara con su voto oficial en la votación de su cámara. `SI` y `NO` se comparan según `votoAFavor`. `ABSTENCIÓN/BLANCO`, `NO VOTA`, `AUSENTE` y las mociones quedan sin comparar y se informan aparte. Una pregunta sin votación de su cámara no figura para él.
-- **Bancadas y partidos.** La posición de un grupo en una votación es su mayoría (`mayoriaDe`, la misma regla de la coincidencia de votos). Si no es `SI` ni `NO`, hay empate o ningún miembro emitió voto, la pregunta queda sin comparar para ese grupo. Las bancadas usan la votación de su cámara. Los partidos se identifican con el partido unificado y combinan sus dos cámaras. Si tuvieron posición en una sola, vale esa; si tuvieron posiciones distintas, la pregunta no se compara. Partido y bancada son los que la API registra para el período, sin fecha.
+- **Preguntas.** En `datos/propios/test-afinidad.json`, un archivo propio que se edita a mano. Cada pregunta indica la ley (`numeroLey`), su tema (de `temas.json`), el texto de la pregunta, una explicación breve opcional, las fuentes de esa explicación, una votación nominal por cámara como máximo (`votaciones`) y qué voto oficial equivale a responder «A favor» (`votoAFavor`, `SI` o `NO`). La compilación falla si una votación no existe, no está enlazada a esa ley o repite cámara. La selección y los textos de la lista actual son preliminares; la revisión editorial y los criterios definitivos de selección son parte de #64. Mientras `estado` sea `preliminar`, la página lleva `noindex`, no está en el sitemap ni en el menú y muestra un aviso.
+- **Textos.** La pregunta y la explicación son textos propios, cortos y sin valoraciones, escritos a partir del texto oficial y de información pública (campo `fuentes`). Cada pregunta muestra el número de la ley y enlaza al expediente oficial del proyecto en SILpy (`proyecto.appURL` de la primera votación).
+- **Respuestas.** A favor, En contra y Sin posición. Sin posición no cuenta como coincidencia ni como diferencia. Durante el test no se muestran autores ni votos, ni enlaces a la ficha de la ley o a las votaciones de este sitio, que los muestran.
+- **Partidos.** La posición de un partido en una votación es su mayoría (`mayoriaDe`, la misma regla de la coincidencia de votos), con el partido unificado. Si no es `SI` ni `NO`, hay empate o ningún miembro emitió voto, la pregunta queda sin comparar en esa votación. Con votaciones en las dos cámaras, si tuvo posición en una sola, vale esa; si tuvo posiciones distintas, la pregunta no se compara. El partido es el que la API registra para el período, sin fecha.
 
-> coincidencia = preguntas en que la posición fue igual a la respuesta ÷ preguntas comparadas × 100
+> coincidencia = preguntas en que la posición del partido fue igual a la respuesta ÷ preguntas comparadas × 100
 
 - **Umbral.** Con menos de 4 preguntas comparadas se muestran las cantidades sin porcentaje, al final de la lista.
-- **Orden.** De mayor a menor coincidencia; a igualdad, de más a menos preguntas comparadas y por nombre. En legisladores se ven los 10 primeros y se pueden ver todos o filtrar por cámara.
+- **Orden.** De mayor a menor coincidencia; a igualdad, de más a menos preguntas comparadas y por nombre.
 - **Privacidad.** El cálculo corre en el navegador con los datos incluidos en la página al compilarla (`lib/testAfinidad.js` los prepara y `lib/afinidad.js` calcula). Sin inteligencia artificial, sin cookies, sin almacenamiento local y sin pedidos a ningún servidor. Las respuestas no se guardan ni se envían.
-- **Al terminar.** Para cada pregunta se muestran la respuesta, la ley, el enlace a la página de cada votación y la mayoría de cada partido.
+- **Al terminar.** Una lista desplegable muestra, para cada pregunta, la respuesta, la ficha de la ley, la página de cada votación y la mayoría de cada partido.
 
-Comprobación. Las pruebas cubren las letras de cada voto y mayoría, la combinación de cámaras, Sin posición, los votos sin comparar, el umbral y el orden, y recalculan a mano el voto de un legislador y la mayoría de cada partido en una pregunta desde `votos.csv`.
+Comprobación. Las pruebas cubren las letras de cada mayoría, la combinación de cámaras, Sin posición, las preguntas sin comparar, el umbral y el orden, el largo de los textos y el enlace al proyecto, y recalculan a mano la mayoría de cada partido en una pregunta desde `votos.csv`.
 
 ## Números de ley
 
