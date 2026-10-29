@@ -10,6 +10,7 @@ import { detalleDeRegistro } from "../../src/lib/ficha.js";
 import { archivosCalculados } from "../../src/lib/calculados.js";
 import { coincidencia, textoDeCoincidencia } from "../../src/lib/coincidencia.js";
 import { comparativa, ficha, legisladores, listado } from "../../src/lib/legisladores.js";
+import { mapaDeDiputados } from "../../src/lib/mapa.js";
 import { observacionesDeLosDatos } from "../../src/lib/metodologia.js";
 import { menuPrincipal, vistasDeAnalisis } from "../../src/lib/navegacion.js";
 import { vistaPrevia } from "../../src/lib/portada.js";
@@ -287,6 +288,20 @@ test("rankings, más «ausentes»: cifras con su denominador, enlaces, fotos, m�
   assert.deepEqual(orden, camaras.flatMap((c) => c.filas.map((f) => f.slug)));
   // La lista de ausentes no va en la portada.
   assert.ok(!leer(rutas.inicio()).includes("data-ausencias="), "La portada muestra la lista de más «ausentes»");
+});
+
+test("mapa de diputados: una zona por departamento, la lista con cada diputado, la fuente y los enlaces", () => {
+  const html = leer(rutas.mapaDiputados());
+  const m = mapaDeDiputados(periodos().find((p) => p.vigente).id);
+  assert.equal((html.match(/class="zona"/g) ?? []).length, m.zonas.length);
+  for (const z of m.zonas) {
+    assert.ok(html.includes(`href="#${z.ancla}"`) && html.includes(`id="${z.ancla}"`), z.nombre);
+    for (const d of z.diputados) assert.ok(html.includes(`href="${d.url}"`), d.url);
+  }
+  assert.ok(texto(rutas.mapaDiputados()).includes(`${m.total} diputados en ejercicio`));
+  assert.ok(html.includes("Natural Earth"));
+  assert.ok(!/<script[^>]+src="https?:/.test(html), "Sin scripts de terceros");
+  for (const url of [rutas.inicio(), rutas.legisladores()]) assert.ok(leer(url).includes(`href="${rutas.mapaDiputados()}"`), url);
 });
 
 test("las direcciones que cambiaron redirigen con una redirección permanente", () => {

@@ -16,6 +16,8 @@ export const ley = (numeroLey) => `/leyes/${encodeURIComponent(numeroLey)}/`;
 export const anclaVotacion = (idVotacion) => `votacion-${idVotacion}`;
 export const votacionEnLey = (numeroLey, idVotacion) => `${ley(numeroLey)}#${anclaVotacion(idVotacion)}`;
 export const legisladores = () => "/legisladores/";
+/** Mapa de diputados por departamento (#65). */
+export const mapaDiputados = () => "/legisladores/mapa/";
 /** Ficha de una persona, con el slug de datos/propios/personas.json. */
 export const legislador = (slug) => `/legisladores/${encodeURIComponent(slug)}/`;
 export const buscar = () => "/buscar/";
@@ -46,6 +48,7 @@ export const anclasMetodologia = {
   temas: "temas-de-las-leyes",
   votosPorTema: "votos-de-partidos-y-bancadas-por-tema",
   testAfinidad: "test-de-afinidad",
+  mapa: "mapa-de-diputados-por-departamento",
 };
 
 /** Repositorio público del proyecto: código, datos y licencias. */

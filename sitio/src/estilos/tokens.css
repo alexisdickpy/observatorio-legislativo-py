@@ -48,6 +48,16 @@
   --color-tema-pendiente: var(--color-borde);
   --mezcla-fondo-tema: 14%; /* cuánto color del tema lleva el fondo de su etiqueta */
 
+  /* Mapa de diputados (#65): escala por cantidad de diputados, sin relación con los partidos */
+  --color-mapa-0: #eef0f2;
+  --color-mapa-1: #dbe8f4;
+  --color-mapa-2: #b3cde6;
+  --color-mapa-3: #7fa9d3;
+  --color-mapa-4: #4a80bb;
+  --color-mapa-5: #1f5a99;
+  --color-mapa-limite: #ffffff;
+  --ancho-mapa: 36rem;
+
   /* Tipografía */
   --fuente-texto: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --fuente-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
