@@ -796,9 +796,14 @@ test("test de afinidad: preguntas sin votos ni autores, enlace al proyecto, dato
     assert.ok(existsSync(pagina(p.ley)), `Falta ${p.ley}`);
     for (const v of p.votaciones) assert.ok(existsSync(pagina(v.url)), `Falta ${v.url}`);
   }
-  if (esPreliminar()) {
-    assert.ok(html.includes('<meta name="robots" content="noindex">') && html.includes("data-preliminar"));
-    const menu = leer(rutas.inicio()).match(/<nav aria-label="Principal"[\s\S]*?<\/nav>/)?.[0] ?? "";
-    assert.ok(!menu.includes(rutas.testAfinidad()), "El test preliminar no va en el menú");
-  }
+  // Publicado (#64): se indexa, sin aviso de versión preliminar, en el menú, en la portada y en el sitemap.
+  assert.equal(esPreliminar(), false);
+  assert.ok(!html.includes('<meta name="robots" content="noindex">') && !html.includes("data-preliminar"));
+  const inicio = leer(rutas.inicio());
+  const menu = inicio.match(/<nav aria-label="Principal"[\s\S]*?<\/nav>/)?.[0] ?? "";
+  assert.ok(menu.includes(`href="${rutas.testAfinidad()}"`), "Falta el test en el menú");
+  const portada = inicio.match(/<main[\s\S]*<\/main>/)?.[0] ?? "";
+  assert.ok(portada.includes(`href="${rutas.testAfinidad()}"`), "Falta el test en la portada");
+  assert.ok(readFileSync(join(dist, "sitemap.xml"), "utf-8").includes(`${rutas.testAfinidad()}</loc>`), "Falta el test en el sitemap");
+  assert.ok(texto(rutas.privacidad()).includes("test de afinidad"), "La privacidad no menciona el test");
 });
