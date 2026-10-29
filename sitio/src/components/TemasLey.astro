@@ -1,0 +1,26 @@
+---
+// Temas de una ley según la clasificación propia (lib/temas.js, #36), señalados como dato del
+// Observatorio y no oficial. Cada tema enlaza al catálogo filtrado por ese tema.
+import EtiquetasTema from "./EtiquetasTema.astro";
+import * as rutas from "../lib/rutas.js";
+
+interface Props {
+  clasificacion: { temas: { id: string; nombre: string; url: string }[]; pendiente: boolean };
+}
+const { clasificacion } = Astro.props;
+---
+
+<p class="temas-ley chico">
+  <span class="texto-suave">Tema según el Observatorio</span>
+  <EtiquetasTema clasificacion={clasificacion} enlaces />
+  <a class="texto-suave" href={rutas.metodologia(rutas.anclasMetodologia.temas)}>Cómo se clasifica</a>
+</p>
+
+<style>
+  .temas-ley {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--espacio-1) var(--espacio-2);
+  }
+</style>

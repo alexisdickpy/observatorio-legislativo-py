@@ -9,6 +9,8 @@ export const absoluta = (ruta) => new URL(ruta, sitio).href;
 
 export const inicio = () => "/";
 export const leyes = () => "/leyes/";
+/** Catálogo de leyes filtrado por un tema de la clasificación propia (#36). */
+export const leyesPorTema = (tema) => `${leyes()}?${parametrosCatalogo.tema}=${encodeURIComponent(tema)}`;
 export const ley = (numeroLey) => `/leyes/${encodeURIComponent(numeroLey)}/`;
 /** Ancla (id) de cada votación dentro de la ficha de su ley. */
 export const anclaVotacion = (idVotacion) => `votacion-${idVotacion}`;
@@ -41,6 +43,9 @@ export const anclasMetodologia = {
   posicionPartidos: "posicion-de-cada-partido",
   masAjustadas: "votaciones-mas-ajustadas",
   observaciones: "observaciones-sobre-los-datos",
+  temas: "temas-de-las-leyes",
+  votosPorTema: "votos-de-partidos-y-bancadas-por-tema",
+  testAfinidad: "test-de-afinidad",
 };
 
 /** Repositorio público del proyecto: código, datos y licencias. */
@@ -75,16 +80,34 @@ export const redireccionesPermanentes = () => [{ desde: "/legisladores/votos-dis
 
 /** Votaciones con la posición de cada partido (#44); con año, la página de ese año. */
 export const votaciones = (anio) => (anio ? `/votaciones/${encodeURIComponent(anio)}/` : "/votaciones/");
-/** Parámetros de la dirección de la página de un año de votaciones (?camara=…&estado=…&resultado=…). */
-export const parametrosVotaciones = { camara: "camara", estado: "estado", resultado: "resultado" };
+/** Página propia de una votación nominal (#45), con el número oficial de la votación. */
+export const votacion = (idVotacion) => `${carpetaVotaciones()}${encodeURIComponent(idVotacion)}/`;
+/** Carpeta de las páginas propias de las votaciones, que marcan «Votaciones» en el menú. */
+export const carpetaVotaciones = () => "/votacion/";
+/**
+ * Imágenes para compartir una votación (scripts/imagenes-votaciones.js), junto a su página. "horizontal"
+ * para la vista previa del enlace; "vertical" para estados e historias.
+ */
+export const imagenVotacion = (idVotacion, formato) => `${votacion(idVotacion)}compartir-${formato}.png`;
+/** Enlaces para compartir en WhatsApp y en X, sin scripts de esos servicios. */
+export const compartirWhatsapp = (texto, url) => `https://wa.me/?text=${encodeURIComponent(`${texto} ${url}`)}`;
+export const compartirX = (texto, url) => `https://x.com/intent/post?text=${encodeURIComponent(texto)}&url=${encodeURIComponent(url)}`;
+/** Parámetros de la dirección de la página de un año de votaciones (?camara=…&estado=…&resultado=…&tema=…). */
+export const parametrosVotaciones = { camara: "camara", estado: "estado", resultado: "resultado", tema: "tema" };
 
 /** Coincidencia de votos entre partidos y entre bancadas; con grupo, la dirección que lo muestra (?grupo=…). */
 export const coincidencia = (grupo) => (grupo ? `/coincidencia-de-votos/?grupo=${encodeURIComponent(grupo)}` : "/coincidencia-de-votos/");
 /** Parámetro de la dirección de la coincidencia de votos (?grupo=…). */
 export const parametroGrupoCoincidencia = "grupo";
 
-/** Parámetros de la dirección del catálogo de leyes (?q=…&anio=…&camara=…&orden=…). */
-export const parametrosCatalogo = { texto: "q", anio: "anio", camara: "camara", orden: "orden" };
+/** Votos de partidos y bancadas por tema (#37); con tema (identificador de temas.json), la página de ese tema. */
+export const votosPorTema = (tema) => (tema ? `/votos-por-tema/${encodeURIComponent(tema)}/` : "/votos-por-tema/");
+
+/** Test de afinidad (#63): preguntas basadas en votaciones nominales y coincidencia con partidos, bancadas y legisladores. */
+export const testAfinidad = () => "/test-de-afinidad/";
+
+/** Parámetros de la dirección del catálogo de leyes (?q=…&anio=…&camara=…&tema=…&orden=…). */
+export const parametrosCatalogo = { texto: "q", anio: "anio", camara: "camara", tema: "tema", orden: "orden" };
 
 /** Foto de un legislador reducida para su ficha (scripts/reducir-fotos.js). La original está en archivoDatos. */
 export const fotoLegislador = (periodo, idLegislador) => `/fotos/${periodo}/${idLegislador}.jpg`;

@@ -19,7 +19,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import abiertos, fotos
+from . import abiertos, fotos, temas
 from .api import BASE, Cliente, ErrorAPI, ListadoCambiado
 from .escribir import csv_bytes, escribir_si_cambia, json_bytes, leer_json
 from .fechas import a_iso
@@ -354,6 +354,11 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
     derivados, avisos_derivados = abiertos.generar(salida)
     cambiados += derivados
     avisos += avisos_derivados
+
+    # Clasificación temática propia de los proyectos de ley (#36): los nuevos toman tema por las reglas.
+    clasificados, avisos_temas = temas.clasificar(salida)
+    cambiados += clasificados
+    avisos += avisos_temas
 
     # Copia propia de las fotos oficiales. Sin red no se descargan.
     descargar = None if getattr(cliente, "sin_red", False) else getattr(cliente, "archivo", None)

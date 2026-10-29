@@ -1141,6 +1141,116 @@
           "descripcion": "De dónde sale el nombre conocido. Solo en las entradas con `nombreConocido`."
         }
       ]
+    },
+    "temas": {
+      "descripcion": "Capa propia con la lista de temas con que este proyecto clasifica los proyectos de ley, la definición de cada uno y las palabras clave de sus reglas. Se edita a mano.",
+      "archivos": [
+        "propios/temas.json"
+      ],
+      "campos": [
+        {
+          "campo": "id",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Identificador del tema (minúsculas y guiones). Es el valor del filtro por tema en las direcciones del sitio."
+        },
+        {
+          "campo": "nombre",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Nombre con que el sitio muestra el tema."
+        },
+        {
+          "campo": "nombreCorto",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Nombre corto con que el sitio muestra el tema en sus etiquetas."
+        },
+        {
+          "campo": "definicion",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Qué leyes incluye el tema."
+        },
+        {
+          "campo": "palabrasClave",
+          "origen": "propio",
+          "tipo": "lista de textos",
+          "descripcion": "Palabras clave de la regla del tema, sin mayúsculas ni tildes. Cada una es el comienzo de una palabra del acápite oficial."
+        },
+        {
+          "campo": "excepto",
+          "origen": "propio",
+          "tipo": "lista de textos",
+          "descripcion": "Frases que no cuentan para el tema. Solo en algunos temas."
+        },
+        {
+          "campo": "exclusivo",
+          "origen": "propio",
+          "tipo": "booleano",
+          "descripcion": "Si el tema deja fuera a los demás temas que asignan las reglas. Solo en algunos temas."
+        }
+      ]
+    },
+    "clasificacion-temas": {
+      "descripcion": "Capa propia con los temas de cada proyecto de ley con ley sancionada o con votación nominal en el período, según la clasificación de este proyecto (ver la metodología). No es un dato oficial.",
+      "archivos": [
+        "propios/clasificacion-temas.json",
+        "propios/clasificacion-temas.csv"
+      ],
+      "campos": [
+        {
+          "campo": "idProyecto",
+          "origen": "oficial",
+          "tipo": "entero",
+          "descripcion": "Identificador oficial del proyecto (`proyecto.idProyecto` de leyes y votaciones)."
+        },
+        {
+          "campo": "periodoLegislativo",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Período legislativo de la clasificación."
+        },
+        {
+          "campo": "temas",
+          "origen": "propio",
+          "tipo": "lista de objetos (JSON) o de textos (CSV)",
+          "descripcion": "En el JSON, un objeto por tema con `tema` (identificador de `temas.json`), `origen` (`regla` o `revision`) y, si lo asignó una regla, `palabraClave`. En el CSV, los identificadores de los temas."
+        },
+        {
+          "campo": "temas[].tema",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Identificador del tema en `temas.json`.",
+          "soloJSON": true
+        },
+        {
+          "campo": "temas[].origen",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "`regla` (lo asignó una regla por palabras clave) o `revision` (lo agregó la revisión manual).",
+          "soloJSON": true
+        },
+        {
+          "campo": "temas[].palabraClave",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Palabra clave que asignó el tema. Solo en los temas con origen `regla`.",
+          "soloJSON": true
+        },
+        {
+          "campo": "pendiente",
+          "origen": "propio",
+          "tipo": "booleano",
+          "descripcion": "Si el proyecto está pendiente de clasificación, sin ningún tema."
+        },
+        {
+          "campo": "revisado",
+          "origen": "propio",
+          "tipo": "booleano",
+          "descripcion": "Si la clasificación se revisó a mano. Las revisadas no se recalculan; las demás salen de las reglas en cada actualización."
+        }
+      ]
     }
   }
 }

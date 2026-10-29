@@ -6,10 +6,13 @@ import { actualizacion, cita } from "../lib/catalogo.js";
 import { periodos } from "../lib/datos.js";
 import { observacionesDeLosDatos } from "../lib/metodologia.js";
 import { tablaDePartidos } from "../lib/partidos.js";
+import { temas, TEXTO_PENDIENTE } from "../lib/temas.js";
 import * as rutas from "../lib/rutas.js";
 import { CANTIDAD_RANKING, MINIMO_VOTACIONES_AUSENCIAS } from "../lib/rankings.js";
 import { CANTIDAD_AJUSTADAS, CANTIDAD_ULTIMAS_PORTADA } from "../lib/votaciones.js";
 import { CANTIDAD_PORTADA, MINIMO_COMPARABLES } from "../lib/votosDistintos.js";
+import { MINIMO_COMPARADAS } from "../lib/afinidad.js";
+import { datosDelTest } from "../lib/testAfinidad.js";
 
 const fuente = cita();
 const partidos = tablaDePartidos();
@@ -18,6 +21,8 @@ const fecha = actualizacion();
 const vigente = periodos().find((p) => p.vigente);
 const observaciones = observacionesDeLosDatos();
 const anclas = rutas.anclasMetodologia;
+const preguntasTest = datosDelTest(vigente.id).preguntas;
+const TOTAL_PREGUNTAS = preguntasTest.length;
 ---
 
 <Base
@@ -292,7 +297,7 @@ const anclas = rutas.anclasMetodologia;
       proyectos de ley del período, una página por año (el de la fecha del trámite votado), de la más
       reciente a la más antigua. Cada votación muestra la fecha, la cámara, la etapa, el proyecto, su estado
       oficial, el resultado oficial, los totales que publica el Congreso sobre los legisladores registrados
-      y la posición de cada partido. Se puede filtrar por cámara, estado del proyecto y resultado.
+      y la posición de cada partido. Se puede filtrar por cámara, estado del proyecto, resultado y tema.
     </p>
     <p>
       La posición de un partido en una votación es la categoría con más votos entre los votos emitidos de
@@ -324,6 +329,96 @@ const anclas = rutas.anclasMetodologia;
       recientes de las dos cámaras. No se
       cuentan las votaciones sin votos SI ni NO. La diferencia no dice si se alcanzó la mayoría que exige el
       reglamento. El resultado que vale es el oficial.
+    </p>
+    <p>
+      Cada votación tiene además su propia página para compartirla, con el mismo detalle de la ficha de la
+      ley y dos imágenes que resumen el resultado, los totales y la posición de cada partido, con la cita de
+      la fuente y la fecha de actualización.
+    </p>
+
+    <h2 id={anclas.temas}>Temas de las leyes</h2>
+    <p>
+      El tema de cada ley es una clasificación del Observatorio, no un dato del Congreso. Abarca las leyes
+      sancionadas y los proyectos de ley votados que no llegaron a ser ley. Un proyecto puede tener más de
+      un tema. Se usan estos {temas().length}.
+    </p>
+    <dl>
+      {
+        temas().map((t) => (
+          <>
+            <dt><a href={t.url}>{t.nombre}</a></dt>
+            <dd>{t.definicion}</dd>
+          </>
+        ))
+      }
+    </dl>
+    <p>
+      Unas reglas buscan palabras clave en el título oficial de cada proyecto, y después cada clasificación
+      se revisó a mano. Si ninguna regla encaja, el proyecto figura como «{TEXTO_PENDIENTE}». Las pensiones
+      graciables y los inmuebles llevan solo ese tema. La lista de palabras clave y la clasificación de cada
+      proyecto se pueden <a href={rutas.datosAbiertos()}>descargar</a>.
+    </p>
+
+    <h2 id={anclas.votosPorTema}>Votos de partidos y bancadas por tema</h2>
+    <p>
+      La página de <a href={rutas.votosPorTema()}>votos por tema</a> muestra, para cada tema, cómo votaron
+      los legisladores de cada partido y de cada bancada en las votaciones nominales sobre proyectos de ley
+      de ese tema, incluidos los proyectos que no llegaron a ser ley. Una votación con dos temas cuenta en
+      los dos.
+    </p>
+    <p>
+      Se suman los votos individuales de la lista oficial de cada votación, en las categorías oficiales sin
+      fusionar (SI, NO, ABSTENCIÓN/BLANCO, mociones, NO VOTA y AUSENTE). Cada cantidad se muestra sobre
+      todos los votos registrados del grupo en las votaciones del tema, incluidos AUSENTE y NO VOTA. No hay
+      una cifra única de apoyo. El reparto se muestra siempre, junto a la cantidad de votaciones, aunque
+      sean pocas.
+    </p>
+    <p>
+      Todo va por cámara y nunca se suman senadores y diputados. Los partidos se identifican con el
+      <a href={`#${anclas.partidoUnificado}`}>partido unificado</a> y las bancadas con su nombre oficial,
+      dentro de su cámara. Partido y bancada son los que la API registra para el período, sin fecha.
+    </p>
+    <p>
+      Un NO puede ser a una modificación o a una objeción del Poder Ejecutivo, y no a la ley. Por eso cada
+      tema lista sus votaciones con la fecha, la etapa y el resultado oficial. La tabla completa se puede
+      descargar en <a href={rutas.datosAbiertos()}>datos abiertos</a>, como cálculo propio de este sitio.
+    </p>
+
+    <h2 id={anclas.testAfinidad}>Test de afinidad</h2>
+    <p>
+      El <a href={rutas.testAfinidad()}>test de afinidad</a> tiene {TOTAL_PREGUNTAS} preguntas basadas en
+      votaciones nominales en general de proyectos que llegaron a ser ley en el período. Cada pregunta usa
+      como máximo una votación por cámara y muestra el número de la ley y el enlace al proyecto en el sitio
+      oficial del Congreso. Durante el test no se muestran autores ni votos.
+    </p>
+    <p>
+      Las leyes se eligieron con temas variados, como máximo tres preguntas por tema, y entre las votaciones
+      que dividieron a los partidos. No se usan las votaciones en las que más del 90 % de los votos SI y NO
+      fueron en un mismo sentido, que no distinguen a nadie, salvo una excepción justificada en los datos
+      del test. Tampoco se usan las votaciones entre dos versiones de un proyecto, en las que SI y NO no
+      significan a favor o en contra de la ley.
+    </p>
+    <p>
+      La pregunta y la explicación breve que la acompaña son textos propios de este sitio, escritos a partir
+      del texto oficial y de información pública, sin valoraciones. Responder sobre una ley es responder
+      sobre todo lo que se votó en esa votación, aunque la pregunta resuma una parte.
+    </p>
+    <p>
+      Las respuestas posibles son A favor, En contra y Sin posición. Sin posición no cuenta como
+      coincidencia ni como diferencia. La posición de un partido en una votación es su mayoría, con la misma
+      regla de la <a href={`#${anclas.coincidencia}`}>coincidencia de votos</a>. Si la mayoría no es SI ni NO,
+      o hay empate, la pregunta queda sin comparar para ese partido. Un partido con posiciones distintas en
+      las dos cámaras tampoco se compara en esa pregunta. El partido es el que la API registra para el
+      período, sin fecha.
+    </p>
+    <p>
+      Coincidencia = preguntas en que la posición del partido fue igual a la respuesta ÷ preguntas
+      comparadas × 100
+    </p>
+    <p>
+      Con menos de {MINIMO_COMPARADAS} preguntas comparadas se muestran las cantidades sin porcentaje. El
+      cálculo se hace en el navegador, sin inteligencia artificial, sin cookies y sin enviar ni guardar las
+      respuestas. Coincidir o no coincidir no es bueno ni malo.
     </p>
 
     <h2 id={anclas.afiliacion}>Partido y bancada</h2>
@@ -437,6 +532,7 @@ const anclas = rutas.anclasMetodologia;
         Las que se hacen sin ese registro, por ejemplo a mano alzada, no se publican en la API. El Senado registra
         muchas menos votaciones nominales que Diputados.
       </li>
+      <li>El tema sale solo del título oficial del proyecto, no de su texto completo.</li>
       <li>Por ahora el sitio cubre solo el período {vigente.id}.</li>
     </ul>
   </div>

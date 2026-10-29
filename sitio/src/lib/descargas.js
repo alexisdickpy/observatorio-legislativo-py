@@ -2,7 +2,7 @@
 // Las descripciones son textos breves para el público; si una tabla nueva no tiene el suyo, se usa
 // la descripción de datos/diccionario.json. Las rutas salen de lib/rutas.
 
-import { archivosCalculados, NOMBRE_COINCIDENCIA, NOMBRE_VOTACIONES_NOMINALES } from "./calculados.js";
+import { archivosCalculados, NOMBRE_COINCIDENCIA, NOMBRE_VOTACIONES_NOMINALES, NOMBRE_VOTOS_POR_TEMA } from "./calculados.js";
 import { archivosDeDatos, diccionario, periodos } from "./datos.js";
 import * as rutas from "./rutas.js";
 
@@ -24,6 +24,8 @@ const TABLAS = {
   autores: "Autores del proyecto de cada ley y de los proyectos de ley votados en el período.",
   personas: "Identificador propio de cada legislador, que se mantiene igual entre legislaturas y se usa en las direcciones del sitio.",
   partidos: "Partido unificado de cada texto oficial de partido, que dice qué textos corresponden al mismo partido, con el fundamento de cada caso y los nombres conocidos. Los textos oficiales no cambian.",
+  temas: "Temas de la clasificación propia de las leyes, con la definición de cada uno y las palabras clave de sus reglas.",
+  "clasificacion-temas": "Temas de cada proyecto de ley con ley o con votación en el período, con la regla o la revisión que asignó cada uno. Es una clasificación propia, no oficial.",
   notas: "Problemas que este proyecto detectó en los datos oficiales (fechas mal escritas, totales que no coinciden, etc.). Los valores oficiales no se corrigen.",
 };
 
@@ -43,6 +45,8 @@ const CALCULADOS = {
     "Por legislador, las votaciones nominales en que figura como AUSENTE, NO VOTA y ABSTENCIÓN/BLANCO, cada una por separado, sobre todas las votaciones nominales en cuya lista figura, y las votaciones en que votó distinto a la mayoría de su bancada y de su partido, sobre las votaciones comparables de cada grupo. Es la tabla de la vista comparativa.",
   [NOMBRE_COINCIDENCIA]:
     "Por cámara, cada par de partidos y cada par de bancadas, con las votaciones nominales sobre proyectos de ley en que los dos tuvieron posición y en cuántas fue la misma. Los partidos se identifican con el partido unificado y las bancadas con su nombre oficial. El porcentaje queda vacío con menos de 20 votaciones en común. Es la tabla de la página de coincidencia de votos.",
+  [NOMBRE_VOTOS_POR_TEMA]:
+    "Por tema, cámara, partido o bancada y categoría oficial de voto, cuántos votos individuales sumaron sus legisladores en las votaciones nominales sobre proyectos de ley de ese tema, sobre sus votos registrados. El tema es la clasificación propia; los partidos se identifican con el partido unificado y las bancadas con su nombre oficial. Es la tabla de la página de votos por tema.",
 };
 
 /** Archivos que genera la compilación (lib/calculados.js), agrupados por período y nombre. */

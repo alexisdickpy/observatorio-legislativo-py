@@ -1,0 +1,128 @@
+{
+  "estado": "publicado",
+  "descripcion": "Preguntas del test de afinidad. Cada una se basa en una o dos votaciones nominales en general (una por cámara) de un proyecto que llegó a ser ley en el período. votoAFavor es el voto oficial que equivale a responder «A favor». La explicación es un texto propio, breve y sin valoraciones; fuentes lista de dónde sale. justificacion explica por qué se usa una votación con más del 90 % de los votos SI y NO en un mismo sentido.",
+  "periodoLegislativo": "2023-2028",
+  "preguntas": [
+    {
+      "id": "organizaciones-sin-fines-de-lucro",
+      "numeroLey": "7363",
+      "tema": "estado",
+      "pregunta": "¿Crear un registro y controles de rendición de cuentas para las organizaciones sin fines de lucro (ONG)?",
+      "explicacion": "Las organizaciones sin fines de lucro que reciben o administran fondos, públicos o privados, deben inscribirse en un registro nacional e informar sobre el uso de sus recursos, con sanciones si no cumplen.",
+      "fuentes": ["https://www.bacn.gov.py/archivos/12848/Ley+7363.pdf", "https://www.icnl.org/post/news/paraguay-non-profit-checklist"],
+      "votaciones": [105345, 105845],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "alimentacion-escolar",
+      "numeroLey": "7264",
+      "tema": "educacion",
+      "pregunta": "¿Dar almuerzo escolar a todos los alumnos con el programa «Hambre Cero en las escuelas» y un fondo nacional propio?",
+      "explicacion": "Crea el Fondo Nacional de Alimentación Escolar, con recursos que antes iban al Fonacide. El almuerzo escolar pasa de los municipios a las gobernaciones, salvo en Asunción, Central y Presidente Hayes, donde lo administra el Ministerio de Desarrollo Social.",
+      "fuentes": ["https://www.lanacion.com.py/politica/2024/04/01/mitos-y-verdades-sobre-hambre-cero-en-las-escuelas/", "https://www.lanacion.com.py/politica/2024/01/30/hambre-cero-garantizan-financiamiento-de-programas-vigentes/", "https://www.diputados.gov.py/noticias/noticias/1667"],
+      "votaciones": [104615],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "inscripcion-en-el-padron-electoral",
+      "numeroLey": "7443",
+      "tema": "derechos",
+      "pregunta": "¿Cambiar las reglas de inscripción en el padrón electoral, para que la inscripción automática sea solo para quienes cumplen 18 años?",
+      "explicacion": "Quienes ya eran mayores y no estaban inscriptos deben pedirlo, en el país o en un consulado. Deroga la ley de 2022, que inscribía automáticamente a todos los mayores sin inscribir y preveía convenios con otros países para inscribir a quienes viven afuera.",
+      "fuentes": ["https://silpy.congreso.gov.py/web/descarga/ley-145161", "https://www.bacn.gov.py/leyes-paraguayas/10569/ley-n-6951-establece-la-inscripci-n-autom-tica-en-el-registro-c-vico-permanente-de-ciudadanos-paraguayos-y-paraguayas-residentes-en-el-paraguay-y-en-el-extranjero-para-el-pleno-ejercicio-del-derecho-al-voto"],
+      "votaciones": [106585],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "acuerdo-militar-estados-unidos",
+      "numeroLey": "7630",
+      "tema": "relaciones-exteriores",
+      "pregunta": "¿Aprobar el acuerdo con Estados Unidos sobre el estatuto de sus fuerzas militares cuando estén en Paraguay?",
+      "explicacion": "Regula la entrada y salida del personal militar y civil de defensa de Estados Unidos, le da inmunidades parecidas a las del personal técnico de una embajada y autoriza a Estados Unidos a ejercer jurisdicción penal sobre ese personal.",
+      "fuentes": ["https://www.bacn.gov.py/leyes-paraguayas/12966/texto"],
+      "votaciones": [108215, 108235],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "registro-unificado-nacional",
+      "numeroLey": "7424",
+      "tema": "estado",
+      "pregunta": "¿Unir los Registros Públicos y el Catastro en un solo organismo, el Registro Unificado Nacional (RUN)?",
+      "explicacion": "El RUN, dentro del Poder Judicial, asume las funciones de la Dirección General de Registros Públicos y del Servicio Nacional de Catastro, que registran los inmuebles y a sus dueños.",
+      "fuentes": ["https://pj.gov.py/descargar/ID1-29_ley_7424.pdf", "https://www.ferrere.com/en/news/novedades-en-el-sector-inmobiliario-se-crea-el-registro-unificado-nacional/"],
+      "votaciones": [106155, 106315],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "creditos-de-carbono",
+      "numeroLey": "7190",
+      "tema": "ambiente",
+      "pregunta": "¿Crear reglas para vender créditos de carbono generados en Paraguay?",
+      "explicacion": "Un crédito de carbono es un certificado que se vende a empresas o países para compensar sus emisiones contaminantes, por ejemplo por conservar un bosque. La ley define quién es dueño de esos créditos y crea un registro nacional.",
+      "fuentes": ["https://www.bacn.gov.py/leyes-paraguayas/11986/ley-n-7190-de-los-cr-ditos-de-carbono", "https://ferrere.com/es/novedades/se-promulga-nueva-ley-de-creditos-de-carbono-en-paraguay/"],
+      "votaciones": [104366],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "direccion-nacional-de-ingresos-tributarios",
+      "numeroLey": "7143",
+      "tema": "presupuesto",
+      "pregunta": "¿Unir en un solo organismo la recaudación de impuestos y la Aduana, creando la DNIT?",
+      "explicacion": "La Dirección Nacional de Ingresos Tributarios (DNIT) reemplaza a la Subsecretaría de Estado de Tributación y a la Dirección Nacional de Aduanas.",
+      "fuentes": ["https://www.bacn.gov.py/leyes-paraguayas/12282/ley-n-7143-que-crea-la-direcci-n-nacional-de-ingresos-tributarios"],
+      "votaciones": [104243],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "jubilacion-ips-diez-anos",
+      "numeroLey": "7446",
+      "tema": "trabajo",
+      "pregunta": "¿Calcular la jubilación del IPS con el promedio de los salarios de los últimos 10 años, en lugar de los últimos 3?",
+      "explicacion": "Es parte de una reforma más amplia del régimen del IPS. El cambio se aplica de forma gradual, sumando al cálculo un mes por cada mes de vigencia de la ley.",
+      "fuentes": ["https://www.abc.com.py/politica/2024/12/17/diputados-elevan-de-3-a-10-anos-calculo-para-la-jubilacion-de-ips/", "https://www.lanacion.com.py/pais/2025/01/02/implementacion-de-nueva-ley-de-jubilacion-sera-gradual/"],
+      "votaciones": [106595],
+      "votoAFavor": "SI",
+      "justificacion": "Única votación nominal de la reforma del IPS (51 a 5, el 91 %). Se mantiene porque los partidos no votaron todos igual, entre ellos el PLRA, dividido."
+    },
+    {
+      "id": "jubilaciones-de-legisladores",
+      "numeroLey": "7714",
+      "tema": "trabajo",
+      "pregunta": "¿Reformar la caja de jubilaciones propia de los senadores y diputados?",
+      "explicacion": "La caja existe desde 2018 y es distinta del IPS. La reforma sube la edad de jubilación de 55 a 60 años, con 15 años de aportes, y prohíbe aportes del Estado. Quedó sancionada la versión del Senado, porque Diputados no trató sus cambios dentro del plazo.",
+      "fuentes": ["https://www.infobae.com/america/agencias/2026/08/13/se-aprueba-con-sancion-automatica-polemica-ley-de-jubilacion-para-congresistas-en-paraguay/", "https://www.lanacion.com.py/politica/2026/05/06/senado-redefine-caja-parlamentaria-con-ajustes-elevando-la-edad-de-jubilacion-y-sin-aporte-estatal/", "https://www.lanacion.com.py/politica_edicion_impresa/2026/10/20/promulgan-ley-que-reestructura-jubilaciones-del-congreso/"],
+      "votaciones": [108395, 108735],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "himno-nacional-semanal",
+      "numeroLey": "7427",
+      "tema": "cultura",
+      "pregunta": "¿Hacer obligatorio cantar el Himno Nacional al menos una vez por semana en escuelas y colegios públicos y privados?",
+      "explicacion": null,
+      "fuentes": ["https://www.bacn.gov.py/leyes-paraguayas/12906/ley-n-7427-2025-que-instaura-la-identidad-nacional-por-medio-del-canto-del-himno-nacional-en-todas-las-instituciones-educativas-del-pa-s"],
+      "votaciones": [105626],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "carne-cultivada-en-laboratorio",
+      "numeroLey": "7312",
+      "tema": "economia",
+      "pregunta": "¿Prohibir la producción, la importación y la venta de carne cultivada en laboratorio para consumo humano?",
+      "explicacion": null,
+      "fuentes": [],
+      "votaciones": [104437],
+      "votoAFavor": "SI"
+    },
+    {
+      "id": "horario-oficial",
+      "numeroLey": "7354",
+      "tema": "estado",
+      "pregunta": "¿Dejar fijo todo el año el horario de verano, sin cambiar la hora en invierno?",
+      "explicacion": "Fija la hora oficial del país en UTC−3 y elimina el cambio de hora entre verano e invierno.",
+      "fuentes": ["https://www.abc.com.py/politica/2024/09/24/congreso-sanciona-horario-de-verano-permanente-y-ley-queda-en-manos-de-pena/"],
+      "votaciones": [105245],
+      "votoAFavor": "SI"
+    }
+  ]
+}

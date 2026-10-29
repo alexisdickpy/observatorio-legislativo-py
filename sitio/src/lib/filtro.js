@@ -21,6 +21,7 @@ export function leerFiltros(parametros, nombres) {
     texto: (parametros.get(nombres.texto) ?? "").trim(),
     anio: (parametros.get(nombres.anio) ?? "").trim(),
     camara: (parametros.get(nombres.camara) ?? "").trim(),
+    tema: (parametros.get(nombres.tema) ?? "").trim(),
     orden: orden in ORDENES ? orden : ORDEN_PREDETERMINADO,
   };
 }
@@ -31,13 +32,14 @@ export function escribirFiltros(filtros, nombres) {
   if (filtros.texto) p.set(nombres.texto, filtros.texto);
   if (filtros.anio) p.set(nombres.anio, filtros.anio);
   if (filtros.camara) p.set(nombres.camara, filtros.camara);
+  if (filtros.tema) p.set(nombres.tema, filtros.tema);
   if (filtros.orden && filtros.orden !== ORDEN_PREDETERMINADO) p.set(nombres.orden, filtros.orden);
   return p;
 }
 
 /**
  * Devuelve las entradas que cumplen los filtros, ordenadas.
- * Cada entrada: { numero, textoBusqueda, anio, camaras: [slug], fechaOrden: "aaaa-mm-dd" | null }.
+ * Cada entrada: { numero, textoBusqueda, anio, camaras: [slug], temas: [id de tema o "pendiente"], fechaOrden: "aaaa-mm-dd" | null }.
  * El texto se busca por palabras: todas deben aparecer en el número o en el título.
  * Si una palabra es exactamente un número de ley, esa ley va primero. Cuando hay un número,
  * se ignoran "ley", "n°", "nro.", etc.
@@ -49,6 +51,7 @@ export function filtrar(entradas, filtros) {
     (e) =>
       (!filtros.anio || e.anio === filtros.anio) &&
       (!filtros.camara || e.camaras.includes(filtros.camara)) &&
+      (!filtros.tema || (e.temas ?? []).includes(filtros.tema)) &&
       palabras.every((p) => e.textoBusqueda.includes(p)),
   );
   const exactos = new Set(palabras);

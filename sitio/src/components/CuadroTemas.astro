@@ -1,0 +1,71 @@
+---
+// Cuadro de leyes por tema (lib/resumenTemas.js, #36): una tarjeta por tema con el color del tema, la
+// cantidad de leyes y la de proyectos votados sin ley por estado oficial. Cada tarjeta lleva al catálogo
+// filtrado por ese tema. Se usa en la portada y en el catálogo de leyes.
+import * as rutas from "../lib/rutas.js";
+import { resumenPorTema } from "../lib/resumenTemas.js";
+
+interface Props {
+  periodo: string;
+  nivel?: 2 | 3;
+}
+const { periodo, nivel = 2 } = Astro.props;
+const Titulo = `h${nivel}`;
+const Tema = `h${nivel + 1}`;
+const cuadros = resumenPorTema(periodo);
+const numero = (n: number) => n.toLocaleString("es-PY");
+const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${n === 1 ? singular : varios}`;
+const sinLey = (c: any) =>
+  [
+    c.archivados && plural(c.archivados, "archivado", "archivados"),
+    c.enTramite && `${numero(c.enTramite)} en trámite`,
+    c.otros && plural(c.otros, "en otro estado", "en otro estado"),
+  ].filter(Boolean);
+---
+
+<section class="cuadro-temas" aria-labelledby="titulo-cuadro-temas">
+  <Titulo id="titulo-cuadro-temas">Leyes por tema</Titulo>
+  <p class="chico texto-suave">
+    Clasificación del Observatorio, no del Congreso. Una ley puede tener más de un tema.
+    <a href={rutas.metodologia(rutas.anclasMetodologia.temas)}>Cómo se clasifica</a>
+  </p>
+  <ul class="tarjetas-tema">
+    {
+      cuadros.map((c) => (
+        <li class="tarjeta-tema" data-tema={c.id}>
+          <Tema class="nombre"><a href={c.url}>{c.nombre}</a></Tema>
+          <p class="cifra"><strong>{plural(c.leyes, "ley sancionada", "leyes sancionadas")}</strong></p>
+          {sinLey(c).length > 0 && <p class="chico texto-suave">{plural(c.archivados + c.enTramite + c.otros, "proyecto votado", "proyectos votados")} sin ley ({sinLey(c).join(" · ")})</p>}
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .cuadro-temas {
+    margin: var(--espacio-5) 0;
+  }
+  .tarjetas-tema {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    gap: var(--espacio-3);
+  }
+  .tarjeta-tema {
+    padding: var(--espacio-3);
+    border: var(--borde-ancho) solid var(--color-borde);
+    border-top: var(--foco-ancho) solid var(--color-tema, var(--color-borde));
+    border-radius: var(--radio);
+    background: color-mix(in srgb, var(--color-tema, var(--color-borde)) var(--mezcla-fondo-tema), var(--color-fondo));
+  }
+  .nombre {
+    margin: 0 0 var(--espacio-1);
+    font-size: var(--tamano-base);
+  }
+  p {
+    margin: 0;
+  }
+</style>

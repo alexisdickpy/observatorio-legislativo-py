@@ -28,6 +28,26 @@
   --color-voto-mocion-3: #e65100;
   --color-voto-otro: #8d6e63;
 
+  /* Color de cada tema de la clasificación propia (#36): borde y fondo suave de sus etiquetas */
+  --color-tema-presupuesto: #1e88e5;
+  --color-tema-economia: #00897b;
+  --color-tema-trabajo: #8d6e63;
+  --color-tema-pensiones-graciables: #ab47bc;
+  --color-tema-inmuebles: #78909c;
+  --color-tema-relaciones-exteriores: #3949ab;
+  --color-tema-salud: #e53935;
+  --color-tema-educacion: #fb8c00;
+  --color-tema-cultura: #d81b60;
+  --color-tema-deporte: #43a047;
+  --color-tema-justicia: #5e35b1;
+  --color-tema-seguridad: #455a64;
+  --color-tema-ambiente: #7cb342;
+  --color-tema-obras: #f9a825;
+  --color-tema-estado: #00acc1;
+  --color-tema-derechos: #ec407a;
+  --color-tema-pendiente: var(--color-borde);
+  --mezcla-fondo-tema: 14%; /* cuánto color del tema lleva el fondo de su etiqueta */
+
   /* Tipografía */
   --fuente-texto: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --fuente-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;

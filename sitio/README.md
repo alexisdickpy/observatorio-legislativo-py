@@ -15,7 +15,7 @@ npm test                  # pruebas del filtro de leyes y de las fichas
 npm run test:compilacion  # comprobar dist/ después de npm run build
 ```
 
-`npm run build` copia `datos/` a `public/datos/` (no se sube al repositorio) para servirlo en `/datos/…` con las mismas rutas, y genera en `public/fotos/` las fotos de `datos/fotos/` reducidas a 320 × 320 píxeles (`scripts/reducir-fotos.js`, con `sharp`).
+`npm run build` copia `datos/` a `public/datos/` (no se sube al repositorio) para servirlo en `/datos/…` con las mismas rutas, y genera en `public/fotos/` las fotos de `datos/fotos/` reducidas a 320 × 320 píxeles (`scripts/reducir-fotos.js`, con `sharp`). También genera en `public/votacion/` las dos imágenes para compartir cada votación (`scripts/imagenes-votaciones.js`); solo redibuja las que cambiaron desde la última vez.
 
 ## Estructura
 

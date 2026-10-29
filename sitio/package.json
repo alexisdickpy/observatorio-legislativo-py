@@ -8,7 +8,7 @@
     "node": "24.21.0"
   },
   "scripts": {
-    "datos": "node scripts/copiar-datos.js && node scripts/reducir-fotos.js",
+    "datos": "node scripts/copiar-datos.js && node scripts/reducir-fotos.js && node scripts/imagenes-votaciones.js",
     "dev": "npm run datos && astro dev",
     "build": "npm run datos && astro build && pagefind --site dist",
     "preview": "astro preview",
@@ -16,6 +16,7 @@
     "test:compilacion": "node --test \"pruebas/compilacion/**/*.test.js\""
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "0.4.2",
     "astro": "7.3.8",
     "pagefind": "1.5.2",
     "sharp": "0.35.5"

@@ -1,11 +1,13 @@
 // Vista previa de las vistas de análisis en la portada (alcance acordado en #51). Sin HTML. Datos por
 // cámara; los únicos nombres de personas son los primeros del cuadro de votos distintos a la mayoría
 // de su partido (#54). Las cifras salen de los mismos cálculos que las páginas de cada vista
-// (lib/votaciones.js, lib/coincidencia.js y lib/votosDistintos.js), nunca se suman las cámaras.
+// (lib/votaciones.js, lib/coincidencia.js, lib/votosDistintos.js y lib/votosPorTema.js), nunca se
+// suman las cámaras.
 
 import { coincidencia } from "./coincidencia.js";
 import { ultimasVotaciones } from "./votaciones.js";
 import { CANTIDAD_PORTADA, votosDistintosAlPartido } from "./votosDistintos.js";
+import { votosPorTema } from "./votosPorTema.js";
 
 const porMayorCoincidencia = (a, b) => b.porcentaje - a.porcentaje || b.total - a.total || a.nombres.localeCompare(b.nombres, "es");
 
@@ -51,6 +53,7 @@ export function barrasDeReferencia(cuadro, id = cuadro.filas[0]?.id) {
  * - votaciones: las CANTIDAD_ULTIMAS_PORTADA votaciones más recientes, de las dos cámaras.
  * - votosDistintos: por cámara, los CANTIDAD_PORTADA primeros del cuadro de votos distintos a la mayoría
  *   de su partido, en el mismo orden.
+ * - temas: los temas con votaciones, cada uno con la dirección de su página de votos por tema (#37).
  */
 export function vistaPrevia(periodo) {
   const c = coincidencia(periodo);
@@ -71,5 +74,6 @@ export function vistaPrevia(periodo) {
       camara: x.camara,
       filas: x.filas.slice(0, CANTIDAD_PORTADA),
     })),
+    temas: votosPorTema(periodo).map((t) => ({ id: t.id, nombre: t.nombre, nombreCorto: t.nombreCorto, url: t.url })),
   };
 }

@@ -1,0 +1,28 @@
+---
+// Votaciones de un tema en una cámara (lib/votosPorTema.js, #37), de la más reciente a la más antigua:
+// fecha, etapa, resultado oficial y proyecto (enlace a la votación en la ficha de la ley o, sin ley, al
+// expediente oficial) y enlace a la página propia de la votación (#45), que tiene el enlace a SILpy.
+// Elementos en una sola línea por el peso de la página.
+interface Props {
+  votaciones: any[];
+}
+const { votaciones } = Astro.props;
+const sinDato = "Sin dato";
+---
+
+<ol class="votaciones-tema chico">
+  {votaciones.map((v) => <li><span class="texto-suave">{v.fecha ?? sinDato} · {v.etapa ?? sinDato} · Resultado <strong>{v.resultado ?? sinDato}</strong></span><br />{v.leyes.length ? v.leyes.map((l: any) => <span><a href={l.url}>Ley {l.numero}</a> <span class="titulo">{l.titulo}</span> </span>) : <span>{v.proyecto.url ? <a href={v.proyecto.url}>Expediente {v.proyecto.expediente ?? sinDato}</a> : `Expediente ${v.proyecto.expediente ?? sinDato}`} <span class="titulo">{v.proyecto.titulo}</span></span>} · <a href={v.pagina}>Ver votación</a></li>)}
+</ol>
+
+<style is:global>
+  .votaciones-tema {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .votaciones-tema li {
+    padding: var(--espacio-2) 0;
+    border-top: var(--borde-ancho) solid var(--color-borde);
+    overflow-wrap: anywhere;
+  }
+</style>

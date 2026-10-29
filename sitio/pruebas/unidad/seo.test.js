@@ -6,6 +6,7 @@ import { leyes } from "../../src/lib/catalogo.js";
 import { ficha, legisladores } from "../../src/lib/legisladores.js";
 import * as rutas from "../../src/lib/rutas.js";
 import { votacionesDelPeriodo } from "../../src/lib/votaciones.js";
+import { votosPorTema } from "../../src/lib/votosPorTema.js";
 import {
   datosAbiertos,
   datosDeLegislador,
@@ -91,13 +92,18 @@ test("datos del sitio y del conjunto de datos", () => {
 test("el sitemap tiene cada ley y cada legislador una vez, sin la búsqueda", () => {
   const urls = direccionesDelSitemap();
   assert.equal(new Set(urls).size, urls.length);
-  const anios = votacionesDelPeriodo("2023-2028").anios;
-  assert.equal(urls.length, leyes().length + legisladores().length + 10 + anios.length);
+  const { anios, votaciones } = votacionesDelPeriodo("2023-2028");
+  const temas = votosPorTema("2023-2028");
+  assert.equal(urls.length, leyes().length + legisladores().length + 12 + anios.length + temas.length + votaciones.length);
+  for (const v of votaciones) assert.ok(urls.includes(rutas.absoluta(rutas.votacion(v.id))), v.id);
+  for (const t of temas) assert.ok(urls.includes(rutas.absoluta(t.url)), t.url);
+  assert.ok(urls.includes(rutas.absoluta(rutas.votosPorTema())));
   assert.ok(urls.includes(rutas.absoluta(rutas.votaciones())));
   for (const a of anios) assert.ok(urls.includes(rutas.absoluta(a.url)), a.url);
   assert.ok(urls.includes(rutas.absoluta(rutas.votacionesNominales())));
   assert.ok(urls.includes(rutas.absoluta(rutas.rankings())));
   assert.ok(urls.includes(rutas.absoluta(rutas.coincidencia())));
+  assert.ok(urls.includes(rutas.absoluta(rutas.testAfinidad())));
   assert.ok(!urls.includes(rutas.absoluta(rutas.buscar())));
   for (const u of urls) assert.ok(u.startsWith(`${rutas.sitio}/`) && u.endsWith("/"), u);
 });

@@ -5,7 +5,8 @@
 //   historial de votos de la ficha de legislador (#28) y de la coincidencia de votos (#43).
 // - Una página por año, con el año de la fecha del trámite. Dentro, de la más reciente a la más
 //   antigua. Filtros por cámara, estado oficial del proyecto y resultado oficial, con su valor de
-//   filtro (slug); los textos que se muestran son los oficiales.
+//   filtro (slug); los textos que se muestran son los oficiales. También por tema, con la
+//   clasificación propia de lib/temas.js (#36); una votación puede tener más de un tema.
 // - Totales: los oficiales (ficha.js, totalesDe), con el denominador de legisladores registrados.
 // - Posición de cada partido: la categoría con más votos entre los votos emitidos de sus miembros
 //   (ficha.js, posicionesDePartidos), con la sigla propia. Partido = texto oficial dentro de la cámara
@@ -21,6 +22,7 @@ import { barra, indice, masRecientePrimero, posicionCamara, posicionesDePartidos
 import { esDeProyectoDeLey, estadosDelPeriodo, leyesDeVotacion, proyectoDeVotacion, valoresUnicos } from "./legisladores.js";
 import { nombreConocido, partidoUnificado, siglaDe } from "./partidos.js";
 import * as rutas from "./rutas.js";
+import { PENDIENTE, TEXTO_PENDIENTE, temas, temasDeProyectos } from "./temas.js";
 import { slug } from "./texto.js";
 
 /** Votaciones más ajustadas por cámara en la página de votaciones y en la portada. */
@@ -88,6 +90,8 @@ function prepararVotacion(v, i, valores) {
     etapa: valor(t.descripcionEtapa),
     resultado,
     resultadoFiltro: valores.resultados.get(resultado) ?? SIN_DATO,
+    // Temas del proyecto según la clasificación propia (#36), para sus etiquetas y el filtro.
+    temas: temasDeProyectos([{ periodo: valores.periodo, idProyecto: v.proyecto?.idProyecto }]),
     proyecto: proyectoDeVotacion(v, valores.estados),
     autores: autoresPorPartido(
       (i.autores.get(v.proyecto?.idProyecto) ?? []).map((a) => ({ partido: a.legislador?.partidoPolitico, idLegislador: a.legislador?.idLegislador })),
@@ -95,6 +99,8 @@ function prepararVotacion(v, i, valores) {
     // Iniciativa oficial, solo si no es parlamentaria (Poder Ejecutivo, Corte Suprema de Justicia…).
     iniciativa: valor(v.proyecto?.iniciativa) && v.proyecto.iniciativa !== PARLAMENTARIA ? v.proyecto.iniciativa : null,
     leyes,
+    // Página propia de la votación (#45).
+    pagina: rutas.votacion(v.idVotacion),
     // Con ley, la votación dentro de su ficha; sin ley, la votación oficial en SILpy.
     url: leyes[0]?.url ?? valor(v.appURL) ?? rutas.votacionSilpy(v.idVotacion),
     registrados: votos.length,
@@ -116,6 +122,7 @@ export function votacionesDelPeriodo(periodo) {
   const i = indice(periodo);
   const lista = [...i.votaciones.values()].filter(esDeProyectoDeLey);
   const valores = {
+    periodo,
     estados: estadosDelPeriodo(periodo),
     resultados: valoresUnicos(lista.map((v) => valor(v.tramitacion?.resultadoTramite))),
   };
@@ -151,6 +158,13 @@ function opcionesDe(votaciones, texto, filtro, orden) {
   return [...opciones.values()].sort(orden ?? ((a, b) => porTexto(a.texto ?? "", b.texto ?? "")));
 }
 
+/** Opciones del filtro por tema: los temas de temas.json y "pendiente", con cuántas votaciones tiene cada uno. */
+function opcionesDeTema(votaciones) {
+  return [...temas().map((t) => ({ valor: t.id, texto: t.nombre })), { valor: PENDIENTE, texto: TEXTO_PENDIENTE }]
+    .map((o) => ({ ...o, total: votaciones.filter((v) => v.temas.filtro.includes(o.valor)).length }))
+    .filter((o) => o.total > 0);
+}
+
 /**
  * Votaciones de un año del período, con las opciones de cada filtro (solo los valores de ese año).
  * Cámaras en el orden de siempre; estados y resultados por su texto oficial.
@@ -166,6 +180,7 @@ export function votacionesDelAnio(periodo, anio) {
       camara: opcionesDe(votaciones, (v) => v.camara, (v) => v.camaraFiltro, (a, b) => posicionCamara(a.texto) - posicionCamara(b.texto)),
       estado: opcionesDe(votaciones, (v) => v.proyecto.estado, (v) => v.proyecto.estadoFiltro),
       resultado: opcionesDe(votaciones, (v) => v.resultado, (v) => v.resultadoFiltro),
+      tema: opcionesDeTema(votaciones),
     },
   };
 }

@@ -247,6 +247,8 @@ function prepararVotacion(v, i) {
   return {
     id: v.idVotacion,
     ancla: rutas.anclaVotacion(v.idVotacion),
+    // Página propia de la votación (#45): todas las de una ficha de ley son sobre un proyecto de ley.
+    pagina: rutas.votacion(v.idVotacion),
     url: valor(v.appURL) ?? rutas.votacionSilpy(v.idVotacion),
     fecha: valor(t.fechaTramite),
     fechaIso: t._propio?.fechaTramite ?? null,
@@ -279,6 +281,12 @@ function prepararVotacion(v, i) {
     votos,
     notas: (i.notas.get(`votacion:${v.idVotacion}`) ?? []).map((n) => n.detalle),
   };
+}
+
+/** Detalle de una votación para su página propia (#45), el mismo de la ficha de la ley. */
+export function detalleDeVotacion(periodo, idVotacion) {
+  const i = indice(periodo);
+  return prepararVotacion(i.votaciones.get(idVotacion), i);
 }
 
 /** De la más reciente a la más antigua; a igual fecha, la de mayor id primero. */

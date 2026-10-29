@@ -194,13 +194,13 @@ Decisión de alcance (#44). La página `/votaciones/` reúne las votaciones nomi
 
 - **Votaciones.** Las nominales del período sobre un proyecto de ley, las mismas del historial de votos (#28) y de la coincidencia (#43): 211 en la Cámara de Senadores y 793 en la de Diputados en 2023-2028. Quedan fuera resoluciones, declaraciones, designaciones y demás tipos de expediente.
 - **Año.** El de la fecha del trámite votado (`tramitacion._propio.fechaTramite`). Dentro de cada año, de la más reciente a la más antigua (a igual fecha, la de mayor `idVotacion`).
-- **Cada votación.** Fecha, cámara, etapa, proyecto (enlace a la ficha de la ley si llegó a ser ley; si no, al expediente oficial en SILpy), estado oficial del proyecto (`estadoProyecto`, el de la última actualización), resultado oficial (`resultadoTramite`), totales oficiales de las categorías con votos sobre los legisladores registrados en la lista, la barra y un enlace a la votación (en la ficha de la ley o, sin ley, en SILpy). Las categorías sin total publicado (mociones) se cuentan desde los votos individuales, como en la ficha de ley.
+- **Cada votación.** Fecha, cámara, etapa, proyecto (enlace a la ficha de la ley si llegó a ser ley; si no, al expediente oficial en SILpy), estado oficial del proyecto (`estadoProyecto`, el de la última actualización), resultado oficial (`resultadoTramite`), totales oficiales de las categorías con votos sobre los legisladores registrados en la lista, la barra y un enlace a la página propia de la votación (ver [Página de cada votación](#página-de-cada-votación)), que enlaza a SILpy. Las categorías sin total publicado (mociones) se cuentan desde los votos individuales, como en la ficha de ley.
 - **Autores por partido.** Debajo del título oficial (completo, sin cambios), «Presentado por» con una etiqueta gris por partido unificado, su sigla y la cantidad de autores legisladores del proyecto según `autores.json` (cada legislador una vez; el nombre oficial del partido en el título de la etiqueta). El importador guarda los autores de los proyectos con ley y también los de los proyectos de ley con votaciones en el período que no llegaron a ser ley (de `proyecto/{idProyecto}/tramitaciones`; de estos últimos no se guardan las tramitaciones). Si la API no publica los autores de un proyecto de ley de iniciativa parlamentaria con votaciones, queda la nota `proyecto_sin_autores` y la votación se muestra sin «Presentado por». Sin autores, si la iniciativa oficial no es parlamentaria se muestra «Iniciativa del» y el texto oficial (Poder Ejecutivo, Corte Suprema de Justicia). Los autores de períodos anteriores llevan el partido que la API les registra en su período; si ese texto no está en `propios/partidos.json`, se muestra completo, sin sigla.
 - **Posición de cada partido.** La categoría con más votos entre los votos emitidos de sus legisladores registrados en la votación (`mayoriaDe`, en `lib/mayoria.js`, el mismo criterio que la coincidencia). `AUSENTE` y `NO VOTA` no son votos emitidos. Si dos o más categorías empatan en el primer lugar, la etiqueta dice «empate». Si ningún legislador del partido emitió voto, dice «sin votos emitidos». Un partido con un solo votante tiene como posición su voto.
 - **Partido.** El texto oficial de `partidoPolitico` dentro de la cámara de la votación, que dentro de una cámara equivale al partido unificado (#42). Los legisladores sin partido registrado no forman parte de ninguna etiqueta. Partido es el que la API registra para el período, sin fecha. No se muestran bancadas en la lista; la ficha de ley mantiene el desglose por bancada.
 - **Siglas.** Dato propio en `datos/propios/partidos.json` (campo `sigla`), para que las etiquetas entren en poco espacio. Salen del texto oficial cuando lo incluye (ANR, PLRA, PPQ, PEN, PDP, PPS); si no, de la bancada oficial (CN, de «PARTIDO CRUZADA NACIONAL "CN"»), del nombre conocido (Yo Creo) o de las iniciales (PPC, IND, IND A). Los textos del mismo partido unificado comparten sigla. El nombre oficial va en el título de cada etiqueta, con los votos de la categoría sobre los votos emitidos del partido.
 - **Presentación.** Cada etiqueta lleva la sigla, un cuadro del color de la categoría (los mismos colores de la barra, en `tokens.css`) y la categoría escrita, para que no dependa solo del color. Las posiciones sin categoría llevan un cuadro sin relleno. Etiquetas de más a menos legisladores del partido en la lista de la votación.
-- **Filtros.** En cada año, por cámara, estado oficial del proyecto y resultado oficial (`?camara=…&estado=…&resultado=…`, con el slug del texto oficial). Sin JavaScript se ven todas las votaciones del año.
+- **Filtros.** En cada año, por cámara, estado oficial del proyecto y resultado oficial (`?camara=…&estado=…&resultado=…`, con el slug del texto oficial), y por tema según la clasificación propia (`?tema=…`, ver [Temas de las leyes](#temas-de-las-leyes)). Sin JavaScript se ven todas las votaciones del año.
 - **Ficha de ley.** Junto a los totales de cada votación, los partidos agrupados por su posición (qué partidos tuvieron `SI` como categoría más votada, cuáles `NO`, cuáles otra categoría, los empates y los que no emitieron voto), cada uno con sus votos de esa categoría sobre sus votos emitidos. El desglose por partido y por bancada sigue igual.
 - **Menú y portada.** Entrada «Votaciones» en el menú. La portada muestra, a lo ancho y debajo de las demás tarjetas de análisis, las 5 votaciones más recientes de las dos cámaras (`portadaAlFinal` en `vistasDeAnalisis`).
 
@@ -214,7 +214,92 @@ En `/votaciones/`, las **10** votaciones de cada cámara con menor diferencia en
 - **Fuera.** Las votaciones sin votos `SI` ni `NO`. Las abstenciones, `NO VOTA` y `AUSENTE` no cambian la diferencia.
 - La diferencia no dice si la votación alcanzó la mayoría que exigía el reglamento; el resultado que vale es el oficial.
 
+### Página de cada votación
+
+Decisión de alcance (#45). Cada votación de `/votaciones/` tiene su página en `/votacion/{idVotacion}/`, con el número oficial de la votación, para compartirla.
+
+- **Contenido.** La referencia del proyecto (número de ley si llegó a ser ley; si no, el expediente oficial), el título oficial completo, los temas, los autores por partido, el estado oficial del proyecto y el mismo detalle de la ficha de la ley (resultado, totales, posición de cada partido, desglose por partido y bancada y voto de cada legislador), con enlaces a la ficha de la ley y a SILpy.
+- **Título.** `Ley N` o `Expediente X`, el número oficial de la votación y la fecha. Un mismo proyecto puede votarse varias veces el mismo día, por eso va el número.
+- **Imágenes para compartir.** Dos por votación, generadas al compilar con `scripts/imagenes-votaciones.js`. La horizontal (1200 × 630) es la vista previa al pegar el enlace; la vertical (1080 × 1920) se descarga para estados e historias. Muestran la cámara, la fecha, la etapa, la referencia, el tema (el texto entre comillas del título oficial, recortado), el resultado oficial, los totales oficiales con su barra y, por categoría, las siglas de los partidos que la tuvieron como categoría con más votos. Al pie, la cita de la fuente y la fecha de la última comprobación de los datos. Textos neutrales, sin calificar el resultado.
+- **Compartir.** Copiar el enlace, WhatsApp y X con enlaces simples (`wa.me` y `x.com/intent/post`), sin scripts de esos servicios ni cookies.
+- **Enlaces.** Desde cada votación de las listas de votaciones (por año, más ajustadas, portada y temas) y de la ficha de la ley («Compartir esta votación»). Todas van en el mapa del sitio.
+
 Comprobación. Las pruebas recalculan los totales con `votaciones.json` y las posiciones de cada partido con un recuento aparte de `votos.csv` y `legisladores.json`, y verifican que cada votación del período figure una sola vez en la página de su año.
+
+## Temas de las leyes
+
+Decisión de alcance (#36). Cada proyecto de ley del período lleva uno o más temas de una lista propia de 16. Es una clasificación de este proyecto, no un dato oficial: el Congreso no publica temas. Se clasifican los 556 proyectos con ley sancionada y los 238 proyectos de ley votados en el período sin ley (rechazados, archivados o en trámite), 794 en total en 2023-2028.
+
+| Tema | Identificador | Qué incluye |
+|---|---|---|
+| Presupuesto y finanzas públicas | `presupuesto` | Presupuesto General de la Nación y sus cambios, impuestos y exoneraciones, préstamos, deuda y uso de los fondos públicos. |
+| Economía y producción | `economia` | Empresas, comercio, inversión, mercado financiero, turismo, industria, producción agropecuaria y ganadera. |
+| Trabajo y jubilaciones | `trabajo` | Trabajo, salarios, ejercicio de profesiones, función pública y carrera del servicio civil, jubilaciones y seguridad social. |
+| Pensiones graciables | `pensiones-graciables` | Leyes que conceden o aumentan una pensión graciable a una persona determinada. |
+| Inmuebles del Estado | `inmuebles` | Desafectaciones, transferencias, permutas y expropiaciones de inmuebles determinados, y los cambios a leyes anteriores de ese tipo. |
+| Relaciones exteriores | `relaciones-exteriores` | Tratados, convenios, acuerdos y memorandos con otros países y organismos internacionales, incluido el Mercosur. |
+| Salud | `salud` | Salud pública, hospitales, profesiones de la salud, enfermedades, medicamentos y vacunas. |
+| Educación | `educacion` | Escuelas, colegios, universidades e institutos superiores, docentes, planes de estudio y alimentación escolar. |
+| Cultura, símbolos y fechas conmemorativas | `cultura` | Cultura, música, literatura, patrimonio histórico, símbolos nacionales, homenajes, nombres de lugares, días nacionales y feriados. |
+| Deporte | `deporte` | Deporte y deportistas, entidades y eventos deportivos, y la seguridad en los espectáculos deportivos. |
+| Justicia | `justicia` | Juzgados y tribunales, Ministerio Público, Defensoría Pública, códigos y leyes penales, civiles y procesales, y procesos judiciales. |
+| Seguridad y defensa | `seguridad` | Policía, Fuerzas Armadas, defensa nacional, armas, cárceles, prevención del delito y personas desaparecidas. |
+| Ambiente | `ambiente` | Áreas protegidas, bosques, incendios forestales, biodiversidad, fauna y protección animal, ríos y cambio climático. |
+| Obras, transporte y energía | `obras` | Rutas, puentes, trenes y transporte, tránsito, obras e infraestructura pública, energía eléctrica y telecomunicaciones. |
+| Estado, municipios y elecciones | `estado` | Organización y control del Estado, ministerios y entes públicos, municipios y límites de distritos, elecciones, transparencia, trámites y registros públicos. |
+| Derechos y protección social | `derechos` | Niñez, mujeres, personas mayores, personas con discapacidad, pueblos indígenas, víctimas, vivienda social, programas sociales y protección de datos personales. |
+
+La lista, las definiciones y las palabras clave están en `datos/propios/temas.json`, que manda sobre esta tabla.
+
+- **Reglas.** `importador/temas.py` busca las palabras clave de cada tema en el acápite oficial del proyecto, sin mayúsculas ni tildes. Antes quita el encabezado de los mensajes del Poder Ejecutivo («Mensaje N° …, Ministerio de …, por el cual remite»), porque el ministerio que envía el proyecto no es su tema, y la parte final «presentado por …». Cada palabra clave es el comienzo de una palabra (`tributari` encuentra «tributaria» y «tributario»). Un tema puede tener frases que no cuentan (`excepto`): «centros educativos» junto a «establecimientos penitenciarios» no es educación.
+- **Más de un tema.** Un proyecto toma todos los temas cuyas reglas se cumplen (una ampliación del presupuesto del Ministerio de Salud es presupuesto y salud). Pensiones graciables e inmuebles son exclusivos: dejan fuera a los demás, porque el oficio de quien recibe la pensión o el organismo que recibe el inmueble no es el tema de la ley.
+- **Pendiente.** Si ninguna regla se cumple, el proyecto queda «pendiente de clasificación», sin tema; nunca se fuerza uno.
+- **Revisión manual.** Las 794 clasificaciones se revisaron a mano una por una. La revisión ajustó las reglas y corrigió 20 proyectos (temas que sobraban o faltaban, y los 2 que ninguna regla clasificaba). Después se separó Deporte de Cultura, y los 12 proyectos que alcanza su regla se reclasificaron con las reglas nuevas. Las entradas revisadas llevan `revisado: true` y no se recalculan. Cada tema guarda cómo se asignó: `regla`, con la palabra clave, o `revision`. Los proyectos nuevos de la actualización diaria toman tema por las reglas y quedan sin revisar (`revisado: false`) hasta la próxima revisión.
+- **Ley y votación.** Una ley toma los temas de su proyecto; una ley con más de un registro, los de todos sus proyectos. Una votación toma los del proyecto votado. Las votaciones que no son de un proyecto de ley (resoluciones, declaraciones, etc.) no se clasifican.
+- **Dónde se ve.** Cada ley y cada votación lleva sus temas como etiquetas de color, con un nombre corto (`nombreCorto` en `temas.json`; colores en `tokens.css`): en el catálogo, debajo del título; en la ficha, como «Tema según el Observatorio», con enlace al catálogo filtrado; en cada votación de `/votaciones/`. El catálogo tiene el filtro «Tema» (`/leyes/?tema={identificador}`, o `tema=pendiente`) y cada año de `/votaciones/` el mismo filtro (`?tema=…`), que incluye los proyectos rechazados y los que siguen en trámite.
+- **Leyes por tema.** En la portada y arriba del catálogo, una tarjeta por tema con la cantidad de leyes sancionadas y la de proyectos de ley votados en el período sin ley, por su estado oficial (`estadoProyecto` de su votación más reciente: archivados, en trámite y otros). Una ley con dos temas cuenta en los dos. De más a menos leyes. Cada tarjeta lleva al catálogo filtrado. Cómo votó cada partido en cada tema está en [Votos de partidos y bancadas por tema](#votos-de-partidos-y-bancadas-por-tema).
+- **Descarga.** `datos/propios/clasificacion-temas.json` y `.csv` (un registro por proyecto, con `idProyecto`, `periodoLegislativo`, `temas`, `pendiente` y `revisado`) y `datos/propios/temas.json`, descritos en el diccionario de datos.
+
+Comprobación. Las pruebas del importador revisan las reglas (tildes, comienzo de palabra, varios temas, exclusivos, excepciones, encabezado de mensaje y «presentado por»), que lo revisado no se recalcule y que cada proyecto del período tenga tema o figure como pendiente. La compilación del sitio falla si una ley o una votación sobre un proyecto de ley no figura en la clasificación.
+
+## Votos de partidos y bancadas por tema
+
+Decisión de alcance (#37). La página `/votos-por-tema/` tiene una tarjeta por tema con la cantidad de votaciones de cada cámara, y cada tema tiene su página (`/votos-por-tema/{identificador}/`) con el reparto de los votos de cada partido y de cada bancada.
+
+- **Votaciones de un tema.** Las nominales del período sobre un proyecto de ley (las mismas de `/votaciones/`) cuyo proyecto tiene ese tema en la clasificación propia ([Temas de las leyes](#temas-de-las-leyes)). Una votación con dos temas cuenta en los dos. Incluye los proyectos que no llegaron a ser ley.
+- **Reparto.** Los votos individuales de la lista oficial de cada votación (`votos.csv`), sumados por grupo en todas las votaciones del tema de esa cámara, en las categorías oficiales sin fusionar (`SI`, `NO`, `ABSTENCIÓN/BLANCO`, las mociones, `NO VOTA` y `AUSENTE`). Cada cantidad lleva su denominador, que es la cantidad de votos registrados del grupo en esas votaciones, incluidos `AUSENTE` y `NO VOTA`. Es un recuento propio; el Congreso no publica totales por partido.
+
+> porcentaje de una categoría = votos del grupo en esa categoría ÷ votos registrados del grupo en las votaciones del tema × 100
+
+- **Sin cifra única.** No hay un índice de «apoyo» por partido. El reparto muestra todas las categorías con votos, con una barra de colores (los de `tokens.css`) y cada cantidad escrita.
+- **Cámaras.** Cada votación es de una sola cámara, así que todo va por cámara y nunca se suman senadores y diputados. Partido = partido unificado (#42), que dentro de una cámara tiene un solo texto oficial; se muestra con su sigla, el texto oficial y el nombre conocido entre paréntesis. Bancada = texto oficial, dentro de su cámara. Los votos sin partido o sin bancada registrados quedan fuera de ese grupo. Partido y bancada son los que la API registra para el período, sin fecha, y la página lo avisa.
+- **Pocas votaciones.** Sin umbral. El reparto se muestra siempre, con la cantidad de votaciones del tema en esa cámara a la vista (en 2023-2028, Deporte y Pensiones graciables tienen 3 votaciones en el Senado).
+- **Etapa.** Un `NO` puede ser a una modificación o a una objeción del Poder Ejecutivo y no a la ley. Por eso cada página lo avisa y lista, por cámara, las votaciones del tema con fecha, etapa (`descripcionEtapa`), resultado oficial y proyecto (enlace a la votación en la ficha de la ley o, sin ley, al expediente y a la votación en SILpy), de la más reciente a la más antigua.
+- **Orden.** Grupos de más a menos votos registrados y, a igualdad, por texto. Temas en el orden de `temas.json`. «Pendiente de clasificación» solo aparece si tiene votaciones.
+- **Menú y portada.** Entrada «Temas» en el menú. La portada la muestra a lo ancho, antes de las últimas votaciones, con una etiqueta por tema que enlaza a su página.
+
+**Descarga.** `/datos/calculados/{período}/votos-por-tema.csv` y `.json`, generados en cada compilación. Una fila por tema, cámara, grupo y categoría con votos, con las columnas `periodo`, `tema`, `camara`, `votaciones` (del tema en esa cámara), `tipoGrupo` (`partido` o `bancada`), `grupo` (partido unificado o texto oficial de la bancada), `textoOficial`, `votosRegistrados` (el denominador), `categoria` y `votos`. Es un cálculo propio, no un dato oficial.
+
+Comprobación. Las pruebas recalculan a mano, con un recuento aparte de `votaciones.json`, `votos.csv`, `legisladores.json` y `clasificacion-temas.json`, el reparto de ANR y PLRA en Salud, Educación y Ambiente en las dos cámaras, y revisan con casos sintéticos el denominador, el orden y los votos sin grupo.
+
+## Test de afinidad
+
+Decisión de alcance (#63). La página `/test-de-afinidad/` tiene 12 preguntas basadas en votaciones nominales reales, una por vez, y al final compara las respuestas del visitante con la posición de cada partido.
+
+- **Preguntas.** En `datos/propios/test-afinidad.json`, un archivo propio que se edita a mano. Cada pregunta indica la ley (`numeroLey`), su tema (de `temas.json`), el texto de la pregunta, una explicación breve opcional, las fuentes de esa explicación, una votación nominal por cámara como máximo (`votaciones`) y qué voto oficial equivale a responder «A favor» (`votoAFavor`, `SI` o `NO`). La compilación falla si una votación no existe, no está enlazada a esa ley o repite cámara. Mientras `estado` sea `preliminar`, la página lleva `noindex`, no está en el sitemap ni en el menú y muestra un aviso; desde #64 el estado es `publicado` y el test está en el menú y en la portada.
+- **Selección (#64).** Leyes del período con temas variados, como máximo 3 preguntas por tema, y votaciones en general que dividieron a los partidos. No se usa una votación con más del 90 % de los votos SI y NO en un mismo sentido, salvo con el campo `justificacion` (hoy solo la reforma del IPS, 51 a 5, su única votación nominal). Si una cámara votó casi por unanimidad y la otra no, se usa solo la dividida. No se usan las votaciones entre dos versiones de un proyecto (por ejemplo «SI = versión de una comisión, NO = versión de otra»), en las que SI no equivale a apoyar la ley; por eso la Ley 7239 se reemplazó por la 7443. En la Ley 7714 la versión del Senado quedó sancionada sin votación final en Diputados (artículo 211 de la Constitución), y la explicación lo dice.
+- **Textos.** La pregunta y la explicación son textos propios, cortos y sin valoraciones, escritos a partir del texto oficial y de información pública (campo `fuentes`). Cada pregunta muestra el número de la ley y enlaza al expediente oficial del proyecto en SILpy (`proyecto.appURL` de la primera votación).
+- **Respuestas.** A favor, En contra y Sin posición. Sin posición no cuenta como coincidencia ni como diferencia. Durante el test no se muestran autores ni votos, ni enlaces a la ficha de la ley o a las votaciones de este sitio, que los muestran.
+- **Partidos.** La posición de un partido en una votación es su mayoría (`mayoriaDe`, la misma regla de la coincidencia de votos), con el partido unificado. Si no es `SI` ni `NO`, hay empate o ningún miembro emitió voto, la pregunta queda sin comparar en esa votación. Con votaciones en las dos cámaras, si tuvo posición en una sola, vale esa; si tuvo posiciones distintas, la pregunta no se compara. El partido es el que la API registra para el período, sin fecha.
+
+> coincidencia = preguntas en que la posición del partido fue igual a la respuesta ÷ preguntas comparadas × 100
+
+- **Umbral.** Con menos de 4 preguntas comparadas se muestran las cantidades sin porcentaje, al final de la lista.
+- **Orden.** De mayor a menor coincidencia; a igualdad, de más a menos preguntas comparadas y por nombre.
+- **Privacidad.** El cálculo corre en el navegador con los datos incluidos en la página al compilarla (`lib/testAfinidad.js` los prepara y `lib/afinidad.js` calcula). Sin inteligencia artificial, sin cookies, sin almacenamiento local y sin pedidos a ningún servidor. Las respuestas no se guardan ni se envían.
+- **Al terminar.** Una lista desplegable muestra, para cada pregunta, la respuesta, la ficha de la ley, la página de cada votación y la mayoría de cada partido.
+
+Comprobación. Las pruebas cubren las letras de cada mayoría, la combinación de cámaras, Sin posición, las preguntas sin comparar, el umbral y el orden, el largo de los textos, el enlace al proyecto, los criterios de selección (temas, votaciones en general con el 90 % como máximo o justificación, fuentes de cada explicación), y recalculan a mano la mayoría de cada partido en una pregunta desde `votos.csv`.
 
 ## Números de ley
 
@@ -224,4 +309,5 @@ El número de ley se usa como URL (`/leyes/{número}/`). El importador verifica 
 
 - La API no informa cuándo se modificó un registro: los cambios se detectan comparando descargas.
 - El partido y la bancada de un legislador son un único valor por período, sin fecha. Los votos no reflejan cambios de bancada.
+- El tema de cada proyecto sale solo de su acápite oficial, no del texto completo de la ley.
 - "AUSENTE" en una votación no equivale a ausencia en la sesión: la métrica se llama "ausencias en votaciones nominales".

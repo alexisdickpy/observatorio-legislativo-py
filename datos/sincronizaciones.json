@@ -1,6 +1,134 @@
 {
   "sincronizaciones": [
     {
+      "archivosModificados": [
+        "fuente/2023-2028/votaciones.json",
+        "fuente/2023-2028/votaciones.csv",
+        "diccionario.md"
+      ],
+      "cambios": {
+        "legisladores": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 0
+        },
+        "leyes": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 0
+        },
+        "votaciones": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 7
+        }
+      },
+      "cantidades": {
+        "autores": 1386,
+        "legisladores": 143,
+        "legisladoresVigentes": 127,
+        "leyes": 556,
+        "numerosDeLey": 541,
+        "tramitaciones": 13601,
+        "votaciones": 1165,
+        "votos": 82680
+      },
+      "consultas": 19,
+      "fecha": "2026-10-28T14:09:21Z",
+      "leyesNuevas": [],
+      "modo": "incremental",
+      "periodo": "2023-2028",
+      "resultado": "correcta"
+    },
+    {
+      "archivosModificados": [
+        "fuente/2023-2028/votaciones.json",
+        "fuente/2023-2028/votaciones.csv",
+        "diccionario.md"
+      ],
+      "cambios": {
+        "legisladores": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 0
+        },
+        "leyes": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 0
+        },
+        "votaciones": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 3
+        }
+      },
+      "cantidades": {
+        "autores": 1386,
+        "legisladores": 143,
+        "legisladoresVigentes": 127,
+        "leyes": 556,
+        "numerosDeLey": 541,
+        "tramitaciones": 13601,
+        "votaciones": 1165,
+        "votos": 82680
+      },
+      "consultas": 19,
+      "fecha": "2026-10-27T13:23:51Z",
+      "leyesNuevas": [],
+      "modo": "incremental",
+      "periodo": "2023-2028",
+      "resultado": "correcta"
+    },
+    {
+      "archivosModificados": [
+        "fuente/2023-2028/votaciones.json",
+        "fuente/2023-2028/votaciones.csv",
+        "diccionario.md"
+      ],
+      "cambios": {
+        "legisladores": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 0
+        },
+        "leyes": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 0
+        },
+        "votaciones": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 1
+        }
+      },
+      "cantidades": {
+        "autores": 1386,
+        "legisladores": 143,
+        "legisladoresVigentes": 127,
+        "leyes": 556,
+        "numerosDeLey": 541,
+        "tramitaciones": 13601,
+        "votaciones": 1165,
+        "votos": 82680
+      },
+      "consultas": 19,
+      "fecha": "2026-10-26T14:25:08Z",
+      "leyesNuevas": [],
+      "modo": "incremental",
+      "periodo": "2023-2028",
+      "resultado": "correcta"
+    },
+    {
+      "consultas": 0,
+      "error": "ErrorAPI: No se pudo obtener https://datosv2.congreso.gov.py/web/api/periodo: <urlopen error [Errno 110] Connection timed out>",
+      "fecha": "2026-10-25T12:03:39Z",
+      "modo": "completo",
+      "periodo": null,
+      "resultado": "error"
+    },
+    {
       "consultas": 0,
       "error": "ErrorAPI: No se pudo obtener https://datosv2.congreso.gov.py/web/api/periodo: HTTP Error 503: Service Unavailable",
       "fecha": "2026-10-24T12:06:33Z",

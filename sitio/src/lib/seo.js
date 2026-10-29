@@ -7,8 +7,10 @@ import { estado, periodos } from "./datos.js";
 import { descargas } from "./descargas.js";
 import { legisladores } from "./legisladores.js";
 import * as rutas from "./rutas.js";
+import { esPreliminar } from "./testAfinidad.js";
 import { recortar } from "./texto.js";
 import { votacionesDelPeriodo } from "./votaciones.js";
+import { votosPorTema } from "./votosPorTema.js";
 
 export const nombreSitio = "Observatorio Legislativo";
 const LARGO_TEMA = 60;
@@ -23,11 +25,11 @@ const TIPOS_MIME = { CSV: "text/csv", JSON: "application/json", MD: "text/markdo
  * Ley "…"», «Mensaje del Poder Ejecutivo N° …») y el tema va entre comillas; en ese caso se toma el
  * texto entre comillas. Si el título empieza directamente con el tema («QUE …»), se usa desde el inicio.
  */
-export function temaDeLey(titulo) {
+export function temaDeLey(titulo, largo = LARGO_TEMA) {
   const t = String(titulo ?? "").replace(/\s+/g, " ").trim();
   const entreComillas = t.match(/[“"«]([^”"»]+)[”"»]/);
   const tema = !/^QUE\b/i.test(t) && entreComillas ? entreComillas[1].trim() : t;
-  return recortar(tema, LARGO_TEMA);
+  return recortar(tema, largo);
 }
 
 export function tituloDeLey(ley) {
@@ -145,6 +147,11 @@ export function direccionesDelSitemap() {
     rutas.rankings(),
     rutas.votaciones(),
     ...votacionesDelPeriodo(periodos().find((p) => p.vigente).id).anios.map((a) => a.url),
+    ...votacionesDelPeriodo(periodos().find((p) => p.vigente).id).votaciones.map((v) => v.pagina),
+    rutas.votosPorTema(),
+    ...votosPorTema(periodos().find((p) => p.vigente).id).map((t) => t.url),
+    // El test de afinidad entra cuando sus preguntas dejan de ser preliminares (#64).
+    ...(esPreliminar() ? [] : [rutas.testAfinidad()]),
     ...legisladores().map((p) => p.url),
     rutas.datosAbiertos(),
     rutas.metodologia(),

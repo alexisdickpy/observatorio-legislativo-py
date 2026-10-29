@@ -6,7 +6,7 @@
 
 | Período | Datos actualizados por última vez |
 |---|---|
-| 2023-2028 | 2026-10-23T12:42:19Z |
+| 2023-2028 | 2026-10-28T14:09:21Z |
 
 La última comprobación de la fuente (aunque no haya cambios) figura en [`estado.json`](estado.json).
 
@@ -272,3 +272,36 @@ Se publica en `propios/partidos.json`.
 | `fundamentoUnificado` | propio | texto | Por qué el texto se agrupa con otro o por qué queda solo, preferentemente con un dato oficial. |
 | `nombreConocido` | propio | texto | Nombre por el que se conoce al partido, cuando difiere del oficial. Solo en algunas entradas. |
 | `fundamentoNombreConocido` | propio | texto | De dónde sale el nombre conocido. Solo en las entradas con `nombreConocido`. |
+
+## temas
+
+Capa propia con la lista de temas con que este proyecto clasifica los proyectos de ley, la definición de cada uno y las palabras clave de sus reglas. Se edita a mano.
+
+Se publica en `propios/temas.json`.
+
+| Campo | Origen | Tipo | Descripción |
+|---|---|---|---|
+| `id` | propio | texto | Identificador del tema (minúsculas y guiones). Es el valor del filtro por tema en las direcciones del sitio. |
+| `nombre` | propio | texto | Nombre con que el sitio muestra el tema. |
+| `nombreCorto` | propio | texto | Nombre corto con que el sitio muestra el tema en sus etiquetas. |
+| `definicion` | propio | texto | Qué leyes incluye el tema. |
+| `palabrasClave` | propio | lista de textos | Palabras clave de la regla del tema, sin mayúsculas ni tildes. Cada una es el comienzo de una palabra del acápite oficial. |
+| `excepto` | propio | lista de textos | Frases que no cuentan para el tema. Solo en algunos temas. |
+| `exclusivo` | propio | booleano | Si el tema deja fuera a los demás temas que asignan las reglas. Solo en algunos temas. |
+
+## clasificacion-temas
+
+Capa propia con los temas de cada proyecto de ley con ley sancionada o con votación nominal en el período, según la clasificación de este proyecto (ver la metodología). No es un dato oficial.
+
+Se publica en `propios/clasificacion-temas.json` y `propios/clasificacion-temas.csv`.
+
+| Campo | Origen | Tipo | Descripción |
+|---|---|---|---|
+| `idProyecto` | oficial | entero | Identificador oficial del proyecto (`proyecto.idProyecto` de leyes y votaciones). |
+| `periodoLegislativo` | propio | texto | Período legislativo de la clasificación. |
+| `temas` | propio | lista de objetos (JSON) o de textos (CSV) | En el JSON, un objeto por tema con `tema` (identificador de `temas.json`), `origen` (`regla` o `revision`) y, si lo asignó una regla, `palabraClave`. En el CSV, los identificadores de los temas. |
+| `temas[].tema` | propio | texto | Identificador del tema en `temas.json`. *Solo en el JSON.* |
+| `temas[].origen` | propio | texto | `regla` (lo asignó una regla por palabras clave) o `revision` (lo agregó la revisión manual). *Solo en el JSON.* |
+| `temas[].palabraClave` | propio | texto | Palabra clave que asignó el tema. Solo en los temas con origen `regla`. *Solo en el JSON.* |
+| `pendiente` | propio | booleano | Si el proyecto está pendiente de clasificación, sin ningún tema. |
+| `revisado` | propio | booleano | Si la clasificación se revisó a mano. Las revisadas no se recalculan; las demás salen de las reglas en cada actualización. |

@@ -1,6 +1,6 @@
 ---
 // Una votación nominal: textos oficiales, totales, posición de cada partido agrupada por sentido
-// (#44), desglose por partido y bancada y voto de cada legislador. Recibe los valores ya calculados por lib/ficha.js.
+// (#44), desglose por partido y bancada y voto de cada legislador, con el enlace a su página propia (#45). Recibe los valores ya calculados por lib/ficha.js.
 // Estilos globales con prefijo de clase: los estilos con alcance agregan un atributo a cada celda.
 import BarraVotos from "./BarraVotos.astro";
 import GraficoPartidos from "./GraficoPartidos.astro";
@@ -10,8 +10,10 @@ import TablaDesglose from "./TablaDesglose.astro";
 interface Props {
   votacion: any;
   nivel: number;
+  /** En la página propia de la votación (#45), sin el enlace a sí misma. */
+  propia?: boolean;
 }
-const { votacion: v, nivel } = Astro.props;
+const { votacion: v, nivel, propia = false } = Astro.props;
 const Titulo = `h${nivel}`;
 const Subtitulo = `h${Math.min(nivel + 1, 6)}`;
 const sinDato = "Sin dato";
@@ -99,7 +101,7 @@ const sinDato = "Sin dato";
     </div>
   </details>
 
-  <p class="chico"><a href={v.url}>Votación en SILpy</a>{v.sesion.url && <Fragment> · <a href={v.sesion.url}>Sesión en SILpy</a></Fragment>}</p>
+  <p class="chico">{!propia && <Fragment><a href={v.pagina}>Compartir esta votación</a> · </Fragment>}<a href={v.url}>Votación en SILpy</a>{v.sesion.url && <Fragment> · <a href={v.sesion.url}>Sesión en SILpy</a></Fragment>}</p>
 </section>
 
 <style is:global>
