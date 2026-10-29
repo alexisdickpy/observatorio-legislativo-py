@@ -2,8 +2,10 @@
 import Base from "../layouts/Base.astro";
 import AnalisisPortada from "../components/AnalisisPortada.astro";
 import CuadroTemas from "../components/CuadroTemas.astro";
+import MapaDepartamentos from "../components/MapaDepartamentos.astro";
 import { leyes } from "../lib/catalogo.js";
 import { periodos } from "../lib/datos.js";
+import { mapaDeDiputados } from "../lib/mapa.js";
 import * as rutas from "../lib/rutas.js";
 import { datosDelSitio } from "../lib/seo.js";
 import { datosDelTest } from "../lib/testAfinidad.js";
@@ -11,6 +13,7 @@ import { datosDelTest } from "../lib/testAfinidad.js";
 const vigente = periodos().find((p) => p.vigente);
 const cantidad = leyes().length;
 const test = datosDelTest(vigente.id);
+const mapa = mapaDeDiputados(vigente.id);
 ---
 
 <Base
@@ -27,18 +30,29 @@ const test = datosDelTest(vigente.id);
     <ul>
       <li><a href={rutas.leyes()}>Ver las {cantidad} leyes del período</a></li>
       <li><a href={rutas.legisladores()}>Ver los legisladores, sus votos y sus leyes</a></li>
+      <li><a href={rutas.mapaDiputados()}>Ver el mapa de diputados por departamento</a></li>
       <li><a href={rutas.buscar()}>Buscar una ley</a></li>
       <li><a href={rutas.datosAbiertos()}>Descargar los datos abiertos</a></li>
     </ul>
-    <section aria-labelledby="test-portada">
-      <h2 id="test-portada">Test de afinidad</h2>
-      <p>
-        {test.preguntas.length} preguntas sobre leyes votadas en el período. Al final ves cuánto coinciden tus
-        respuestas con lo que votó cada partido.
-      </p>
-      <p><a href={rutas.testAfinidad()}>Hacer el test</a></p>
-    </section>
   </div>
+  <AnalisisPortada periodo={vigente.id} parte="tarjetas" />
+  <section aria-labelledby="test-portada" class="lectura">
+    <h2 id="test-portada">Test de afinidad</h2>
+    <p>
+      {test.preguntas.length} preguntas sobre leyes votadas en el período. Al final ves cuánto coinciden tus
+      respuestas con lo que votó cada partido.
+    </p>
+    <p><a href={rutas.testAfinidad()}>Hacer el test</a></p>
+  </section>
   <CuadroTemas periodo={vigente.id} />
-  <AnalisisPortada periodo={vigente.id} />
+  <AnalisisPortada periodo={vigente.id} parte="temas" />
+  <section aria-labelledby="mapa-portada">
+    <h2 id="mapa-portada">Diputados por departamento</h2>
+    <p class="lectura">
+      {mapa.total} diputados en ejercicio. Elegí un departamento para ver quiénes son, o mirá el
+      <a href={rutas.mapaDiputados()}>mapa con la lista completa</a>.
+    </p>
+    <MapaDepartamentos mapa={mapa} sinLista />
+  </section>
+  <AnalisisPortada periodo={vigente.id} parte="votaciones" />
 </Base>

@@ -1,0 +1,240 @@
+---
+// Mapa de diputados por departamento (#65) y, debajo, la lista con los mismos datos, que es la
+// alternativa accesible y la vista de pantallas chicas. Cada zona es un enlace a su departamento en
+// la lista; con JavaScript, el detalle se muestra además junto al mapa.
+// Con sinLista (portada), la lista queda oculta y solo alimenta el detalle; sin JavaScript, cada zona
+// lleva a su departamento en la página del mapa.
+import * as rutas from "../lib/rutas.js";
+
+interface Props {
+  mapa: any;
+  sinLista?: boolean;
+}
+const { mapa, sinLista = false } = Astro.props;
+const enlace = (z: any) => (sinLista ? `${rutas.mapaDiputados()}#${z.ancla}` : `#${z.ancla}`);
+// Asunción es muy chica para su cifra: su círculo va al costado, unido por una línea a su lugar real.
+const CAPITAL = "PY-ASU";
+const DESVIO_CAPITAL = [-32, -14];
+const posicion = (z: any) => (z.codigo === CAPITAL ? [z.etiqueta[0] + DESVIO_CAPITAL[0], z.etiqueta[1] + DESVIO_CAPITAL[1]] : z.etiqueta);
+const plural = (n: number) => (n === 1 ? "1 diputado" : `${n} diputados`);
+const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConocido})` : (d.partido ?? "Sin dato"));
+---
+
+<div class:list={["mapa-departamentos", { "sin-lista": sinLista }]}>
+  <figure class="mapa-dibujo">
+    <svg viewBox={`0 0 ${mapa.ancho} ${mapa.alto}`} role="group" aria-label="Mapa del Paraguay por departamento">
+      {
+        mapa.zonas.map((z: any) => (
+          <a href={enlace(z)} class="zona" data-ancla={z.ancla} aria-label={`${z.nombre}, ${plural(z.cantidad)}`}>
+            <title>{`${z.nombre}, ${plural(z.cantidad)}`}</title>
+            <path d={z.ruta} class={`nivel-${z.nivel}`} />
+            {z.codigo === CAPITAL && (
+              <>
+                <line x1={z.etiqueta[0]} y1={z.etiqueta[1]} x2={posicion(z)[0]} y2={posicion(z)[1]} class="guia" />
+                <circle cx={posicion(z)[0]} cy={posicion(z)[1]} r="11" class={`nivel-${z.nivel}`} />
+              </>
+            )}
+          </a>
+        ))
+      }
+      {
+        mapa.zonas.map((z: any) => (
+          <text x={posicion(z)[0]} y={posicion(z)[1]} class={z.nivel >= 4 ? "cifra sobre-oscuro" : "cifra"} aria-hidden="true">
+            {z.cantidad}
+          </text>
+        ))
+      }
+    </svg>
+    <figcaption class="chico texto-suave">
+      <ul class="leyenda">
+        {mapa.niveles.map((n: any) => <li><span class={`muestra nivel-${n.nivel}`}></span>{n.texto}</li>)}
+      </ul>
+      El color depende solo de la cantidad de diputados. El círculo es {mapa.zonas.find((z: any) => z.codigo === CAPITAL)?.nombre}.
+    </figcaption>
+  </figure>
+  <div class="mapa-detalle" id="mapa-detalle" aria-live="polite" hidden>
+    <p class="texto-suave">Elegí un departamento en el mapa.</p>
+  </div>
+</div>
+
+{!sinLista && <h2>Diputados por departamento</h2>}
+<div class="mapa-lista" hidden={sinLista}>
+  {
+    mapa.zonas.map((z: any) => (
+      <section id={z.ancla} class="departamento">
+        <h3>{z.nombre} <span class="texto-suave">· {plural(z.cantidad)}</span></h3>
+        {z.oficialDistinto.length > 0 && <p class="chico texto-suave">Figura en la API como {z.oficialDistinto.join(" y ")}.</p>}
+        {z.cantidad === 0 ? (
+          <p class="chico">Sin diputados en ejercicio según la API.</p>
+        ) : (
+          <ul>
+            {z.diputados.map((d: any) => <li class="diputado">{d.foto ? <img src={d.foto} alt="" width="40" height="40" loading="lazy" /> : <span class="sin-foto" aria-hidden="true" />}<span><a href={d.url}>{d.nombre}</a><br /><span class="chico texto-suave">{partido(d)}</span></span></li>)}
+          </ul>
+        )}
+      </section>
+    ))
+  }
+  {
+    mapa.sinZona.map((g: any) => (
+      <section class="departamento">
+        <h3>{g.departamento} <span class="texto-suave">· {plural(g.diputados.length)}, sin zona en el mapa</span></h3>
+        <ul>
+          {g.diputados.map((d: any) => <li class="diputado">{d.foto ? <img src={d.foto} alt="" width="40" height="40" loading="lazy" /> : <span class="sin-foto" aria-hidden="true" />}<span><a href={d.url}>{d.nombre}</a><br /><span class="chico texto-suave">{partido(d)}</span></span></li>)}
+        </ul>
+      </section>
+    ))
+  }
+</div>
+
+<script>
+  const detalle = document.getElementById("mapa-detalle");
+  const zonas = detalle ? [...document.querySelectorAll<SVGAElement>(".mapa-departamentos .zona")] : [];
+  if (detalle) detalle.hidden = false;
+
+  function mostrar(ancla: string) {
+    const seccion = document.getElementById(ancla);
+    if (!seccion || !detalle) return;
+    detalle.innerHTML = seccion.innerHTML;
+    for (const z of zonas) z.classList.toggle("elegida", z.dataset.ancla === ancla);
+  }
+
+  for (const z of zonas) {
+    z.addEventListener("click", (e) => {
+      e.preventDefault();
+      mostrar(z.dataset.ancla!);
+      history.replaceState(null, "", `#${z.dataset.ancla}`);
+    });
+  }
+  if (detalle && location.hash) mostrar(decodeURIComponent(location.hash.slice(1)));
+</script>
+
+<style is:global>
+  .mapa-departamentos {
+    display: grid;
+    gap: var(--espacio-5);
+    margin-block: var(--espacio-5);
+  }
+  @media (min-width: 48rem) {
+    .mapa-departamentos {
+      grid-template-columns: minmax(0, var(--ancho-mapa)) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+  .mapa-dibujo {
+    margin: 0;
+  }
+  .mapa-dibujo svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .mapa-departamentos .zona path,
+  .mapa-departamentos .zona circle {
+    stroke: var(--color-mapa-limite);
+    stroke-width: 1;
+    cursor: pointer;
+  }
+  .mapa-departamentos .guia {
+    stroke: var(--color-mapa-cifra);
+    stroke-width: 1;
+  }
+  .mapa-departamentos .zona:hover path,
+  .mapa-departamentos .zona:hover circle,
+  .mapa-departamentos .zona.elegida path,
+  .mapa-departamentos .zona.elegida circle {
+    stroke: var(--color-texto);
+    stroke-width: 2;
+  }
+  .mapa-departamentos .zona:focus {
+    outline: none;
+  }
+  .mapa-departamentos .zona:focus-visible path,
+  .mapa-departamentos .zona:focus-visible circle {
+    stroke: var(--color-foco);
+    stroke-width: var(--foco-ancho);
+  }
+  .mapa-departamentos .nivel-0 { fill: var(--color-mapa-0); background: var(--color-mapa-0); }
+  .mapa-departamentos .nivel-1 { fill: var(--color-mapa-1); background: var(--color-mapa-1); }
+  .mapa-departamentos .nivel-2 { fill: var(--color-mapa-2); background: var(--color-mapa-2); }
+  .mapa-departamentos .nivel-3 { fill: var(--color-mapa-3); background: var(--color-mapa-3); }
+  .mapa-departamentos .nivel-4 { fill: var(--color-mapa-4); background: var(--color-mapa-4); }
+  .mapa-departamentos .nivel-5 { fill: var(--color-mapa-5); background: var(--color-mapa-5); }
+  .mapa-departamentos .cifra {
+    fill: var(--color-mapa-cifra);
+    font-size: var(--tamano-chico);
+    font-weight: var(--peso-fuerte);
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+  }
+  .mapa-departamentos .cifra.sobre-oscuro {
+    fill: var(--color-mapa-cifra-oscura);
+  }
+  .mapa-departamentos .leyenda {
+    list-style: none;
+    padding: 0;
+    margin: var(--espacio-2) 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espacio-1) var(--espacio-4);
+  }
+  .mapa-departamentos .leyenda li {
+    display: flex;
+    align-items: center;
+    gap: var(--espacio-1);
+  }
+  .mapa-departamentos .muestra {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: var(--borde-ancho) solid var(--color-borde);
+  }
+  .mapa-detalle,
+  .mapa-lista .departamento {
+    border: var(--borde-ancho) solid var(--color-borde);
+    border-radius: var(--radio);
+    padding: var(--espacio-3) var(--espacio-4);
+  }
+  .mapa-detalle h3,
+  .mapa-lista h3 {
+    margin-top: 0;
+  }
+  .mapa-detalle ul,
+  .mapa-lista ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 0;
+  }
+  .diputado {
+    display: grid;
+    grid-template-columns: var(--tamano-foto-mapa) 1fr;
+    gap: var(--espacio-3);
+    align-items: center;
+    padding-block: var(--espacio-1);
+  }
+  .diputado img,
+  .diputado .sin-foto {
+    display: block;
+    width: var(--tamano-foto-mapa);
+    height: var(--tamano-foto-mapa);
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--color-superficie);
+  }
+  .mapa-lista[hidden] {
+    display: none;
+  }
+  .mapa-lista {
+    display: grid;
+    gap: var(--espacio-3);
+  }
+  @media (min-width: 48rem) {
+    .mapa-lista {
+      grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    }
+  }
+  .mapa-lista .departamento:target {
+    border-color: var(--color-acento);
+    background: var(--color-superficie);
+  }
+</style>

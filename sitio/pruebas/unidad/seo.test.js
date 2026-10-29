@@ -94,7 +94,7 @@ test("el sitemap tiene cada ley y cada legislador una vez, sin la búsqueda", ()
   assert.equal(new Set(urls).size, urls.length);
   const { anios, votaciones } = votacionesDelPeriodo("2023-2028");
   const temas = votosPorTema("2023-2028");
-  assert.equal(urls.length, leyes().length + legisladores().length + 12 + anios.length + temas.length + votaciones.length);
+  assert.equal(urls.length, leyes().length + legisladores().length + 13 + anios.length + temas.length + votaciones.length);
   for (const v of votaciones) assert.ok(urls.includes(rutas.absoluta(rutas.votacion(v.id))), v.id);
   for (const t of temas) assert.ok(urls.includes(rutas.absoluta(t.url)), t.url);
   assert.ok(urls.includes(rutas.absoluta(rutas.votosPorTema())));
@@ -102,6 +102,7 @@ test("el sitemap tiene cada ley y cada legislador una vez, sin la búsqueda", ()
   for (const a of anios) assert.ok(urls.includes(rutas.absoluta(a.url)), a.url);
   assert.ok(urls.includes(rutas.absoluta(rutas.votacionesNominales())));
   assert.ok(urls.includes(rutas.absoluta(rutas.rankings())));
+  assert.ok(urls.includes(rutas.absoluta(rutas.mapaDiputados())));
   assert.ok(urls.includes(rutas.absoluta(rutas.coincidencia())));
   assert.ok(urls.includes(rutas.absoluta(rutas.testAfinidad())));
   assert.ok(!urls.includes(rutas.absoluta(rutas.buscar())));

@@ -300,6 +300,15 @@ Decisión de alcance (#63). La página `/test-de-afinidad/` tiene 12 preguntas b
 
 Comprobación. Las pruebas cubren las letras de cada mayoría, la combinación de cámaras, Sin posición, las preguntas sin comparar, el umbral y el orden, el largo de los textos, el enlace al proyecto, los criterios de selección (temas, votaciones en general con el 90 % como máximo o justificación, fuentes de cada explicación), y recalculan a mano la mayoría de cada partido en una pregunta desde `votos.csv`.
 
+## Mapa de diputados por departamento
+
+La página `/legisladores/mapa/` (#65) agrupa a los diputados en ejercicio por el `departamento` oficial de cada uno, sin cambiarlo. Los senadores (`NACIONAL`) y los diputados que ya no ejercen quedan fuera del mapa y se mencionan en la página.
+
+- Correspondencia. `CORRESPONDENCIA` en `sitio/src/lib/mapa.js` es un dato propio que relaciona cada texto oficial, normalizado (sin tildes ni signos), con el código ISO 3166-2 de su zona. Por ejemplo, `CAPITAL` corresponde a Asunción (`PY-ASU`) y `PTE. HAYES` a Presidente Hayes (`PY-15`). Un texto sin correspondencia se muestra aparte, sin zona.
+- Contorno. `sitio/src/mapa/departamentos.json` es una copia propia y simplificada de Natural Earth, «Admin 1 – States, Provinces», escala 1:10m, versión 5.1.2 (dominio público). La genera a mano `sitio/scripts/mapa-departamentos.js`. El sitio no consulta servicios de mapas externos.
+- Colores. Cinco tramos según la cantidad de diputados (1, 2 a 3, 4 a 5, 6 a 8, 9 o más), nunca según el partido.
+- Comprobación. Las pruebas revisan que cada departamento de los diputados en ejercicio tenga su zona, que la suma del mapa sea el total de diputados en ejercicio y que los valores desconocidos queden aparte.
+
 ## Números de ley
 
 El número de ley se usa como URL (`/leyes/{número}/`). El importador verifica en cada ejecución que ningún número del período figure en otra legislatura, comparando con el listado histórico completo de la API. El resultado se informa en el resumen de cada ejecución.
