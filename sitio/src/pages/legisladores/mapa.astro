@@ -1,0 +1,32 @@
+---
+// Mapa de diputados en ejercicio por departamento (#65).
+import Base from "../../layouts/Base.astro";
+import MapaDepartamentos from "../../components/MapaDepartamentos.astro";
+import { periodos } from "../../lib/datos.js";
+import { mapaDeDiputados } from "../../lib/mapa.js";
+import * as rutas from "../../lib/rutas.js";
+
+const periodo = periodos().find((p) => p.vigente).id;
+const mapa = mapaDeDiputados(periodo);
+---
+
+<Base
+  titulo="Mapa de diputados por departamento"
+  descripcion={`Los ${mapa.total} diputados en ejercicio del Congreso Nacional del Paraguay en el período legislativo ${periodo}, por departamento, con su partido y el enlace a su ficha.`}
+>
+  <h1>Mapa de diputados por departamento</h1>
+  <div class="lectura">
+    <p>
+      {mapa.total} diputados en ejercicio en el período legislativo {periodo}, según el departamento que
+      registra la API para cada uno. Cada nombre lleva a su ficha.
+    </p>
+    <p class="chico texto-suave">
+      Los {mapa.senadores} senadores no figuran porque se eligen en una circunscripción nacional. Tampoco los
+      {mapa.diputadosQueNoEjercen} diputados del período que ya no ejercen, que están en
+      <a href={rutas.legisladores()}>Legisladores</a>. Contorno de los departamentos de
+      <a href={mapa.urlFuente}>Natural Earth</a> ({mapa.licencia.toLowerCase()}), simplificado por este proyecto.
+      <a href={rutas.metodologia(rutas.anclasMetodologia.mapa)}>Cómo se arma el mapa</a>.
+    </p>
+  </div>
+  <MapaDepartamentos mapa={mapa} />
+</Base>

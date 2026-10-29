@@ -421,6 +421,19 @@ const TOTAL_PREGUNTAS = preguntasTest.length;
       respuestas. Coincidir o no coincidir no es bueno ni malo.
     </p>
 
+    <h2 id={anclas.mapa}>Mapa de diputados por departamento</h2>
+    <p>
+      El <a href={rutas.mapaDiputados()}>mapa</a> muestra a los diputados en ejercicio según el departamento
+      que la API registra para cada uno, sin cambiarlo. Los senadores figuran como NACIONAL y no van en el
+      mapa, igual que los diputados que ya no ejercen. Algunos textos oficiales no coinciden con el nombre
+      del departamento, como CAPITAL (Asunción) o PTE. HAYES (Presidente Hayes). La correspondencia entre
+      cada texto y su zona es un dato propio del sitio, y un texto sin correspondencia se muestra aparte.
+    </p>
+    <p>
+      El contorno de los departamentos es de Natural Earth (dominio público), simplificado y guardado por
+      este proyecto, sin servicios de mapas externos. El color depende solo de la cantidad de diputados.
+    </p>
+
     <h2 id={anclas.afiliacion}>Partido y bancada</h2>
     <p>
       La API publica un único partido y una única bancada por legislador y período, sin fecha. Si un
