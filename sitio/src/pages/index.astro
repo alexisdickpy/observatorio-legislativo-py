@@ -1,8 +1,10 @@
 ---
 import Base from "../layouts/Base.astro";
 import AnalisisPortada from "../components/AnalisisPortada.astro";
+import ComposicionCongreso from "../components/ComposicionCongreso.astro";
 import CuadroTemas from "../components/CuadroTemas.astro";
 import MapaDepartamentos from "../components/MapaDepartamentos.astro";
+import UltimaVotacion from "../components/UltimaVotacion.astro";
 import { leyes } from "../lib/catalogo.js";
 import { periodos } from "../lib/datos.js";
 import { mapaDeDiputados } from "../lib/mapa.js";
@@ -21,12 +23,16 @@ const mapa = mapaDeDiputados(vigente.id);
   descripcion={`Leyes sancionadas por el Congreso Nacional del Paraguay en el período legislativo ${vigente.id}, con datos abiertos.`}
   datos={datosDelSitio()}
 >
-  <div class="lectura">
-    <h1>Observatorio Legislativo</h1>
-    <p>
+  <div class="presentacion">
+    <h1>Qué vota el Congreso del Paraguay</h1>
+    <p class="lectura">
       Leyes sancionadas por el Congreso Nacional del Paraguay en el período legislativo
       {vigente.id}, a partir de los datos abiertos que publica el propio Congreso.
     </p>
+  </div>
+  <ComposicionCongreso periodo={vigente.id} />
+  <UltimaVotacion periodo={vigente.id} />
+  <nav class="accesos" aria-label="Secciones del sitio">
     <ul>
       <li><a href={rutas.leyes()}>Ver las {cantidad} leyes del período</a></li>
       <li><a href={rutas.legisladores()}>Ver los legisladores, sus votos y sus leyes</a></li>
@@ -34,16 +40,26 @@ const mapa = mapaDeDiputados(vigente.id);
       <li><a href={rutas.buscar()}>Buscar una ley</a></li>
       <li><a href={rutas.datosAbiertos()}>Descargar los datos abiertos</a></li>
     </ul>
-  </div>
+  </nav>
   <AnalisisPortada periodo={vigente.id} parte="tarjetas" />
-  <section aria-labelledby="test-portada" class="lectura">
-    <h2 id="test-portada">Test de afinidad</h2>
-    <p>
-      {test.preguntas.length} preguntas sobre leyes votadas en el período. Al final ves cuánto coinciden tus
-      respuestas con lo que votó cada partido.
-    </p>
-    <p><a href={rutas.testAfinidad()}>Hacer el test</a></p>
-  </section>
+  <div class="dos-acciones">
+    <section aria-labelledby="test-portada">
+      <h2 id="test-portada">Test de afinidad</h2>
+      <p>
+        {test.preguntas.length} preguntas sobre leyes votadas en el período. Al final ves cuánto coinciden tus
+        respuestas con lo que votó cada partido.
+      </p>
+      <p><a class="boton" href={rutas.testAfinidad()}>Hacer el test</a></p>
+    </section>
+    <section aria-labelledby="telegram-portada">
+      <h2 id="telegram-portada">Avisos por Telegram</h2>
+      <p>
+        Un bot te avisa de las novedades del Congreso. Eliges qué avisos recibir y te das de baja cuando
+        quieras con el comando /baja.
+      </p>
+      <p><a class="boton" href={rutas.botTelegram()}>Abrir el bot</a></p>
+    </section>
+  </div>
   <CuadroTemas periodo={vigente.id} />
   <AnalisisPortada periodo={vigente.id} parte="temas" />
   <section aria-labelledby="mapa-portada">
@@ -56,3 +72,40 @@ const mapa = mapaDeDiputados(vigente.id);
   </section>
   <AnalisisPortada periodo={vigente.id} parte="votaciones" />
 </Base>
+
+<style>
+  .presentacion {
+    padding: var(--espacio-5) 0 var(--espacio-4);
+  }
+  .presentacion h1 {
+    margin: 0 0 var(--espacio-2);
+  }
+  .presentacion p {
+    margin: 0;
+    color: var(--color-texto-suave);
+  }
+  .accesos ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: 0 var(--espacio-5);
+    list-style: none;
+    padding: 0;
+    margin: var(--espacio-5) 0 0;
+  }
+  .accesos li {
+    border-top: var(--borde-ancho) solid var(--color-borde);
+    padding: var(--espacio-2) 0;
+  }
+  .dos-acciones {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: 0 var(--espacio-6);
+    margin-top: var(--espacio-6);
+    border-top: var(--borde-ancho) solid var(--color-borde-fuerte);
+    border-bottom: var(--borde-ancho) solid var(--color-borde);
+    padding-bottom: var(--espacio-3);
+  }
+  .dos-acciones h2 {
+    margin-top: var(--espacio-4);
+  }
+</style>

@@ -4,6 +4,8 @@
 // mayoría de su bancada y de su partido en todas las votaciones nominales, leyes de su autoría,
 // expedientes presentados y comisiones (preparado por lib/legisladores.js).
 import Base from "../../layouts/Base.astro";
+import { clasePartido } from "../../lib/partidos.js";
+import { legible } from "../../lib/texto.js";
 import AusenciasVotaciones from "../../components/AusenciasVotaciones.astro";
 import ComisionesLegislador from "../../components/ComisionesLegislador.astro";
 import ExpedientesPresentados from "../../components/ExpedientesPresentados.astro";
@@ -55,7 +57,7 @@ const descripcion = descripcionDeLegislador(f, sinDato);
               <div><dt>Cámara</dt><dd>{b.camara ?? sinDato}</dd></div>
               <div><dt>Tipo</dt><dd>{b.tipo ?? sinDato}</dd></div>
               <div><dt>Departamento</dt><dd>{b.departamento ?? sinDato}</dd></div>
-              <div><dt>Partido</dt><dd>{b.partido ?? sinDato}{b.partidoConocido && ` (${b.partidoConocido})`}</dd></div>              <div><dt>Bancada</dt><dd>{b.bancada ?? sinDato}</dd></div>
+              <div><dt>Partido</dt><dd>{b.partido && <span class={`pip ${clasePartido(b.partido)}`}></span>} {legible(b.partido) ?? sinDato}{b.partidoConocido && ` (${b.partidoConocido})`}</dd></div>              <div><dt>Bancada</dt><dd>{legible(b.bancada) ?? sinDato}</dd></div>
               <div><dt>Cargo en la bancada</dt><dd class={b.cargoBancada ? undefined : "texto-suave"}>{b.cargoBancada ?? sinDato}</dd></div>
               <div><dt>Correo</dt><dd class={b.correo ? "contacto" : "texto-suave"}>{b.correo ? <a href={`mailto:${b.correo}`}>{b.correo}</a> : sinDato}</dd></div>
               <div><dt>Teléfono</dt><dd class={b.telefono ? undefined : "texto-suave"}>{b.telefono ?? sinDato}</dd></div>

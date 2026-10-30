@@ -1,0 +1,53 @@
+---
+// Barras horizontales de una lista de cifras (lib/estadisticas.js): nombre, cifra y una barra proporcional
+// a la mayor. Con `clase`, la barra y el punto llevan el color del partido.
+interface Props {
+  filas: { texto: string; cantidad: number; clase?: string; url?: string }[];
+}
+const { filas } = Astro.props;
+const mayor = Math.max(...filas.map((f) => f.cantidad), 1);
+---
+
+<ul class="barras-cifras">
+  {
+    filas.map((f) => (
+      <li class={f.clase}>
+        <span class="fila">
+          <span>{f.clase && <span class="pip"></span>} {f.url ? <a href={f.url}>{f.texto}</a> : f.texto}</span>
+          <strong>{f.cantidad.toLocaleString("es-PY")}</strong>
+        </span>
+        <span class="pista" aria-hidden="true"><span class="relleno" style={`width:${(f.cantidad / mayor) * 100}%`}></span></span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .barras-cifras {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--tamano-chico);
+  }
+  li {
+    padding: var(--espacio-2) 0;
+    border-top: var(--borde-ancho) solid var(--color-borde);
+  }
+  .fila {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--espacio-3);
+    margin-bottom: var(--espacio-1);
+  }
+  .pista {
+    display: block;
+    height: var(--alto-barra-fina);
+    background: var(--color-superficie);
+  }
+  .relleno {
+    display: block;
+    height: 100%;
+    background: var(--color-partido, var(--color-borde-fuerte));
+    box-shadow: inset 0 0 0 var(--borde-ancho) var(--borde-partido, transparent);
+  }
+</style>

@@ -1,0 +1,112 @@
+---
+// Divide en páginas numeradas las listas largas (#80): cualquier elemento con el atributo data-paginar
+// (una tabla o una lista; su valor, si tiene, es la cantidad por página). Sin JavaScript se ve todo. No usa
+// `hidden`, que es de los filtros: cuenta solo lo que los filtros dejan visible y se rehace si cambian o si
+// la tabla se reordena.
+---
+
+<script>
+  const POR_PAGINA = 25;
+  /** Números a mostrar: el primero, el último y los vecinos de la página actual; null es «…». */
+  const numeros = (actual: number, total: number) => {
+    const lista: (number | null)[] = [];
+    for (let n = 1; n <= total; n++) {
+      if (n === 1 || n === total || Math.abs(n - actual) <= 1) lista.push(n);
+      else if (lista.at(-1) !== null) lista.push(null);
+    }
+    return lista;
+  };
+
+  for (const lista of document.querySelectorAll<HTMLElement>("[data-paginar]")) {
+    const porPagina = Number(lista.dataset.paginar) || POR_PAGINA;
+    const nav = document.createElement("nav");
+    nav.className = "paginas";
+    nav.setAttribute("aria-label", "Páginas de la lista");
+    (lista.closest("table")?.parentElement?.matches("div") ? lista.closest("table")!.parentElement! : (lista.closest("table") ?? lista)).after(nav);
+    let actual = 1;
+
+    const dibujar = (desplazar = false) => {
+      const items = [...lista.children] as HTMLElement[];
+      const visibles = items.filter((x) => !x.hidden);
+      const total = Math.max(1, Math.ceil(visibles.length / porPagina));
+      actual = Math.min(actual, total);
+      observador.disconnect();
+      for (const x of items) x.classList.add("fuera-de-pagina");
+      visibles.slice((actual - 1) * porPagina, actual * porPagina).forEach((x) => x.classList.remove("fuera-de-pagina"));
+      nav.replaceChildren();
+      nav.hidden = total === 1;
+      const boton = (texto: string, pagina: number, etiqueta: string, activo = false, apagado = false) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = texto;
+        b.setAttribute("aria-label", etiqueta);
+        if (activo) b.setAttribute("aria-current", "page");
+        b.disabled = apagado;
+        b.addEventListener("click", () => {
+          actual = pagina;
+          dibujar(true);
+        });
+        nav.append(b);
+      };
+      boton("←", actual - 1, "Página anterior", false, actual === 1);
+      for (const n of numeros(actual, total)) {
+        if (n === null) nav.append(Object.assign(document.createElement("span"), { textContent: "…" }));
+        else boton(String(n), n, `Página ${n}`, n === actual);
+      }
+      boton("→", actual + 1, "Página siguiente", false, actual === total);
+      observar();
+      if (desplazar) (lista.closest("table") ?? lista).scrollIntoView({ block: "start" });
+    };
+
+    const observador = new MutationObserver(() => {
+      actual = 1;
+      dibujar();
+    });
+    const observar = () => observador.observe(lista, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+
+    // Un enlace con ancla a una fila lleva a la página donde está.
+    const irAlAncla = () => {
+      const destino = location.hash && lista.querySelector(`[id="${CSS.escape(location.hash.slice(1))}"]`);
+      if (!destino) return;
+      const item = [...lista.children].find((x) => x.contains(destino)) as HTMLElement;
+      const visibles = ([...lista.children] as HTMLElement[]).filter((x) => !x.hidden);
+      actual = Math.floor(visibles.indexOf(item) / porPagina) + 1;
+      dibujar();
+      destino.scrollIntoView();
+    };
+    dibujar();
+    irAlAncla();
+    addEventListener("hashchange", irAlAncla);
+  }
+</script>
+
+<style is:global>
+  .fuera-de-pagina {
+    display: none !important;
+  }
+  .paginas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--espacio-1);
+    margin: var(--espacio-3) 0 var(--espacio-4);
+    font-size: var(--tamano-chico);
+  }
+  .paginas button {
+    min-width: 2.25rem;
+    padding: var(--espacio-1) var(--espacio-2);
+    border-color: var(--color-borde);
+    background: transparent;
+    color: var(--color-texto);
+  }
+  .paginas button[aria-current="page"] {
+    background: var(--color-acento);
+    border-color: var(--color-acento);
+    color: var(--color-sobre-acento);
+    font-weight: var(--peso-fuerte);
+  }
+  .paginas button:disabled {
+    color: var(--color-borde-fuerte);
+    cursor: default;
+  }
+</style>

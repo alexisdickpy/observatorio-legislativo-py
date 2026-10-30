@@ -1,0 +1,116 @@
+---
+// Estadísticas generales del período vigente (lib/estadisticas.js, #80), con recuentos propios sobre los
+// datos abiertos. Cada cámara por separado.
+import Base from "../layouts/Base.astro";
+import BarrasCifras from "../components/BarrasCifras.astro";
+import Hemiciclo from "../components/Hemiciclo.astro";
+import { periodos } from "../lib/datos.js";
+import { CANTIDAD_AUTORES, estadisticas } from "../lib/estadisticas.js";
+import * as rutas from "../lib/rutas.js";
+
+const periodo = periodos().find((p) => p.vigente).id;
+const e = estadisticas(periodo);
+const numero = (n: number) => n.toLocaleString("es-PY");
+---
+
+<Base
+  titulo="Estadísticas"
+  descripcion={`Cifras generales del Congreso Nacional del Paraguay en el período legislativo ${periodo}: composición de cada cámara, leyes sancionadas y votaciones nominales.`}
+>
+  <h1>Estadísticas</h1>
+  <p class="lectura">
+    Cifras generales del período legislativo {periodo}, contadas por este sitio a partir de los datos abiertos
+    del Congreso, con {numero(e.leyes)} leyes sancionadas y {numero(e.votaciones)} votaciones nominales sobre
+    proyectos de ley. Se actualizan solas con cada sincronización de los datos.
+  </p>
+
+  <h2>Composición de cada cámara</h2>
+  <div class="columnas">
+    {
+      e.camaras.map((c: any) => (
+        <section>
+          <h3>{c.nombre}</h3>
+          <Hemiciclo puntos={c.asientos} cifra={String(c.total)} detalle={c.nombre.toUpperCase()} etiqueta={`${c.nombre}: ${c.partidos.map((p: any) => `${p.sigla} ${p.cantidad}`).join(", ")}.`} />
+          <BarrasCifras filas={c.partidos.map((p: any) => ({ texto: p.sigla, clase: p.clase, cantidad: p.cantidad }))} />
+          <p class="chico texto-suave nota">En ejercicio según el tipo oficial, contando a los vitalicios, {c.tipos.map((t: any) => `${t.texto} ${t.cantidad}`).join(" · ")}.</p>
+        </section>
+      ))
+    }
+  </div>
+
+  <h2>Leyes sancionadas</h2>
+  <div class="columnas">
+    <section>
+      <h3>Por año de sanción</h3>
+      <BarrasCifras filas={e.leyesPorAnio} />
+    </section>
+    <section>
+      <h3>Por iniciativa</h3>
+      <p class="chico texto-suave">Según el dato oficial de cada proyecto.</p>
+      <BarrasCifras filas={e.iniciativas} />
+    </section>
+    <section>
+      <h3>Por partido de sus autores</h3>
+      <p class="chico texto-suave">Una ley cuenta una vez por cada partido con algún autor, así que la suma pasa del total.</p>
+      <BarrasCifras filas={e.leyesPorPartido} />
+    </section>
+    <section>
+      <h3>Legisladores con más leyes de su autoría</h3>
+      <p class="chico texto-suave">Los {CANTIDAD_AUTORES} primeros. Muchas leyes tienen varios autores. Más leyes no significa mejor ni peor trabajo.</p>
+      <BarrasCifras filas={e.autores} />
+    </section>
+  </div>
+
+  <h2>Votaciones nominales sobre proyectos de ley</h2>
+  <div class="columnas">
+    <section>
+      <h3>Por año y cámara</h3>
+      <table class="por-anio">
+        <caption class="solo-lectores">Votaciones nominales por año y cámara</caption>
+        <thead><tr><th scope="col">Año</th><th scope="col">Senadores</th><th scope="col">Diputados</th></tr></thead>
+        <tbody>
+          {e.votacionesPorAnio.map((a: any) => <tr><th scope="row"><a href={a.url}>{a.anio}</a></th><td>{numero(a.porCamara.find((x: any) => x.camara === "CAMARA DE SENADORES")?.total ?? 0)}</td><td>{numero(a.porCamara.find((x: any) => x.camara === "CAMARA DE DIPUTADOS")?.total ?? 0)}</td></tr>)}
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h3>Por resultado oficial</h3>
+      <BarrasCifras filas={e.resultados} />
+    </section>
+  </div>
+  <p class="chico texto-suave">
+    <a href={rutas.metodologia()}>Metodología</a> · <a href={rutas.datosAbiertos()}>Datos abiertos</a>
+  </p>
+</Base>
+
+<style>
+  .columnas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    gap: var(--espacio-5) var(--espacio-6);
+    margin-bottom: var(--espacio-6);
+  }
+  section {
+    min-width: 0;
+  }
+  h3 {
+    margin-top: 0;
+  }
+  .nota {
+    margin-top: var(--espacio-3);
+  }
+  .por-anio {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--tamano-chico);
+  }
+  .por-anio th,
+  .por-anio td {
+    padding: var(--espacio-2) 0;
+    border-top: var(--borde-ancho) solid var(--color-borde);
+    text-align: right;
+  }
+  .por-anio th:first-child {
+    text-align: left;
+  }
+</style>

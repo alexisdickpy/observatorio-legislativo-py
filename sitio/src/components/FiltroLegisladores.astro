@@ -5,6 +5,8 @@
 import { parametrosLegisladores } from "../lib/rutas.js";
 
 type Opcion = { valor: string; etiqueta: string };
+import { legible } from "../lib/texto.js";
+
 interface Props {
   entradas: any[];
   opciones: { camaras: Opcion[]; partidos: Opcion[]; bancadas: Opcion[]; departamentos: Opcion[] };
@@ -30,7 +32,7 @@ const selectores = [
         <label for={`filtro-${s.campo}`}>{s.etiqueta}</label>
         <select id={`filtro-${s.campo}`} name={p[s.campo as keyof typeof p]}>
           <option value="">{s.todas}</option>
-          {s.lista.map((o) => <option value={o.valor}>{o.etiqueta}</option>)}
+          {s.lista.map((o) => <option value={o.valor}>{legible(o.etiqueta)}</option>)}
         </select>
       </div>
     ))

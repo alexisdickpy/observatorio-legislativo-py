@@ -12,7 +12,7 @@ const { partidos } = Astro.props;
 const detalle = (p: any) => (p.posicion ? `${p.partido}, ${p.cantidad} de ${p.votantes}` : `${p.partido}, ${p.votantes} de ${p.miembros} con voto emitido`);
 ---
 
-<ul class="posicion-partidos chico">{partidos.map((p) => <li title={detalle(p)}><i class={p.clase}></i><b>{p.sigla}</b> {p.texto}</li>)}</ul>
+<ul class="posicion-partidos chico">{partidos.map((p) => <li title={detalle(p)}><u class={p.clasePartido}></u><b>{p.sigla}</b> <i class={p.clase}></i> {p.texto}</li>)}</ul>
 
 <style is:global>
   .posicion-partidos {
@@ -28,13 +28,18 @@ const detalle = (p: any) => (p.posicion ? `${p.partido}, ${p.cantidad} de ${p.vo
     align-items: center;
     gap: var(--espacio-1);
     padding: 0 var(--espacio-2);
-    border: var(--borde-ancho) solid var(--color-borde);
-    border-radius: var(--radio);
-    background: var(--color-fondo);
     white-space: nowrap;
   }
   .posicion-partidos b {
     font-weight: var(--peso-fuerte);
+  }
+  .posicion-partidos u {
+    flex: none;
+    width: var(--tamano-pip);
+    height: var(--tamano-pip);
+    border-radius: 50%;
+    background: var(--color-partido);
+    border: var(--borde-ancho) solid var(--borde-partido, transparent);
   }
   .posicion-partidos i {
     display: inline-block;

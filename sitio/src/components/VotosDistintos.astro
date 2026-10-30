@@ -65,7 +65,7 @@ const celda = (x: any) =>
                 <th scope="col">Mayoría de su partido</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody data-paginar>
               {m.lista.map((x: any) => <tr data-distinto><td>{x.fecha ?? sinDato}</td><td>{x.url ? <a href={x.url}>Expediente {x.expediente ?? sinDato}</a> : `Expediente ${x.expediente ?? sinDato}`}</td><td>{x.etapa ?? sinDato}</td><td>{x.sentido}</td><td class={x.bancada.estado === "distinto" ? "distinto" : undefined}>{celda(x.bancada)}</td><td class={x.partido.estado === "distinto" ? "distinto" : undefined}>{celda(x.partido)}</td></tr>)}
             </tbody>
           </table>

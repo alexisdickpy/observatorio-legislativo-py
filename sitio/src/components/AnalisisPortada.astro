@@ -45,8 +45,8 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
             </form>
           )}
           {v.clave === "coincidencia" && (
-            previa.coincidencia.map((c) => (
-              <div class="camara">
+            previa.coincidencia.map((c, n) => (
+              <div class={`camara camara-${n}`}>
                 <h4 class="chico">{c.camara}</h4>
                 <p class="chico texto-suave">{plural(c.votaciones, "votación nominal", "votaciones nominales")} sobre proyectos de ley.</p>
                 {c.graficos.map((g, i) => (
@@ -72,14 +72,14 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
             ))
           )}
           {v.clave === "rankings" && (
-            previa.votosDistintos.map((c) => (
-              <div class="camara">
+            previa.votosDistintos.map((c, n) => (
+              <div class={`camara camara-${n}`}>
                 <h4 class="chico">{c.camara}</h4>
                 <ListaRanking filas={c.filas} cifra="mayoriaPartido" />
               </div>
             ))
           )}
-          <p class="chico">
+          <p class="chico ver-mas">
             <a href={v.url}>Ver {v.titulo.toLowerCase()}</a>
           </p>
         </article>
@@ -142,13 +142,23 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
   .tarjetas {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-    gap: var(--espacio-4);
+    gap: 0 var(--espacio-6);
   }
+  /* Filas compartidas: cada cámara arranca a la misma altura en las dos columnas. */
+  .tarjetas .tarjeta {
+    display: grid;
+    grid-row: span 6;
+    grid-template-rows: subgrid;
+    margin-bottom: var(--espacio-5);
+  }
+  .tarjetas .selector-partido { grid-row: 3; }
+  .tarjetas .camara-0 { grid-row: 4; }
+  .tarjetas .camara-1 { grid-row: 5; }
+  .tarjetas .ver-mas { grid-row: 6; }
   .tarjeta {
-    border: var(--borde-ancho) solid var(--color-borde);
-    border-radius: var(--radio);
-    background: var(--color-superficie);
-    padding: var(--espacio-4);
+    border-top: var(--borde-ancho) solid var(--color-borde-fuerte);
+    padding-top: var(--espacio-3);
+    min-width: 0;
   }
   .tarjeta h3 {
     margin-top: 0;

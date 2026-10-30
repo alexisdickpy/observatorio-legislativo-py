@@ -4,7 +4,9 @@
 // la lista; con JavaScript, el detalle se muestra además junto al mapa.
 // Con sinLista (portada), la lista queda oculta y solo alimenta el detalle; sin JavaScript, cada zona
 // lleva a su departamento en la página del mapa.
+import { clasePartido } from "../lib/partidos.js";
 import * as rutas from "../lib/rutas.js";
+import { legible } from "../lib/texto.js";
 
 interface Props {
   mapa: any;
@@ -17,7 +19,7 @@ const CAPITAL = "PY-ASU";
 const DESVIO_CAPITAL = [-32, -14];
 const posicion = (z: any) => (z.codigo === CAPITAL ? [z.etiqueta[0] + DESVIO_CAPITAL[0], z.etiqueta[1] + DESVIO_CAPITAL[1]] : z.etiqueta);
 const plural = (n: number) => (n === 1 ? "1 diputado" : `${n} diputados`);
-const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConocido})` : (d.partido ?? "Sin dato"));
+const partido = (d: any) => legible(d.partidoConocido ? `${d.partido} (${d.partidoConocido})` : (d.partido ?? "Sin dato"));
 ---
 
 <div class:list={["mapa-departamentos", { "sin-lista": sinLista }]}>
@@ -68,7 +70,7 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
           <p class="chico">Sin diputados en ejercicio según la API.</p>
         ) : (
           <ul>
-            {z.diputados.map((d: any) => <li class="diputado">{d.foto ? <img src={d.foto} alt="" width="40" height="40" loading="lazy" /> : <span class="sin-foto" aria-hidden="true" />}<span><a href={d.url}>{d.nombre}</a><br /><span class="chico texto-suave">{partido(d)}</span></span></li>)}
+            {z.diputados.map((d: any) => <li class="diputado">{d.foto ? <img src={d.foto} alt="" width="40" height="40" loading="lazy" /> : <span class="sin-foto" aria-hidden="true" />}<span><a href={d.url}>{d.nombre}</a><br /><span class="chico texto-suave"><span class={`pip ${clasePartido(d.partido)}`}></span> {partido(d)}</span></span></li>)}
           </ul>
         )}
       </section>
@@ -79,7 +81,7 @@ const partido = (d: any) => (d.partidoConocido ? `${d.partido} (${d.partidoConoc
       <section class="departamento">
         <h3>{g.departamento} <span class="texto-suave">· {plural(g.diputados.length)}, sin zona en el mapa</span></h3>
         <ul>
-          {g.diputados.map((d: any) => <li class="diputado">{d.foto ? <img src={d.foto} alt="" width="40" height="40" loading="lazy" /> : <span class="sin-foto" aria-hidden="true" />}<span><a href={d.url}>{d.nombre}</a><br /><span class="chico texto-suave">{partido(d)}</span></span></li>)}
+          {g.diputados.map((d: any) => <li class="diputado">{d.foto ? <img src={d.foto} alt="" width="40" height="40" loading="lazy" /> : <span class="sin-foto" aria-hidden="true" />}<span><a href={d.url}>{d.nombre}</a><br /><span class="chico texto-suave"><span class={`pip ${clasePartido(d.partido)}`}></span> {partido(d)}</span></span></li>)}
         </ul>
       </section>
     ))

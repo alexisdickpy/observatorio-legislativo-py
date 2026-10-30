@@ -2,6 +2,9 @@
 // Tabla del listado de legisladores. Recibe las filas ya preparadas por lib/legisladores.js.
 // Filas en una sola línea y estilos globales con prefijo de clase: con compressHTML desactivado,
 // la sangría y los atributos de los estilos con alcance se copian en cada celda.
+import { clasePartido } from "../lib/partidos.js";
+import { legible } from "../lib/texto.js";
+
 interface Props {
   titulo: string;
   filas: any[];
@@ -22,8 +25,8 @@ const sinDato = "Sin dato";
       <th scope="col">Bancada</th>
     </tr>
   </thead>
-  <tbody>
-    {filas.map((l) => <tr data-slug={l.slug}><th scope="row"><a href={l.url}>{l.nombre ?? sinDato}</a></th><td data-etiqueta="Cámara">{l.camara ?? sinDato}</td><td data-etiqueta="Tipo">{l.tipo ?? sinDato}</td><td data-etiqueta="Departamento">{l.departamento ?? sinDato}</td><td data-etiqueta="Partido">{l.partido ?? sinDato}{l.partidoConocido && ` (${l.partidoConocido})`}</td><td data-etiqueta="Bancada">{l.bancada ?? sinDato}</td></tr>)}
+  <tbody data-paginar>
+    {filas.map((l) => <tr data-slug={l.slug}><th scope="row"><a href={l.url}>{l.nombre ?? sinDato}</a></th><td data-etiqueta="Cámara">{l.camara ?? sinDato}</td><td data-etiqueta="Tipo">{l.tipo ?? sinDato}</td><td data-etiqueta="Departamento">{l.departamento ?? sinDato}</td><td data-etiqueta="Partido">{l.partido ? <span class={`pip ${clasePartido(l.partido)}`}></span> : ""} {legible(l.partido) ?? sinDato}{l.partidoConocido && ` (${l.partidoConocido})`}</td><td data-etiqueta="Bancada">{legible(l.bancada) ?? sinDato}</td></tr>)}
   </tbody>
 </table>
 

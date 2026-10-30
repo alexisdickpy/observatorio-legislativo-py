@@ -24,7 +24,7 @@ const sinDato = "Sin dato";
         <th scope="col">Su voto</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody data-paginar>
       {historial.map((h) => <tr data-estado={h.proyecto.estadoFiltro}><td>{h.fecha ?? sinDato}</td><td>{h.leyes.length ? h.leyes.map((l: any) => <p><a href={l.url}>Ley {l.numero}</a>{l.tituloCorto && <span class="texto-suave"> {l.tituloCorto}</span>}</p>) : <p>{h.proyecto.url ? <a href={h.proyecto.url}>Expediente {h.proyecto.expediente ?? sinDato}</a> : `Expediente ${h.proyecto.expediente ?? sinDato}`}{h.proyecto.tituloCorto && <span class="texto-suave"> {h.proyecto.tituloCorto}</span>}</p>}</td><td>{h.proyecto.estado ?? sinDato}</td><td>{h.etapa ?? sinDato}</td><td>{h.resultado ?? sinDato}</td><td class="voto"><span class={`cuadro ${h.clase}`}></span>{h.sentido}{h.observacion && <span class="texto-suave"> ({h.observacion})</span>}</td></tr>)}
     </tbody>
   </table>

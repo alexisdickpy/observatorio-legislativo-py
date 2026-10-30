@@ -19,7 +19,7 @@ test("el menú tiene una entrada por cada vista de análisis, con direcciones de
   for (const v of vistasDeAnalisis()) assert.ok(urls.includes(v.url), `Falta ${v.url} en el menú`);
   assert.deepEqual(
     menuPrincipal().map((e) => e.texto),
-    ["Leyes", "Legisladores", "Votaciones", "Partidos", "Temas", "Rankings", "Test de afinidad", "Buscar", "Datos abiertos"],
+    ["Leyes", "Legisladores", "Votaciones", "Partidos", "Temas", "Rankings", "Estadísticas", "Test de afinidad", "Bot de Telegram", "Buscar leyes", "Datos abiertos"],
   );
   assert.ok(urls.includes(rutas.coincidencia()) && urls.includes(rutas.rankings()));
   // La tabla de votaciones nominales ya no tiene entrada propia; marca «Rankings» (siguiente prueba).

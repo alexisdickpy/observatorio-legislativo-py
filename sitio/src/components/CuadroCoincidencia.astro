@@ -1,11 +1,13 @@
 ---
 // Cuadro de coincidencia de todos los pares de partidos de una cámara: filas y columnas con los
 // mismos partidos, y en cada celda el porcentaje con su numerador y su denominador. El sombreado es
-// de un solo tono (más oscuro = más coincidencia), sin colores que califiquen; la intensidad viene de
+// de un solo tono (más intenso = más coincidencia), sin colores que califiquen; la intensidad viene de
 // lib/coincidencia.js y la mezcla máxima de tokens.css. Filas y columnas van de más a menos
 // legisladores en ejercicio en esa cámara. Con pocas votaciones en común, solo las
 // cantidades y sin sombreado.
 import { intensidadDe } from "../lib/coincidencia.js";
+import { clasePartido } from "../lib/partidos.js";
+import { legible } from "../lib/texto.js";
 
 interface Props {
   titulo: string;
@@ -20,17 +22,18 @@ const { titulo, filas } = Astro.props;
     <thead>
       <tr>
         <td></td>
-        {filas.map((f) => <th scope="col"><span class="vertical">{f.nombre}</span></th>)}
+        {filas.map((f) => <th scope="col"><span class="vertical"><span class={`pip ${clasePartido(f.nombre)}`}></span> {legible(f.nombre)}</span></th>)}
       </tr>
     </thead>
     <tbody>
-      {filas.map((f) => <tr data-cuadro-fila={f.id}><th scope="row">{f.nombre}<span class="bancas">{f.legisladores} {f.legisladores === 1 ? "legislador" : "legisladores"} en ejercicio</span></th>{f.celdas.map((c) => !c ? <td class="diagonal"><span aria-hidden="true">—</span><span class="solo-lectores">Mismo partido</span></td> : c.suficiente ? <td style={`--intensidad: ${intensidadDe(c)}`}><span class="porcentaje">{c.porcentajeTexto}</span> <span class="fraccion">{c.fraccion}</span></td> : <td class="sin-porcentaje"><span class="fraccion">{c.fraccion}</span> <span class="fraccion">sin %</span></td>)}</tr>)}
+      {filas.map((f) => <tr data-cuadro-fila={f.id}><th scope="row"><span class={`pip ${clasePartido(f.nombre)}`}></span> {legible(f.nombre)}<span class="bancas">{f.legisladores} {f.legisladores === 1 ? "legislador" : "legisladores"} en ejercicio</span></th>{f.celdas.map((c) => !c ? <td class="diagonal"><span aria-hidden="true">—</span><span class="solo-lectores">Mismo partido</span></td> : c.suficiente ? <td style={`--intensidad: ${intensidadDe(c)}`}><span class="porcentaje">{c.porcentajeTexto}</span> <span class="fraccion">{c.fraccion}</span></td> : <td class="sin-porcentaje"><span class="fraccion">{c.fraccion}</span> <span class="fraccion">sin %</span></td>)}</tr>)}
     </tbody>
   </table>
 </div>
 
 <style>
   .cuadro-coincidencia-desplazable {
+    position: relative; /* contiene los textos solo para lectores de pantalla de sus celdas */
     overflow-x: auto;
     margin-bottom: var(--espacio-5);
   }

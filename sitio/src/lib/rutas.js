@@ -25,6 +25,7 @@ export const expedientesLegislador = (slug) => `${legislador(slug)}expedientes/`
 export const buscar = () => "/buscar/";
 export const datosAbiertos = () => "/datos/";
 export const privacidad = () => "/privacidad/";
+export const estadisticas = () => "/estadisticas/";
 export const sitemap = () => "/sitemap.xml";
 /** Archivos internos del buscador (Pagefind), que los rastreadores no necesitan leer. */
 export const archivosBuscador = () => "/pagefind/";

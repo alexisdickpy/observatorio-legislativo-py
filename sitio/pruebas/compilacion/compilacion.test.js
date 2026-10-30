@@ -13,7 +13,8 @@ import { comparativa, conProyectosDeLey, ficha, legisladores, listado } from "..
 import { mapaDeDiputados } from "../../src/lib/mapa.js";
 import { observacionesDeLosDatos } from "../../src/lib/metodologia.js";
 import { menuPrincipal, vistasDeAnalisis } from "../../src/lib/navegacion.js";
-import { vistaPrevia } from "../../src/lib/portada.js";
+import { composicion, vistaPrevia } from "../../src/lib/portada.js";
+import { legible } from "../../src/lib/texto.js";
 import * as rutas from "../../src/lib/rutas.js";
 import { masAjustadas, votacionesDelAnio, votacionesDelPeriodo } from "../../src/lib/votaciones.js";
 import { MINIMO_VOTACIONES_AUSENCIAS, masAusentes } from "../../src/lib/rankings.js";
@@ -262,7 +263,7 @@ function itemRanking(html, f, cifra = "mayoriaPartido") {
   return (
     item.includes(`href="${f.url}"`) &&
     (!f.foto || item.includes(`src="${f.foto}"`)) &&
-    item.includes(escapar(f.mayoriaPartido.grupo ?? "Sin partido registrado")) &&
+    item.includes(escapar(legible(f.mayoriaPartido.grupo) ?? "Sin partido registrado")) &&
     item.includes(f[cifra].porcentajeTexto) &&
     item.includes(`${f[cifra].fraccion} votaciones`)
   );
@@ -395,7 +396,7 @@ function votacionCompleta(item, v) {
     item.includes(`(de ${v.registrados} legisladores registrados)`) &&
     v.totales.every((t) => item.includes(`${t.categoria} ${t.cantidad}`)) &&
     (item.match(/<li title=/g)?.length ?? 0) === v.partidos.length &&
-    v.partidos.every((p) => item.includes(`<b>${escapar(p.sigla)}</b> ${p.texto}</li>`))
+    v.partidos.every((p) => item.includes(`<b>${escapar(p.sigla)}</b> <i class="${p.clase}"></i> ${p.texto}</li>`))
   );
 }
 
@@ -782,16 +783,16 @@ test("votos por tema: índice, una página por tema con el reparto de cada grupo
   for (const t of lista) {
     const html = texto(t.url);
     assert.ok(html.includes(`href="${rutas.metodologia(rutas.anclasMetodologia.votosPorTema)}"`), t.url);
-    assert.ok(html.includes("objeción del Poder Ejecutivo") && html.includes("no necesariamente los de la fecha"), `Faltan los avisos en ${t.url}`);
+    assert.ok(html.includes("objeción del Poder Ejecutivo") && html.includes("no necesariamente el de la fecha"), `Faltan los avisos en ${t.url}`);
     for (const c of t.camaras) {
       assert.ok(new RegExp(`<h2[^>]*>${c.camara}</h2>`).test(html), `${t.url} ${c.camara}`);
-      for (const f of [...c.partidos, ...c.bancadas]) {
+      for (const f of c.partidos) {
         c.categorias.forEach((cat, n) => {
           if (f.celdas[n].cantidad > 0) assert.ok(html.includes(`<b>${cat}</b> ${f.celdas[n].texto}`), `${t.url} ${c.camara} ${f.texto} ${cat}`);
         });
       }
       for (const v of c.votaciones) assert.ok(html.includes(v.etapa ?? "Sin dato"), `${t.url} etapa de ${v.id}`);
-      assert.equal(html.split(`<ol class="votaciones-tema chico">`).length - 1, t.camaras.length, `${t.url} listas de votaciones`);
+      assert.equal(html.split(`<ol class="votaciones-tema chico" data-paginar>`).length - 1, t.camaras.length, `${t.url} listas de votaciones`);
     }
     const bytes = statSync(pagina(t.url)).size;
     assert.ok(bytes < 900_000, `${t.url} pesa ${bytes} bytes`);
@@ -877,4 +878,18 @@ test("test de afinidad: preguntas sin votos ni autores, enlace al proyecto, dato
   assert.ok(portada.includes(`href="${rutas.testAfinidad()}"`), "Falta el test en la portada");
   assert.ok(readFileSync(join(dist, "sitemap.xml"), "utf-8").includes(`${rutas.testAfinidad()}</loc>`), "Falta el test en el sitemap");
   assert.ok(texto(rutas.privacidad()).includes("test de afinidad"), "La privacidad no menciona el test");
+});
+
+test("diseño: composición en la portada, estadísticas en el menú y listas largas paginables", () => {
+  const portada = leer(rutas.inicio());
+  const periodo = periodos().find((p) => p.vigente).id;
+  for (const c of composicion(periodo)) {
+    const panel = portada.split(`data-panel-camara="${c.nombre}"`)[1]?.split("</svg>")[0] ?? "";
+    assert.equal((panel.match(/<circle /g) ?? []).length, c.total, c.nombre);
+  }
+  assert.ok(portada.includes('id="telegram-portada"') && portada.includes(`href="${rutas.botTelegram()}"`));
+  assert.ok(leer(rutas.estadisticas()).includes("<h1>Estadísticas</h1>") || /<h1[^>]*>Estadísticas<\/h1>/.test(leer(rutas.estadisticas())));
+  assert.ok(portada.includes(`href="${rutas.estadisticas()}"`));
+  assert.ok(leer(rutas.leyes()).includes("data-paginar"), "El catálogo de leyes no se pagina");
+  assert.ok(!leer(rutas.votosPorTema("salud")).includes("Por bancada"), "Votos por tema no lleva bancadas");
 });

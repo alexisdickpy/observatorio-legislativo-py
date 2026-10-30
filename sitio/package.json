@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@expo-google-fonts/inter": "0.4.2",
+    "@fontsource-variable/newsreader": "5.2.5",
+    "@fontsource-variable/public-sans": "5.2.5",
     "astro": "7.3.8",
     "pagefind": "1.5.2",
     "sharp": "0.35.5"

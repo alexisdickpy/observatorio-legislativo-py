@@ -22,7 +22,7 @@ const { leyes } = Astro.props;
       <th scope="col">Cámara de origen</th>
     </tr>
   </thead>
-  <tbody>
+  <tbody data-paginar>
     {
       leyes.map((l) => (
         <tr data-numero={l.numero}>

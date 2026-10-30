@@ -4,6 +4,8 @@
 // numerador y su denominador. Recibe las filas de lib/coincidencia.js. Usa los estilos globales de
 // la tabla comparativa (TablaComparativa).
 import { textoDeCoincidencia } from "../lib/coincidencia.js";
+import { clasePartido } from "../lib/partidos.js";
+import { legible } from "../lib/texto.js";
 
 interface Props {
   titulo: string;
@@ -24,7 +26,7 @@ const { titulo, grupo, columnas, filas } = Astro.props;
       </tr>
     </thead>
     <tbody>
-      {filas.map((f) => <tr data-coincidencia><th scope="row">{f.nombre}</th>{f.celdas.map((c, n) => <td data-etiqueta={columnas[n]}>{textoDeCoincidencia(c)}</td>)}</tr>)}
+      {filas.map((f) => <tr data-coincidencia><th scope="row">{grupo === "Partido" && <span class={`pip ${clasePartido(f.nombre)}`}></span>} {legible(f.nombre)}</th>{f.celdas.map((c, n) => <td data-etiqueta={columnas[n]}>{textoDeCoincidencia(c)}</td>)}</tr>)}
     </tbody>
   </table>
 </div>
