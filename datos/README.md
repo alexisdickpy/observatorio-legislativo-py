@@ -24,6 +24,7 @@ No editar estos archivos a mano, salvo las notas manuales de `propios/notas.json
 | `fuente/{período}/autores.json` y `.csv` | Autores de cada proyecto con ley y de cada proyecto de ley con votaciones en el período (`idProyecto` + `legislador`), en el orden que publica la API. |
 | `fuente/{período}/expedientes.json` y `.csv` | Un registro por cada expediente del período en que un legislador figura entre los autores (`idLegislador` + los campos oficiales del expediente), de todos los tipos. Se descarga los martes. |
 | `fuente/{período}/comisiones.json` y `.csv` | Un registro por cada miembro de cada comisión en cada período parlamentario (`idComision` + `idPeriodoParlamentario` + `idLegislador`), de las dos cámaras y de todos los tipos. Sin cargo dentro de la comisión: la API no lo publica. |
+| `fuente/{período}/decisiones-plenario.json` | Decisiones del plenario sobre los proyectos de ley en trámite ingresados desde 2023, para los avisos del bot de Telegram. Solo en JSON. |
 | `fuente/{período}/proyectos-recientes.json` | Proyectos de ley de cualquier iniciativa ingresados en los últimos 90 días, con sus autores y ministerios, para los avisos del bot de Telegram. Cambia a diario y no tiene versión CSV. |
 | `fotos/{período}/{idLegislador}.jpg` | Copia de la foto que publica el Congreso en el `fotoURL` de cada legislador, sin cambios. No figura en el diccionario porque no es una tabla. |
 | `propios/personas.json` | Identificador estable (slug) de cada persona y sus `idLegislador` por período. |

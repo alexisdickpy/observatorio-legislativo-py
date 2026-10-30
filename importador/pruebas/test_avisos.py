@@ -31,6 +31,13 @@ def proyecto(i, autores="", iniciativa="PARLAMENTARIA", ministerios=()):
             "appURL": f"https://silpy.test/expediente/{i}", "_propio": {"fechaIngreso": "2026-10-20", "autores": autores}}
 
 
+def decision(i, fecha="2026-10-20", resultado="RECHAZADO"):
+    return {"idProyecto": 500 + i, "acapite": f"Plenario {i}, presentado por Ana Pérez", "appURL": f"https://silpy.test/expediente/{500 + i}",
+            "autores": [{"idLegislador": 1, "nombres": "Ana", "apellidos": "Pérez"}],
+            "tramitacion": {"idTramitacion": i, "camaraTramite": "CAMARA DE SENADORES", "fechaTramite": "20/10/2026",
+                            "resultadoTramite": resultado, "_propio": {"fechaTramite": fecha}}}
+
+
 class Avisos(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -99,7 +106,7 @@ class Avisos(unittest.TestCase):
         texto, = self.textos("votaciones")
         self.assertTrue(texto.startswith("Votaciones nominales nuevas de proyectos de ley\n"))
         self.assertIn("Proyecto 2", texto)
-        self.assertIn("Resultado oficial APROBADO. Sí 30, No 5, Abstención 1", texto)
+        self.assertIn("Resultado oficial: APROBADO. Sí 30, No 5, Abstención 1", texto)
         self.assertIn(f"{BASE}/votacion/3/", texto)
         self.assertNotIn("Proyecto 4", texto)
 
@@ -181,10 +188,10 @@ class Avisos(unittest.TestCase):
         self.correr()
         texto, = self.textos("votaciones")
         self.assertIn("Proyecto de Ley “QUE CREA ALGO”\n\nPresentado por 🔴 Ana Pérez (ANR), ⚪ Luis Gómez (Otro partido)\n\nCAMARA", texto)
-        self.assertIn("Votación en SILpy https://silpy.test/votacion/2", texto)
-        self.assertIn("Proyecto en SILpy https://silpy.test/expediente/50", texto)
+        self.assertIn("Votación en SILpy: https://silpy.test/votacion/2", texto)
+        self.assertIn("Proyecto en SILpy: https://silpy.test/expediente/50", texto)
         self.assertIn("Mensaje, presentado por el Poder Ejecutivo", texto)
-        self.assertIn(f"Análisis completo {BASE}/votacion/2/", texto)
+        self.assertIn(f"Análisis completo: {BASE}/votacion/2/", texto)
         self.assertLess(texto.index("Proyecto en SILpy"), texto.index("Análisis completo"))
 
     def test_sin_novedades_no_se_envia_nada(self):
@@ -201,7 +208,7 @@ class Avisos(unittest.TestCase):
         self.correr()
         texto, = self.textos("leyes")
         self.assertIn("Votaciones nominales (1)", texto)
-        self.assertIn("Resultado oficial APROBADO. Sí 30, No 5, Abstención 1", texto)
+        self.assertIn("Resultado oficial: APROBADO. Sí 30, No 5, Abstención 1", texto)
         self.assertIn(f"{BASE}/votacion/1/", texto)
 
     def test_ley_sin_votaciones_no_las_menciona(self):
@@ -282,6 +289,64 @@ class Avisos(unittest.TestCase):
         avisar(self.salida, None, BASE, salida_texto=textos.append)
         self.assertTrue(any("Ley 7002" in t for t in textos))
         self.assertEqual(self.registro(), antes)
+
+    def poner_decisiones(self, *decisiones):
+        carpeta = self.salida / "fuente" / "2023-2028"
+        (carpeta / "decisiones-plenario.json").write_bytes(json_bytes({"seguidos": [], "decisiones": list(decisiones)}))
+
+    def test_decisiones_existentes_no_se_envian_al_agregar_el_tipo(self):
+        self.correr()
+        self.poner_decisiones(decision(1))
+        self.correr()
+        self.assertEqual(self.enviados, [])
+        self.assertEqual(self.registro()["iniciales"]["plenario"], [1])
+
+    def test_decision_nueva_se_envia_con_las_votaciones(self):
+        self.correr()
+        self.poner_decisiones(decision(1))
+        self.correr()
+        self.poner_decisiones(decision(1), decision(2))
+        self.correr()
+        self.assertEqual(len(self.enviados), 1)
+        tipo, texto = self.enviados[0]
+        self.assertEqual(tipo, "votaciones")
+        self.assertIn("sin votación nominal publicada", texto)
+        self.assertIn("Plenario 2\n", texto)
+        self.assertIn("Resultado oficial: RECHAZADO", texto)
+        self.assertIn("Ana Pérez", texto)
+        self.assertIn("https://silpy.test/expediente/502", texto)
+        self.assertNotIn("Plenario 1", texto)
+        self.correr()
+        self.assertEqual(len(self.enviados), 1)
+
+    def test_decision_con_votacion_nominal_no_se_repite(self):
+        self.correr()
+        self.poner_decisiones(decision(1))
+        self.correr()
+        nominal = votacion(9)
+        nominal["tramitacion"]["idTramitacion"] = 2
+        self.poner(votaciones=[votacion(1), nominal])
+        self.poner_decisiones(decision(1), decision(2))
+        self.correr()
+        self.assertEqual(len(self.enviados), 1)
+        self.assertIn("Votaciones nominales nuevas", self.enviados[0][1])
+        self.assertNotIn("sin votación nominal publicada", self.enviados[0][1])
+
+    def test_decision_nueva_entra_en_el_resumen_una_vez(self):
+        self.correr()
+        self.poner_decisiones(decision(1))
+        self.correr()
+        self.poner_decisiones(decision(1), decision(2))
+        self.correr()
+        self.enviados.clear()
+        self.correr(ahora=LUNES, resumen=True)
+        self.assertEqual(len(self.enviados), 1)
+        self.assertEqual(self.enviados[0][0], "resumen")
+        self.assertIn("sin votación nominal publicada (1)", self.enviados[0][1])
+        self.assertIn("RECHAZADO, 1", self.enviados[0][1])
+        self.enviados.clear()
+        self.correr(ahora="2026-11-09T12:00:00Z", resumen=True)
+        self.assertEqual(self.enviados, [])
 
     def test_rutas_iguales_a_las_del_sitio(self):
         rutas = (RAIZ / "sitio" / "src" / "lib" / "rutas.js").read_text(encoding="utf-8")

@@ -6,6 +6,8 @@ Se ejecuta en la sincronización diaria, después de importar. Compara los datos
 - leyes: un mensaje por número de ley nuevo, con el resultado de sus votaciones nominales si las hay, o un
   solo mensaje si hay más de LIMITE_LEYES;
 - votaciones: un mensaje con las votaciones nominales nuevas de proyectos de ley, solo si hay;
+- plenario: para quienes eligieron las votaciones, un mensaje con las decisiones nuevas del plenario sobre
+  proyectos de ley que no tienen votación nominal publicada (decisiones-plenario.json), solo si hay;
 - proyectos: un mensaje con los proyectos de ley nuevos de cualquier iniciativa y sus autores, solo si hay;
 - resumen: con --resumen (el flujo lo pasa los lunes), las leyes y las votaciones que no estuvieron
   en un resumen anterior, sin las votaciones de ese mismo día. Si no hay ninguna, no envía nada.
@@ -13,6 +15,8 @@ Se ejecuta en la sincronización diaria, después de importar. Compara los datos
 En los proyectos, a cada autor se le agrega su partido y un círculo de color (COLOR_PARTIDO), y del título se
 omite la parte final «presentado por...», que repetiría a los autores. En las votaciones, además, se agregan el
 voto por partido y los enlaces a la votación y al proyecto en SILpy.
+
+Si ya hay votación nominal de un trámite, no se avisa como decisión del plenario.
 
 La primera ejecución marca todo lo existente como procesado y no envía nada. Si la lista de suscriptores no
 se puede obtener, o un mensaje no llega a nadie, ese aviso se reintenta en la próxima ejecución. Un fallo de
@@ -59,6 +63,7 @@ COLOR_PARTIDO = {"ANR": "🔴", "PLRA": "🔵", "CN": "⚫", "Yo Creo": "🟠", 
 SIN_COLOR_PARTIDO = "⚪"
 LEYENDA_VOTOS = "🟩 Sí  🟥 No  🟨 Abstención  ⬜ Sin voto"
 ANCHO_BARRA = 10
+ENVIO_DE_TIPO = {"plenario": "votaciones"}  # tipos sin opción propia en el menú del bot
 PRESENTADO_POR = re.compile(r"[\s,.]*\bpresentado por\b.*$", re.IGNORECASE | re.DOTALL)
 
 
@@ -95,8 +100,8 @@ def url_ley(base, ley):
 def tramite_votacion(v):
     tramite = v.get("tramitacion") or {}
     totales = f"Sí {v.get('totalSI', 0)}, No {v.get('totalNO', 0)}, Abstención {v.get('totalAbstencion', 0)}"
-    return (f"{tramite.get('camaraTramite') or 'Cámara sin dato'}, {tramite.get('fechaTramite') or 'fecha sin dato'}\n"
-            f"Resultado oficial {tramite.get('resultadoTramite') or 'sin dato'}. {totales}")
+    return (f"{tramite.get('camaraTramite') or 'Cámara sin dato'}, {tramite.get('fechaTramite') or 'fecha sin dato'}\n\n"
+            f"Resultado oficial: {tramite.get('resultadoTramite') or 'sin dato'}. {totales}")
 
 
 def url_votacion(v, base):
@@ -226,14 +231,14 @@ def bloque_votacion(v, base, partidos=None, autores=None):
     partes.append(tramite_votacion(v))
     enlaces = []
     if v.get("appURL"):
-        enlaces.append(f"Votación en SILpy {v['appURL']}")
+        enlaces.append(f"Votación en SILpy: {v['appURL']}")
     if proyecto.get("appURL"):
-        enlaces.append(f"Proyecto en SILpy {proyecto['appURL']}")
+        enlaces.append(f"Proyecto en SILpy: {proyecto['appURL']}")
     if enlaces:
         partes.append("\n".join(enlaces))
     if partidos:
         partes.append("Votación por partido\n" + "\n".join(lineas_por_partido(partidos)))
-    partes.append(f"Análisis completo {url_votacion(v, base)}")
+    partes.append(f"Análisis completo: {url_votacion(v, base)}")
     return "\n\n".join([acortar(titulo)] + partes)
 
 
@@ -262,8 +267,37 @@ def bloque_proyecto(p, siglas):
             f"{p.get('appURL') or ''}".rstrip())
 
 
+def bloque_decision(d, siglas):
+    """Una decisión del plenario de decisiones-plenario.json, con su resultado oficial."""
+    tramite = d["tramitacion"]
+    autores = autores_con_partido(d, siglas)
+    titulo = d.get("acapite")
+    encabezado = acortar(titulo)
+    if autores:
+        titulo = PRESENTADO_POR.sub("", titulo or "") or titulo
+        encabezado = f"{acortar(titulo)}\nPresentado por {autores}"
+    partes = [encabezado, f"{tramite.get('camaraTramite') or 'Cámara sin dato'}, {tramite.get('fechaTramite') or 'fecha sin dato'}",
+              f"Resultado oficial: {tramite.get('resultadoTramite')}"]
+    if d.get("appURL"):
+        partes.append(f"Proyecto en SILpy: {d['appURL']}")
+    return "\n\n".join(partes)
+
+
+def decisiones_sin_nominal(salida):
+    """Decisiones del plenario sin votación nominal de ese trámite."""
+    nominales = {(v.get("tramitacion") or {}).get("idTramitacion") for v in tablas(salida, "votaciones")}
+    pendientes = {}
+    for periodo in (leer_json(salida / "periodos.json") or {"periodos": []})["periodos"]:
+        documento = leer_json(salida / "fuente" / periodo["id"] / "decisiones-plenario.json") or {"decisiones": []}
+        for d in documento["decisiones"]:
+            tramite = d["tramitacion"]
+            if tramite["idTramitacion"] not in nominales:
+                pendientes[tramite["idTramitacion"]] = d
+    return pendientes
+
+
 def novedades(salida):
-    """Lo que cada tipo de aviso sigue, por identificador: leyes, votaciones y proyectos de ley."""
+    """Lo que cada tipo de aviso sigue, por identificador: leyes, votaciones, decisiones del plenario y proyectos de ley."""
     leyes = sorted(tablas(salida, "leyes"), key=lambda l: (l["_propio"].get("fechaSancion") or "", l["_propio"]["numeroLey"], l["idLey"]))
     votaciones = sorted((v for v in tablas(salida, "votaciones") if (v.get("proyecto") or {}).get("tipoProyecto") == PROYECTO_DE_LEY),
                         key=lambda v: ((v.get("tramitacion") or {}).get("_propio", {}).get("fechaTramite") or "", v["idVotacion"]))
@@ -271,6 +305,7 @@ def novedades(salida):
                                                     key=lambda p: ((p.get("_propio") or {}).get("fechaIngreso") or "", p["idProyecto"]))}
     return {"leyes": {l["idLey"]: l for l in leyes},
             "votaciones": {v["idVotacion"]: v for v in votaciones},
+            "plenario": decisiones_sin_nominal(salida),
             "proyectos": proyectos}
 
 
@@ -291,6 +326,9 @@ def mensajes_de(tipo, pendientes, votaciones, base, salida):
         autores = autores_de_votaciones(salida)
         bloques = [bloque_votacion(v, base, por_partido.get(i), autores.get((v.get("proyecto") or {}).get("idProyecto")))
                    for i, v in pendientes.items()]
+    elif tipo == "plenario":
+        encabezado = "Decisiones del plenario sobre proyectos de ley, sin votación nominal publicada"
+        bloques = [bloque_decision(d, siglas) for d in pendientes.values()]
     else:
         encabezado = "Proyectos de ley nuevos presentados"
         bloques = [bloque_proyecto(p, siglas) for p in pendientes.values()]
@@ -307,8 +345,8 @@ def para_el_resumen(registro, ids, hoy):
     elegidas = []
     for a in registro["avisados"]:
         elemento = ids.get(a["tipo"], {}).get(a["id"])
-        if a["tipo"] in ("leyes", "votaciones") and not a.get("resumido") and elemento:
-            if not (a["tipo"] == "votaciones" and fecha_votacion(elemento) >= hoy.isoformat()):
+        if a["tipo"] in ("leyes", "votaciones", "plenario") and not a.get("resumido") and elemento:
+            if not (a["tipo"] != "leyes" and fecha_votacion(elemento) >= hoy.isoformat()):
                 elegidas.append(a)
     return elegidas
 
@@ -321,7 +359,8 @@ def mensaje_resumen(elegidas, ids, base, hoy):
             ley = ids["leyes"][a["id"]]
             leyes.setdefault(ley["_propio"]["numeroLey"], ley)
     votaciones = [ids["votaciones"][a["id"]] for a in elegidas if a["tipo"] == "votaciones"]
-    if not leyes and not votaciones:
+    decisiones = [ids["plenario"][a["id"]] for a in elegidas if a["tipo"] == "plenario"]
+    if not leyes and not votaciones and not decisiones:
         return []
     bloques = []
     if leyes:
@@ -332,6 +371,10 @@ def mensaje_resumen(elegidas, ids, base, hoy):
         bloques.append(f"Votaciones nominales de proyectos de ley ({len(votaciones)})\n"
                        + "\n".join(f"{r}, {n}" for r, n in sorted(por_resultado.items()))
                        + f"\n{base}/legisladores/votaciones-nominales/")
+    if decisiones:
+        por_resultado = Counter(d["tramitacion"].get("resultadoTramite") for d in decisiones)
+        bloques.append(f"Decisiones del plenario sobre proyectos de ley, sin votación nominal publicada ({len(decisiones)})\n"
+                       + "\n".join(f"{r}, {n}" for r, n in sorted(por_resultado.items())))
     return en_mensajes(f"Resumen de la semana anterior, al {fecha_legible(hoy.isoformat())}. Incluye lo que apareció "
                        "en los datos desde el resumen anterior, aunque su fecha oficial sea más vieja.", bloques)
 
@@ -353,7 +396,7 @@ def avisar(salida, enviar, base, ahora=None, salida_texto=print, resumen=False):
                      + ". Se marcan como procesados, sin enviar mensajes"
                      + (" (modo de prueba, no se registra)." if enviar is None else "."))
         if enviar is not None:
-            escribir_si_cambia(ruta, json_bytes({"iniciales": {t: sorted(v) for t, v in ids.items()},
+            escribir_si_cambia(ruta, json_bytes({"iniciales": {t: sorted(v) for t, v in ids.items() if v or t != "plenario"},
                                                  "avisados": [], "ultimoResumen": None}))
         return resultado
 
@@ -361,13 +404,18 @@ def avisar(salida, enviar, base, ahora=None, salida_texto=print, resumen=False):
         if enviar is None:
             salida_texto(f"--- Mensaje de {tipo} (modo de prueba, sin enviar) ---\n{texto}")
             return True
-        error = enviar(tipo, texto)
+        error = enviar(ENVIO_DE_TIPO.get(tipo, tipo), texto)
         if error:
             resultado["errores"].append(error)
             salida_texto(f"AVISO: no se pudo enviar un aviso de {tipo} ({error}). Se reintentará en la próxima ejecución.")
             return False
         resultado["enviados"] += 1
         return True
+
+    # Un tipo de aviso que se agrega después empieza igual que la primera ejecución, sin enviar lo que ya existe.
+    for tipo, elementos in ids.items():
+        if tipo not in registro["iniciales"] and elementos:
+            registro["iniciales"][tipo] = sorted(elementos)
 
     nuevos = []
     for tipo, elementos in ids.items():

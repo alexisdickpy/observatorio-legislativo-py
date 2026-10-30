@@ -49,6 +49,14 @@ class ApiSimulada:
                                   {**base, "idProyecto": 900, "fechaIngresoExpediente": "01/01/2020"}]
         self.rutas["proyecto/903/tramitaciones"] = [{"autores": [{"idLegislador": 1, "nombres": "Ana", "apellidos": "Paz", "emailParlamentario": "a@b.c"}],
                                                      "ministerios": ["MINISTERIO"]}]
+        tramite = {"camaraTramite": "CAMARA DE SENADORES", "fechaTramite": "22/10/2026", "numeroSesion": "1"}
+        self.rutas["proyecto"].insert(0, {**base, "idProyecto": 904, "fechaIngresoExpediente": "01/06/2024", "estadoProyecto": "EN TRAMITE"})
+        self.rutas["proyecto/904/tramitaciones"] = [{"autores": [{"idLegislador": 1, "nombres": "Ana", "apellidos": "Paz", "emailParlamentario": "a@b.c"}], "tramitaciones": [
+            {**tramite, "idTramitacion": 1, "descripcionSubEtapa": "Discusión Plenario", "resultadoTramite": "RECHAZADO"},
+            {**tramite, "idTramitacion": 2, "descripcionSubEtapa": "Discusión Plenario (3T) - Modificaciones", "resultadoTramite": "APROBADAS LAS MODIFICACIONES"},
+            {**tramite, "idTramitacion": 3, "descripcionSubEtapa": "Discusión Plenario", "resultadoTramite": "POSTERGADO"},
+            {**tramite, "idTramitacion": 4, "descripcionSubEtapa": "Discusión Plenario", "resultadoTramite": "SE ENVÍA A COMISIÓN PARA NUEVO DICTAMEN: Salud"},
+            {**tramite, "idTramitacion": 5, "descripcionSubEtapa": "Dictamen de Comisión", "resultadoTramite": "Presupuesto"}]}]
         self.guardadas = []
 
     def datos(self, ruta, params=None, reutilizable=False, guardada=False):
@@ -172,6 +180,27 @@ class Importar(unittest.TestCase):
         self.assertEqual(proyectos[0]["_propio"]["autores"], "Ana Paz")
         self.assertEqual(proyectos[0]["ministerios"], ["MINISTERIO"])
         self.assertNotIn("emailParlamentario", proyectos[0]["autores"][0])
+
+    def test_decisiones_del_plenario(self):
+        self.correr()
+        documento = self.leer("fuente/2023-2028/decisiones-plenario.json")
+        self.assertEqual(documento["seguidos"], [904])
+        self.assertEqual([d["tramitacion"]["idTramitacion"] for d in documento["decisiones"]], [1, 2])
+        self.assertEqual(documento["decisiones"][0]["tramitacion"]["_propio"]["fechaTramite"], "2026-10-22")
+        self.assertNotIn("emailParlamentario", documento["decisiones"][0]["autores"][0])
+
+    def test_proyecto_que_deja_de_estar_en_tramite_se_consulta_una_vez_mas(self):
+        api = ApiSimulada()
+        self.correr(api)
+        fila = next(p for p in api.rutas["proyecto"] if p["idProyecto"] == 904)
+        fila["estadoProyecto"] = "ARCHIVADO"
+        api.rutas["proyecto/904/tramitaciones"][0]["tramitaciones"].append(
+            {"idTramitacion": 6, "camaraTramite": "CAMARA DE SENADORES", "fechaTramite": "23/10/2026",
+             "descripcionSubEtapa": "Discusión Plenario", "resultadoTramite": "RECHAZADO"})
+        self.correr(api)
+        documento = self.leer("fuente/2023-2028/decisiones-plenario.json")
+        self.assertEqual(documento["seguidos"], [])
+        self.assertEqual([d["tramitacion"]["idTramitacion"] for d in documento["decisiones"]], [1, 2, 6])
 
     def test_comisiones_de_periodos_terminados_guardadas(self):
         api = ApiSimulada()
