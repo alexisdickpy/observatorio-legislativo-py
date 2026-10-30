@@ -10,7 +10,7 @@ const { votaciones } = Astro.props;
 const sinDato = "Sin dato";
 ---
 
-<ol class="votaciones-tema chico">
+<ol class="votaciones-tema chico" data-paginar>
   {votaciones.map((v) => <li><span class="texto-suave">{v.fecha ?? sinDato} · {v.etapa ?? sinDato} · Resultado <strong>{v.resultado ?? sinDato}</strong></span><br />{v.leyes.length ? v.leyes.map((l: any) => <span><a href={l.url}>Ley {l.numero}</a> <span class="titulo">{l.titulo}</span> </span>) : <span>{v.proyecto.url ? <a href={v.proyecto.url}>Expediente {v.proyecto.expediente ?? sinDato}</a> : `Expediente ${v.proyecto.expediente ?? sinDato}`} <span class="titulo">{v.proyecto.titulo}</span></span>} · <a href={v.pagina}>Ver votación</a></li>)}
 </ol>
 

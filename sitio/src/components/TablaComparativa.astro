@@ -31,7 +31,7 @@ const ordenMayoria = (c: any) => (c.total ? c.porcentaje : -1);
         {CIFRAS_MAYORIA.map((c) => <th scope="col">{c.titulo}</th>)}
       </tr>
     </thead>
-    <tbody>
+    <tbody data-paginar>
       {filas.map((f, n) => <tr data-comparativa data-slug={f.slug} data-posicion={n} data-ausencias={f.ausencias.porcentaje} data-no-vota={f.noVota.porcentaje} data-abstencion={f.abstencion.porcentaje} data-mayoria-bancada={ordenMayoria(f.mayoriaBancada)} data-mayoria-partido={ordenMayoria(f.mayoriaPartido)}><th scope="row"><a href={f.url}>{f.nombre ?? sinDato}</a>{!f.vigente && <span class="chico texto-suave"> (ya no ejerce)</span>}</th><td data-etiqueta="Votaciones en su lista">{f.ausencias.total.toLocaleString("es-PY")}</td>{CIFRAS_COMPARATIVAS.map((c) => <td data-etiqueta={c.titulo}>{f[c.campo].texto}</td>)}{CIFRAS_MAYORIA.map((c) => <td data-etiqueta={c.titulo}>{textoMayoria(f[c.campo], c.grupo)}</td>)}</tr>)}
     </tbody>
   </table>

@@ -1,12 +1,15 @@
 ---
 // Gráfico de barras de la portada: la coincidencia de cada partido de una cámara con el de más
-// legisladores en ejercicio (lib/portada.js, barrasDeReferencia). Un solo tono, sin colores que
-// califiquen, y el porcentaje con sus cantidades siempre a la vista. Sin porcentaje (pocas votaciones
+// legisladores en ejercicio (lib/portada.js, barrasDeReferencia). Cada barra con el color de su partido
+// y el porcentaje con sus cantidades siempre a la vista. Sin porcentaje (pocas votaciones
 // en común), solo las cantidades y sin barra.
 interface Props {
   referencia: string;
   barras: any[];
 }
+import { clasePartido } from "../lib/partidos.js";
+import { legible } from "../lib/texto.js";
+
 const { referencia, barras } = Astro.props;
 ---
 
@@ -17,7 +20,7 @@ const { referencia, barras } = Astro.props;
       barras.map((b) => (
         <li>
           <span class="encabezado chico">
-            <span>{b.nombre}</span>
+            <span><span class={`pip ${clasePartido(b.nombre)}`}></span> {legible(b.nombre)}</span>
             {b.suficiente ? (
               <span class="valor">
                 <strong>{b.porcentajeTexto}</strong> <span class="texto-suave">{b.fraccion}</span>
@@ -28,7 +31,7 @@ const { referencia, barras } = Astro.props;
           </span>
           {b.suficiente && (
             <span class="pista" aria-hidden="true">
-              <span class="relleno" style={`--porcentaje: ${b.porcentaje}`} />
+              <span class={`relleno ${clasePartido(b.nombre)}`} style={`--porcentaje: ${b.porcentaje}`} />
             </span>
           )}
         </li>
@@ -57,17 +60,16 @@ const { referencia, barras } = Astro.props;
   }
   .pista {
     display: block;
-    height: var(--alto-barra-votos);
-    background: var(--color-fondo);
-    border: var(--borde-ancho) solid var(--color-borde);
-    border-radius: var(--radio);
+    height: var(--alto-barra-fina);
+    background: var(--color-superficie);
     overflow: hidden;
   }
   .relleno {
     display: block;
     height: 100%;
     width: calc(var(--porcentaje) * 100%);
-    background: var(--color-acento);
+    background: var(--color-partido);
+    box-shadow: inset 0 0 0 var(--borde-ancho) var(--borde-partido, transparent);
   }
   .valor {
     white-space: nowrap;

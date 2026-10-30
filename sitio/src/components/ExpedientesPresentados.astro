@@ -25,7 +25,7 @@ const leyes = e.proyectosDeLey;
           <thead>
             <tr><th scope="col">Tipo de expediente</th><th scope="col">Cantidad</th></tr>
           </thead>
-          <tbody>
+          <tbody data-paginar>
             {e.porTipo.map((t: any) => <tr><td>{t.tipo ?? sinDato}</td><td class="numero">{t.cantidad}</td></tr>)}
           </tbody>
         </table>
@@ -37,7 +37,7 @@ const leyes = e.proyectosDeLey;
                 <thead>
                   <tr><th scope="col">Estado</th><th scope="col">Proyectos de ley</th></tr>
                 </thead>
-                <tbody>
+                <tbody data-paginar>
                   {leyes.porEstado.map((x: any) => <tr><td>{x.estado ?? sinDato}</td><td class="numero">{x.texto}</td></tr>)}
                 </tbody>
               </table>

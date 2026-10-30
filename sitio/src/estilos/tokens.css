@@ -1,32 +1,47 @@
 /*
  * Tokens de diseño: ÚNICO lugar del aspecto visual (colores, tipografías, medidas).
- * Diseño provisional y sobrio. El rediseño de la Fase 4 (#14) puede cambiar la identidad
- * visual tocando solo este archivo.
+ * Identidad definitiva (#80): carbón azulado por defecto y papel en modo claro (botón del encabezado),
+ * titulares con serifa, líneas finas en lugar de cajas y cifras tabulares. Cada partido tiene su color
+ * (--color-partido-…), siempre con su sigla escrita al lado.
  */
 :root {
   /* Colores */
-  --color-fondo: #ffffff;
-  --color-superficie: #f5f6f7;
-  --color-texto: #1d2125;
-  --color-texto-suave: #5a6169;
-  --color-borde: #d5d9de;
-  --color-enlace: #0b5394;
-  --color-enlace-visitado: #5b3a8c;
-  --color-acento: #0b5394;
+  --color-fondo: #f6f5f0;
+  --color-superficie: #ecebe4;
+  --color-texto: #171b22;
+  --color-texto-suave: #4d5664;
+  --color-borde: #d3d1c7;
+  --color-borde-fuerte: #6d7482;
+  --color-enlace: #0f4fc4;
+  --color-enlace-visitado: #5a3d9a;
+  --color-acento: #a85a00;
   --color-sobre-acento: #ffffff;
-  --color-foco: #f2a900;
-  --color-marca: #fff4c2;
+  --color-foco: #b35c00;
+  --color-marca: #f8e3b4;
 
-  /* Colores de las categorías de voto (barras de las votaciones) */
-  --color-voto-si: #2e7d32;
-  --color-voto-no: #c62828;
-  --color-voto-abstencion: #f2a900;
-  --color-voto-no-vota: #7b5ea7;
-  --color-voto-ausente: #b4bac1;
-  --color-voto-mocion-1: #1565c0;
-  --color-voto-mocion-2: #00897b;
-  --color-voto-mocion-3: #e65100;
-  --color-voto-otro: #8d6e63;
+  /* Colores de las categorías de voto (hemiciclo y barras de las votaciones) */
+  --color-voto-si: #0c8a62;
+  --color-voto-no: #d92d2d;
+  --color-voto-abstencion: #7c5ce0;
+  --color-voto-no-vota: #7b8493;
+  --color-voto-ausente: #8d95a2;
+  --color-voto-mocion-1: #00707a;
+  --color-voto-mocion-2: #a8407a;
+  --color-voto-mocion-3: #5e6b1f;
+  --color-voto-otro: #7d6650;
+
+  /* Color de cada partido */
+  --color-partido-anr: #ef4444;
+  --color-partido-plra: #3b82f6;
+  --color-partido-cn: #0f172a;
+  --borde-partido-cn: #0f172a;
+  --color-partido-yo-creo: #f97316;
+  --color-partido-pen: #eab308;
+  --color-partido-pdp: #22c55e;
+  --color-partido-ppq: #38bdf8;
+  --color-partido-pps: #a855f7;
+  --color-partido-ppc: #a1724e;
+  --color-partido-otro: #64748b;
 
   /* Color de cada tema de la clasificación propia (#36): borde y fondo suave de sus etiquetas */
   --color-tema-presupuesto: #1e88e5;
@@ -62,16 +77,19 @@
   --ancho-mapa: 36rem;
 
   /* Tipografía */
-  --fuente-texto: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fuente-titulo: "Newsreader Variable", Georgia, "Times New Roman", serif;
+  --fuente-texto: "Public Sans Variable", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --fuente-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
   --tamano-base: 1rem;
   --tamano-chico: 0.875rem;
-  --tamano-titulo-1: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
-  --tamano-titulo-2: 1.25rem;
-  --tamano-titulo-3: 1.0625rem;
+  --tamano-veredicto: clamp(2.5rem, 1.6rem + 4vw, 4.5rem);
+  --tamano-titulo-1: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
+  --tamano-titulo-2: clamp(1.4rem, 1.25rem + 0.7vw, 1.75rem);
+  --tamano-titulo-3: 1.1875rem;
   --interlineado: 1.55;
-  --interlineado-titulo: 1.25;
+  --interlineado-titulo: 1.15;
   --peso-normal: 400;
+  --peso-titulo: 500;
   --peso-fuerte: 650;
 
   /* Espaciado */
@@ -81,18 +99,22 @@
   --espacio-4: 1rem;
   --espacio-5: 1.5rem;
   --espacio-6: 2.5rem;
+  --espacio-7: 4rem;
 
   /* Medidas */
-  --ancho-contenido: 72rem;
+  --ancho-contenido: 76rem;
   --ancho-lectura: 46rem;
   --borde-ancho: 1px;
+  --borde-grueso: 2px;
   --foco-ancho: 3px;
-  --radio: 4px;
+  --radio: 2px;
   --lineas-titulo-catalogo: 4;
   --columna-numero: 5.5rem;
   --columna-fecha: 7rem;
   --ancho-campo-filtro: 11rem;
-  --alto-barra-votos: 1.25rem;
+  --alto-barra-votos: 0.875rem;
+  --alto-barra-fina: 0.5rem;
+  --tamano-pip: 0.75rem;
   --tamano-cuadro-voto: 0.75rem;
   --tamano-foto-legislador: 10rem;
   --tamano-foto-lista: 3rem;
@@ -101,24 +123,41 @@
   --ancho-nombre-barra: 16rem;
   --sombreado-maximo-cuadro: 45%; /* mezcla máxima del color de acento en el cuadro de coincidencia */
   --ancho-celda-cuadro: 4.75rem;
+  --tamano-punto: 0.625rem;
   --punto-quiebre-movil: 48rem; /* referencia: las media queries no aceptan variables */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-fondo: #16191c;
-    --color-superficie: #1f2327;
-    --color-texto: #e6e8ea;
-    --color-texto-suave: #a5adb5;
-    --color-borde: #3a4048;
-    --color-enlace: #7cb7f0;
-    --color-enlace-visitado: #b9a2e6;
-    --color-acento: #7cb7f0;
-    --color-sobre-acento: #0f1215;
-    --color-marca: #4a3f10;
-    --color-voto-si: #4caf50;
-    --color-voto-no: #ef5350;
-    --color-voto-ausente: #5f666e;
-    --color-voto-mocion-1: #64a8f0;
-  }
+:root:not([data-modo="claro"]) {
+  /* Modo oscuro: el predeterminado. public/modo.js pone data-modo="claro" si se eligió el otro. */
+  --color-fondo: #121316;
+  --color-superficie: #1c1d22;
+  --color-texto: #e8ebf0;
+  --color-texto-suave: #a2acba;
+  --color-borde: #2c2e35;
+  --color-borde-fuerte: #6b7687;
+  --color-enlace: #7fb0ff;
+  --color-enlace-visitado: #bda9ee;
+  --color-acento: #f2a93b;
+  --color-sobre-acento: #121316;
+  --color-foco: #f4b14a;
+  --color-marca: #4d3a12;
+  --color-voto-si: #10b981;
+  --color-voto-no: #ef4444;
+  --color-voto-abstencion: #a78bfa;
+  --color-voto-no-vota: #7b8698;
+  --color-voto-ausente: #626e80;
+  --color-voto-mocion-1: #4cc4cf;
+  --color-voto-mocion-2: #e58cbc;
+  --color-voto-mocion-3: #b4c45a;
+  --color-voto-otro: #b89b7f;
+  --color-partido-cn: #0f172a;
+  --borde-partido-cn: #94a3b8;
+  --color-mapa-0: #1c1d22;
+  --color-mapa-1: #1f2d45;
+  --color-mapa-2: #243a60;
+  --color-mapa-3: #2a4a80;
+  --color-mapa-4: #2f5aa3;
+  --color-mapa-5: #356bc8;
+  --color-mapa-limite: #121316;
+  --color-mapa-cifra: #ffffff;
 }

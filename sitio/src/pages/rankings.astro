@@ -196,9 +196,15 @@ const tabla = rutas.votacionesNominales();
   .columnas {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
-    gap: var(--espacio-5);
-    align-items: start;
+    gap: var(--espacio-3) var(--espacio-6);
     margin-top: var(--espacio-6);
+  }
+  /* Título, explicación y cada cámara comparten fila entre las dos listas: los cuadros arrancan a la misma altura. */
+  .columnas > section {
+    display: grid;
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    min-width: 0;
   }
   .columnas > section > h2 {
     margin-top: 0;

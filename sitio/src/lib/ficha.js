@@ -20,7 +20,7 @@
 
 import { fuente, notas } from "./datos.js";
 import { mayoriaDe } from "./mayoria.js";
-import { nombreConocido, siglaDe } from "./partidos.js";
+import { clasePartido, nombreConocido, siglaDe } from "./partidos.js";
 import * as rutas from "./rutas.js";
 import { recortar, slug } from "./texto.js";
 
@@ -173,6 +173,7 @@ export function posicionesDePartidos(votos) {
       return {
         partido,
         sigla: siglaDe(partido),
+        clasePartido: clasePartido(partido),
         miembros: sentidos.length,
         votantes,
         posicion,

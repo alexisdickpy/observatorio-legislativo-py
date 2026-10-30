@@ -33,7 +33,7 @@ export const vistasDeAnalisis = () => [
     url: rutas.votosPorTema(),
     menu: "Temas",
     titulo: "Votos de partidos por tema",
-    descripcion: "Cómo votaron los legisladores de cada partido y de cada bancada en las votaciones nominales de cada tema, por cámara.",
+    descripcion: "Cómo votaron los legisladores de cada partido en las votaciones nominales de cada tema, por cámara.",
     portadaAlFinal: true,
   },
   {
@@ -52,8 +52,10 @@ export const menuPrincipal = () => [
   { url: rutas.leyes(), texto: "Leyes" },
   { url: rutas.legisladores(), texto: "Legisladores" },
   ...vistasDeAnalisis().map((v) => ({ url: v.url, texto: v.menu, incluye: v.incluye ?? [] })),
+  { url: rutas.estadisticas(), texto: "Estadísticas" },
   { url: rutas.testAfinidad(), texto: "Test de afinidad" },
-  { url: rutas.buscar(), texto: "Buscar" },
+  { url: rutas.botTelegram(), texto: "Bot de Telegram" },
+  { url: rutas.buscar(), texto: "Buscar leyes" },
   { url: rutas.datosAbiertos(), texto: "Datos abiertos" },
 ];
 

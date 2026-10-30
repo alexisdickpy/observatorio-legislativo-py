@@ -1,6 +1,9 @@
 ---
 // Iniciativa y autores de un registro de ley, tal como los publica el Congreso.
 // El nombre de cada autor del período enlaza a su ficha; el de otras legislaturas, a SILpy.
+import { clasePartido } from "../lib/partidos.js";
+import { legible } from "../lib/texto.js";
+
 interface Props {
   detalle: any;
   nivel: number;
@@ -35,7 +38,7 @@ const sinDato = "Sin dato";
         <li>
           {a.ficha || a.url ? <a href={a.ficha ?? a.url}>{a.nombre ?? sinDato}</a> : <span>{a.nombre ?? sinDato}</span>}
           <span class="chico texto-suave">
-            {" "}— Partido: {a.partido ?? sinDato}{a.partidoConocido && ` (${a.partidoConocido})`} · Bancada: {a.bancada ?? sinDato} · {a.camara ?? sinDato}
+            {" "}— Partido: {a.partido && <span class={`pip ${clasePartido(a.partido)}`}></span>} {legible(a.partido) ?? sinDato}{a.partidoConocido && ` (${a.partidoConocido})`} · Bancada: {legible(a.bancada) ?? sinDato} · {a.camara ?? sinDato}
             {!a.delPeriodo && <strong> · Legislatura {a.legislatura ?? sinDato}</strong>}
           </span>
         </li>

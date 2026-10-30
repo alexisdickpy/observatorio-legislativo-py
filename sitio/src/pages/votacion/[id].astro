@@ -6,7 +6,9 @@
 import Base from "../../layouts/Base.astro";
 import Compartir from "../../components/Compartir.astro";
 import EtiquetasTema from "../../components/EtiquetasTema.astro";
+import Hemiciclo from "../../components/Hemiciclo.astro";
 import Votacion from "../../components/Votacion.astro";
+import { puntosDeVotacion } from "../../lib/portada.js";
 import { compartirVotacion, datosDeVotacion } from "../../lib/compartir.js";
 import { periodos } from "../../lib/datos.js";
 import { detalleDeVotacion } from "../../lib/ficha.js";
@@ -22,6 +24,7 @@ const { periodo, v } = Astro.props;
 const c = compartirVotacion(v);
 const detalle = detalleDeVotacion(periodo, v.id);
 const sinDato = "Sin dato";
+const numeroDe = (categoria: string) => detalle.totales.find((t: any) => t.categoria === categoria)?.cantidad ?? 0;
 ---
 
 <Base titulo={c.titulo} descripcion={c.descripcion} imagen={c.vistaPrevia} datos={datosDeVotacion(v, c)}>
@@ -48,11 +51,19 @@ const sinDato = "Sin dato";
     {!v.autores.length && v.iniciativa && <p class="chico">Iniciativa del {v.iniciativa}</p>}
     <p class="chico">Estado del proyecto <strong>{v.proyecto.estado ?? sinDato}</strong></p>
   </div>
+  <figure class="plenario">
+    <Hemiciclo puntos={puntosDeVotacion(detalle)} cifra={`${numeroDe("SI")} – ${numeroDe("NO")}`} detalle="SI – NO" etiqueta={`Hemiciclo con ${detalle.registrados} legisladores: ${detalle.barraTotal.etiqueta}.`} />
+    <figcaption class="chico texto-suave">Un punto por legislador, agrupados por voto. No es la ubicación real de las bancas.</figcaption>
+  </figure>
   <Compartir url={c.url} enlaces={c.enlaces} vertical={c.imagenes.vertical.url} />
   <Votacion votacion={detalle} nivel={2} propia />
 </Base>
 
 <style>
+  .plenario {
+    max-width: 36rem;
+    margin: var(--espacio-4) 0;
+  }
   .proyecto {
     overflow-wrap: anywhere;
   }

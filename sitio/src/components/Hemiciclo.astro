@@ -1,0 +1,70 @@
+---
+// Hemiciclo de puntos (#80): un punto por legislador, cada uno con su clase de color (de un voto o de un
+// partido, tokens.css) y una cifra al centro. Se usa para la composición de una cámara y para una
+// votación. Cada punto enlaza a la ficha del legislador.
+import { ALTO, ANCHO, asientos } from "../lib/hemiciclo.js";
+
+interface Props {
+  /** En el orden en que deben formar bloques, de izquierda a derecha. */
+  puntos: { titulo: string; ficha: string | null; clase: string }[];
+  cifra: string;
+  detalle: string;
+  etiqueta: string;
+}
+const { puntos, cifra, detalle, etiqueta } = Astro.props;
+const { r, puntos: posiciones } = asientos(puntos.length);
+---
+
+<svg class="hemiciclo" viewBox={`0 0 ${ANCHO} ${ALTO}`} role="img" aria-label={etiqueta}>
+  {
+    puntos.map((x, i) => {
+      const punto = <circle class={`asiento ${x.clase}`} cx={posiciones[i].x} cy={posiciones[i].y} r={r}><title>{x.titulo}</title></circle>;
+      return x.ficha ? <a href={x.ficha} tabindex="-1">{punto}</a> : punto;
+    })
+  }
+  <text class="marcador" x={ANCHO / 2} y={ALTO - 26} text-anchor="middle">{cifra}</text>
+  <text class="pie-marcador" x={ANCHO / 2} y={ALTO - 2} text-anchor="middle">{detalle}</text>
+</svg>
+
+<style>
+  .hemiciclo {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .asiento {
+    fill: var(--color-partido, var(--color-partido-otro));
+    stroke: var(--borde-partido, transparent);
+    stroke-width: 1.5;
+  }
+  a:hover .asiento {
+    stroke: var(--color-texto);
+    stroke-width: 2.5;
+  }
+  .asiento.voto-si { fill: var(--color-voto-si); }
+  .asiento.voto-no { fill: var(--color-voto-no); }
+  .asiento.voto-abstencion { fill: var(--color-voto-abstencion); }
+  .asiento.voto-no-vota { fill: var(--color-voto-no-vota); }
+  .asiento.voto-mocion-1 { fill: var(--color-voto-mocion-1); }
+  .asiento.voto-mocion-2 { fill: var(--color-voto-mocion-2); }
+  .asiento.voto-mocion-3 { fill: var(--color-voto-mocion-3); }
+  .asiento.voto-otro { fill: var(--color-voto-otro); }
+  /* La banca vacía: solo el contorno, para que AUSENTE se distinga también sin color. */
+  .asiento.voto-ausente {
+    fill: none;
+    stroke: var(--color-voto-ausente);
+    stroke-width: 2.5;
+  }
+  .marcador {
+    font-family: var(--fuente-titulo);
+    font-size: 60px;
+    font-weight: 500;
+    fill: var(--color-texto);
+  }
+  .pie-marcador {
+    font-family: var(--fuente-texto);
+    font-size: 15px;
+    letter-spacing: 0.12em;
+    fill: var(--color-texto-suave);
+  }
+</style>

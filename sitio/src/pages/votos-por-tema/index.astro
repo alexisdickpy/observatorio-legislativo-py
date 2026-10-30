@@ -15,11 +15,11 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
 
 <Base
   titulo="Votos de partidos por tema"
-  descripcion={`Cómo votaron los legisladores de cada partido y de cada bancada del Congreso Nacional del Paraguay en las votaciones nominales sobre proyectos de ley de cada tema, período legislativo ${periodo}, cada cámara por separado.`}
+  descripcion={`Cómo votaron los legisladores de cada partido del Congreso Nacional del Paraguay en las votaciones nominales sobre proyectos de ley de cada tema, período legislativo ${periodo}, cada cámara por separado.`}
 >
   <h1>Votos de partidos por tema</h1>
   <p class="lectura">
-    Para cada tema, los votos de los legisladores de cada partido y de cada bancada en las votaciones
+    Para cada tema, los votos de los legisladores de cada partido en las votaciones
     nominales sobre proyectos de ley del período {periodo}, cámara por cámara. El tema es una
     clasificación del Observatorio, no del Congreso.{" "}
     <a href={rutas.metodologia(rutas.anclasMetodologia.votosPorTema)}>Cómo se calcula</a>

@@ -5,6 +5,10 @@
 // suman las cámaras.
 
 import { coincidencia } from "./coincidencia.js";
+import { claseDeCategoria, detalleDeVotacion } from "./ficha.js";
+import { listado } from "./legisladores.js";
+import { clasePartido, siglaDe } from "./partidos.js";
+import { legible, recortar } from "./texto.js";
 import { ultimasVotaciones } from "./votaciones.js";
 import { CANTIDAD_PORTADA, votosDistintosAlPartido } from "./votosDistintos.js";
 import { votosPorTema } from "./votosPorTema.js";
@@ -41,6 +45,96 @@ export function barrasDeReferencia(cuadro, id = cuadro.filas[0]?.id) {
     .filter((b) => b.total > 0)
     .sort((a, b) => Number(b.suficiente) - Number(a.suficiente) || porMayorCoincidencia(a, b));
   return { referencia: referencia.nombre, barras };
+}
+
+/** Tipo oficial de los senadores vitalicios, que no ocupan una de las 45 bancas. */
+const VITALICIO = "VITALICIO";
+
+/** Las dos cámaras en su orden, con sus bancas según la Constitución. */
+const CAMARAS = [
+  { camara: "CAMARA DE SENADORES", nombre: "Senadores", bancas: 45 },
+  { camara: "CAMARA DE DIPUTADOS", nombre: "Diputados", bancas: 80 },
+];
+
+/**
+ * Composición actual de cada cámara (#80): legisladores en ejercicio según el dato oficial, sin los
+ * senadores vitalicios, por
+ * partido, de más a menos. `asientos`, un punto por legislador, partido por partido. Se muestra lo que
+ * publica el Congreso aunque no coincida con las bancas (`bancas` queda para avisarlo).
+ */
+export function composicion(periodo) {
+  const { enEjercicio } = listado(periodo);
+  return CAMARAS.map(({ camara, nombre, bancas }) => {
+    const grupos = new Map();
+    for (const f of enEjercicio.filter((x) => x.camara === camara && x.tipo !== VITALICIO)) {
+      const clave = f.partido ?? "Sin partido registrado";
+      if (!grupos.has(clave)) grupos.set(clave, []);
+      grupos.get(clave).push(f);
+    }
+    const partidos = [...grupos.entries()]
+      .map(([texto, miembros]) => ({ sigla: siglaDe(texto) ?? texto, nombre: legible(miembros[0].partidoConocido ? `${texto} (${miembros[0].partidoConocido})` : texto), clase: clasePartido(texto), cantidad: miembros.length, miembros }))
+      .sort((a, b) => b.cantidad - a.cantidad || a.sigla.localeCompare(b.sigla, "es"));
+    return {
+      camara,
+      nombre,
+      bancas,
+      total: partidos.reduce((a, p) => a + p.cantidad, 0),
+      partidos: partidos.map(({ miembros, ...p }) => p),
+      asientos: partidos.flatMap((p) => p.miembros.map((f) => ({ titulo: `${f.nombre} · ${p.sigla}`, ficha: f.url, clase: p.clase }))),
+    };
+  });
+}
+
+/** Largo máximo del título oficial en el titular de la portada; el completo está en la votación. */
+const LARGO_TITULO_DESTACADA = 200;
+
+/** Un punto por legislador de una votación (ficha.js, detalleDeVotacion), por sentido y dentro por partido. */
+export function puntosDeVotacion(d) {
+  const posicion = new Map(d.categorias.map((c, n) => [c, n]));
+  const orden = new Map(d.porPartido.map((p, n) => [p.nombre, n]));
+  return [...d.votos]
+    .sort((a, b) => posicion.get(a.sentido) - posicion.get(b.sentido) || orden.get(a.partido) - orden.get(b.partido))
+    .map((x) => ({ titulo: `${x.nombre ?? "Sin dato"} · ${x.partido ?? "Sin dato"} · ${x.sentido}`, ficha: x.ficha, clase: claseDeCategoria(x.sentido), partido: x.partido, sentido: x.sentido }));
+}
+
+/**
+ * La votación más reciente para el titular de la portada (#80), o null. Resultado y título son los
+ * oficiales. `asientos` lleva un punto por legislador de la lista oficial, ordenado por sentido del voto
+ * y, dentro, por partido, para que cada voto forme un bloque en el hemiciclo. `partidos`, el voto de cada
+ * legislador por partido, sin mezclar ningún total con los oficiales.
+ */
+export function votacionDestacada(periodo) {
+  const v = ultimasVotaciones(periodo, 1)[0];
+  if (!v) return null;
+  const d = detalleDeVotacion(periodo, v.id);
+  const votos = puntosDeVotacion(d);
+  const cantidadOficial = (categoria) => d.totales.find((t) => t.categoria === categoria)?.cantidad ?? 0;
+  return {
+    pagina: v.pagina,
+    fecha: v.fecha,
+    fechaIso: v.fechaIso,
+    camara: v.camara,
+    etapa: v.etapa,
+    resultado: v.resultado,
+    titulo: recortar(v.proyecto.titulo, LARGO_TITULO_DESTACADA),
+    expediente: v.proyecto.expediente,
+    ley: v.leyes[0] ?? null,
+    si: cantidadOficial("SI"),
+    no: cantidadOficial("NO"),
+    registrados: d.registrados,
+    leyenda: d.totales.filter((t) => t.cantidad > 0).map((t) => ({ categoria: t.categoria, cantidad: t.cantidad, clase: claseDeCategoria(t.categoria) })),
+    asientos: votos,
+    partidos: d.porPartido.map((p) => ({
+      sigla: p.nombre ? siglaDe(p.nombre) : "Sin partido registrado",
+      clase: clasePartido(p.nombre),
+      nombre: legible(p.nombre),
+      total: p.total,
+      puntos: votos.filter((x) => x.partido === p.nombre).map((x) => ({ clase: x.clase, titulo: x.titulo })),
+      resumen: d.categorias.map((c, n) => ({ categoria: c, cantidad: p.celdas[n].cantidad })).filter((c) => c.cantidad > 0),
+    })),
+    totalesCoinciden: d.totalesCoinciden,
+    recalculados: d.recalculados,
+  };
 }
 
 /**

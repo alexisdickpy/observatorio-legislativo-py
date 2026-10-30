@@ -313,7 +313,7 @@ const TOTAL_PREGUNTAS = preguntasTest.length;
     </p>
     <p>
       Arriba de la página, un cuadro por cámara reúne todos los pares de partidos. Cada celda tiene un
-      sombreado de un solo color, más oscuro cuanto mayor es la coincidencia, sin colores que la
+      sombreado de un solo color, más intenso cuanto mayor es la coincidencia, sin colores que la
       califiquen. Las celdas con menos de 20 votaciones en común no llevan sombreado.
       Los partidos y las bancadas se ordenan de más a menos legisladores en ejercicio, en su cámara
       (en el menú de partidos, en el Congreso). Es solo un orden, que no cambia ninguna cifra.
@@ -480,6 +480,17 @@ const TOTAL_PREGUNTAS = preguntasTest.length;
       porque la fuente publica con demora. Cuando la fuente no publica autores, como en los proyectos del
       Poder Ejecutivo, se indica la iniciativa oficial y los ministerios. El bot guarda solo el número de chat y los avisos elegidos, y el comando
       /baja o bloquear el bot los borra.
+    </p>
+    <h2 id="presentacion-nombres">Nombres de partidos y bancadas, y composición</h2>
+    <p>
+      Algunos partidos y bancadas figuran en la API todo en mayúsculas. Para que se lean mejor, el sitio los
+      muestra con mayúscula inicial, sin cambiar ninguna letra ni agregar acentos. El texto oficial no se
+      modifica y es el que está en los datos abiertos que se descargan.
+    </p>
+    <p>
+      Los hemiciclos de composición muestran a los legisladores en ejercicio según la API, sin los senadores
+      vitalicios, que no ocupan ninguna de las 45 bancas. La posición de los puntos no es la de las bancas
+      reales y sus colores identifican a cada partido, sin ninguna valoración.
     </p>
 
     <h2 id={anclas.afiliacion}>Partido y bancada</h2>

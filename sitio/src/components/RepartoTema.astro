@@ -1,7 +1,9 @@
 ---
-// Reparto de los votos de cada partido o bancada en las votaciones de un tema (lib/votosPorTema.js,
+// Reparto de los votos de cada partido en las votaciones de un tema (lib/votosPorTema.js,
 // #37): por grupo, su nombre, la barra de colores y cada categoría con votos, con su denominador. Recibe
 // los valores ya calculados. Los partidos llevan la sigla propia y, entre paréntesis, el nombre conocido.
+import { clasePartido } from "../lib/partidos.js";
+import { legible } from "../lib/texto.js";
 import BarraVotos from "./BarraVotos.astro";
 
 interface Props {
@@ -15,7 +17,7 @@ const { titulo, categorias, filas } = Astro.props;
 <div class="reparto-tema">
   <h4>{titulo}</h4>
   <ul>
-    {filas.map((f) => <li><p class="nombre chico">{f.sigla && f.sigla !== f.texto && <b>{f.sigla} </b>}{f.texto}{f.nombreConocido && <span class="texto-suave"> ({f.nombreConocido})</span>}</p><BarraVotos barra={f.barra} /><p class="cifras chico">{categorias.map((c, n) => f.celdas[n].cantidad > 0 && <span><b>{c}</b> {f.celdas[n].texto}</span>)}</p></li>)}
+    {filas.map((f) => <li><p class="nombre chico"><span class={`pip ${clasePartido(f.texto)}`}></span> {f.sigla && f.sigla !== f.texto && <b>{f.sigla} </b>}{legible(f.texto)}{f.nombreConocido && <span class="texto-suave"> ({f.nombreConocido})</span>}</p><BarraVotos barra={f.barra} /><p class="cifras chico">{categorias.map((c, n) => f.celdas[n].cantidad > 0 && <span><b>{c}</b> {f.celdas[n].texto}</span>)}</p></li>)}
   </ul>
 </div>
 

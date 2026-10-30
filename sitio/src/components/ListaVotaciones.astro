@@ -24,7 +24,7 @@ const proyecto = (v: any) =>
     : [{ url: v.proyecto.url, texto: `Expediente ${v.proyecto.expediente ?? sinDato}`, titulo: v.proyecto.titulo }];
 ---
 
-<ol class="lista-votaciones">
+<ol class="lista-votaciones" data-paginar="10">
   {votaciones.map((v) => <li data-votacion={v.id} data-camara={v.camaraFiltro} data-estado={v.proyecto.estadoFiltro} data-resultado={v.resultadoFiltro}><p class="chico texto-suave">{v.fecha ?? sinDato} · {v.camara ?? sinDato} · {v.etapa ?? sinDato}</p><p class="proyecto">{proyecto(v).map((p: any) => <span>{p.url ? <a href={p.url}>{p.texto}</a> : p.texto}{p.titulo && <span class="titulo texto-suave"> {p.titulo}</span>} </span>)}</p><EtiquetasTema clasificacion={v.temas} />{v.autores.length > 0 && <p class="chico presentado">Presentado por {v.autores.map((a: any) => <span title={a.nombre}><b>{a.sigla}</b> {a.cantidad}</span>)}</p>}{!v.autores.length && v.iniciativa && <p class="chico presentado">Iniciativa del <span>{v.iniciativa}</span></p>}<p class="chico">Estado del proyecto <strong>{v.proyecto.estado ?? sinDato}</strong> · Resultado <strong>{v.resultado ?? sinDato}</strong>{diferencia && <span> · Diferencia entre SI y NO <strong>{v.diferencia}</strong></span>}</p><p class="chico">{v.totales.map((t: any) => `${t.categoria} ${t.cantidad}`).join(" · ")} <span class="texto-suave">(de {v.registrados} legisladores registrados)</span></p><BarraVotos barra={v.barra} compacta /><PosicionPartidos partidos={v.partidos} /><p class="chico"><a href={v.pagina}>Ver votación</a></p></li>)}
 </ol>
 

@@ -52,14 +52,11 @@ const sinLey = (c: any) =>
     padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
-    gap: var(--espacio-3);
+    gap: 0 var(--espacio-5);
   }
   .tarjeta-tema {
-    padding: var(--espacio-3);
-    border: var(--borde-ancho) solid var(--color-borde);
-    border-top: var(--foco-ancho) solid var(--color-tema, var(--color-borde));
-    border-radius: var(--radio);
-    background: color-mix(in srgb, var(--color-tema, var(--color-borde)) var(--mezcla-fondo-tema), var(--color-fondo));
+    padding: var(--espacio-2) 0 var(--espacio-3);
+    border-top: var(--borde-ancho) solid var(--color-borde);
   }
   .nombre {
     margin: 0 0 var(--espacio-1);

@@ -1,0 +1,137 @@
+---
+// Inicio de la portada (#80): composición actual de cada cámara en un hemiciclo con el color de cada
+// partido, y un botón para pasar de una cámara a la otra. Sin JavaScript se ven las dos, una debajo de la
+// otra. Datos de lib/portada.js.
+import Hemiciclo from "./Hemiciclo.astro";
+import { composicion } from "../lib/portada.js";
+
+interface Props {
+  periodo: string;
+}
+const { periodo } = Astro.props;
+const camaras = composicion(periodo);
+---
+
+<section class="composicion" aria-labelledby="titulo-composicion">
+  <div class="cabecera">
+    <h2 id="titulo-composicion">Composición actual</h2>
+    <div class="selector" id="selector-camara" role="group" aria-label="Elegir cámara" hidden>
+      {camaras.map((c, i) => <button type="button" data-camara={c.nombre} aria-pressed={i === 0 ? "true" : "false"}>{c.nombre} ({c.total})</button>)}
+    </div>
+  </div>
+  {
+    camaras.map((c) => (
+      <div class="camara" data-panel-camara={c.nombre}>
+        <h3 class="nombre-camara">{c.nombre}</h3>
+        <div class="columnas">
+          <Hemiciclo puntos={c.asientos} cifra={String(c.total)} detalle={c.nombre.toUpperCase()} etiqueta={`${c.nombre}: ${c.partidos.map((p) => `${p.sigla} ${p.cantidad}`).join(", ")}.`} />
+          <ul class="partidos">
+            {c.partidos.map((p) => <li><span class={`pip ${p.clase}`}></span><span class="nombre"><b>{p.sigla}</b> <span class="chico texto-suave">{p.nombre}</span></span><span class="cantidad">{p.cantidad}</span></li>)}
+          </ul>
+        </div>
+        {c.total !== c.bancas && <p class="chico texto-suave aviso">La lista oficial marca a {c.total} como vigentes y la cámara tiene {c.bancas} bancas. Se muestra tal como se publica.</p>}
+      </div>
+    ))
+  }
+  <p class="chico texto-suave">Un punto por banca, agrupados por partido, sin los senadores vitalicios. No es la ubicación real de las bancas.</p>
+</section>
+
+<script>
+  // Con JavaScript se ve una cámara por vez; al abrir, la primera.
+  const selector = document.getElementById("selector-camara");
+  if (selector) {
+    const botones = [...selector.querySelectorAll("button")];
+    const paneles = [...document.querySelectorAll<HTMLElement>("[data-panel-camara]")];
+    const elegir = (nombre: string) => {
+      for (const b of botones) b.setAttribute("aria-pressed", String(b.dataset.camara === nombre));
+      for (const p of paneles) p.hidden = p.dataset.panelCamara !== nombre;
+    };
+    selector.hidden = false;
+    for (const p of paneles) p.classList.add("con-selector");
+    elegir(botones[0].dataset.camara!);
+    for (const b of botones) b.addEventListener("click", () => elegir(b.dataset.camara!));
+  }
+</script>
+
+<style>
+  .composicion {
+    border-top: var(--borde-grueso) solid var(--color-texto);
+    padding-top: var(--espacio-2);
+    margin-bottom: var(--espacio-6);
+  }
+  .cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espacio-2) var(--espacio-4);
+    margin-bottom: var(--espacio-4);
+  }
+  .cabecera h2 {
+    margin: 0;
+  }
+  .selector {
+    display: flex;
+  }
+  .selector button {
+    border-color: var(--color-borde-fuerte);
+    color: var(--color-texto);
+    border-radius: 0;
+  }
+  .selector button + button {
+    border-left: 0;
+  }
+  .selector button[aria-pressed="true"] {
+    background: var(--color-acento);
+    border-color: var(--color-acento);
+    color: var(--color-sobre-acento);
+    font-weight: var(--peso-fuerte);
+  }
+  .nombre-camara {
+    margin-top: 0;
+  }
+  .con-selector .nombre-camara {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .columnas {
+    display: grid;
+    gap: var(--espacio-4) var(--espacio-6);
+  }
+  .partidos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .partidos li {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: var(--espacio-3);
+    padding: var(--espacio-2) 0;
+    border-top: var(--borde-ancho) solid var(--color-borde);
+  }
+  .partidos li:last-child {
+    border-bottom: var(--borde-ancho) solid var(--color-borde);
+  }
+  .partidos b {
+    font-weight: var(--peso-fuerte);
+  }
+  .cantidad {
+    font-family: var(--fuente-titulo);
+    font-size: var(--tamano-titulo-3);
+  }
+  .aviso {
+    margin-top: var(--espacio-3);
+    margin-bottom: 0;
+  }
+  @media (min-width: 60rem) {
+    .columnas {
+      grid-template-columns: 7fr 5fr;
+      align-items: center;
+    }
+  }
+</style>

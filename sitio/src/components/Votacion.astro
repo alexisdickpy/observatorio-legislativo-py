@@ -2,6 +2,8 @@
 // Una votación nominal: textos oficiales, totales, posición de cada partido agrupada por sentido
 // (#44), desglose por partido y bancada y voto de cada legislador, con el enlace a su página propia (#45). Recibe los valores ya calculados por lib/ficha.js.
 // Estilos globales con prefijo de clase: los estilos con alcance agregan un atributo a cada celda.
+import { clasePartido } from "../lib/partidos.js";
+import { legible } from "../lib/texto.js";
 import BarraVotos from "./BarraVotos.astro";
 import GraficoPartidos from "./GraficoPartidos.astro";
 import PosicionPorSentido from "./PosicionPorSentido.astro";
@@ -93,9 +95,9 @@ const sinDato = "Sin dato";
             <th scope="col">Bancada</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody data-paginar>
           {/* Filas en una sola línea: con compressHTML desactivado, la sangría se copia en cada celda. */}
-          {v.votos.map((x: any) => <tr><td>{x.sentido}</td><th scope="row">{x.ficha ? <a href={x.ficha}>{x.nombre ?? sinDato}</a> : (x.nombre ?? sinDato)}{x.observacion && <span class="texto-suave"> ({x.observacion})</span>}</th><td>{x.partido ?? sinDato}{x.partidoConocido && ` (${x.partidoConocido})`}</td><td>{x.bancada ?? sinDato}</td></tr>)}
+          {v.votos.map((x: any) => <tr><td>{x.sentido}</td><th scope="row">{x.ficha ? <a href={x.ficha}>{x.nombre ?? sinDato}</a> : (x.nombre ?? sinDato)}{x.observacion && <span class="texto-suave"> ({x.observacion})</span>}</th><td>{x.partido && <span class={`pip ${clasePartido(x.partido)}`}></span>} {legible(x.partido) ?? sinDato}{x.partidoConocido && ` (${x.partidoConocido})`}</td><td>{legible(x.bancada) ?? sinDato}</td></tr>)}
         </tbody>
       </table>
     </div>

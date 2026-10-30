@@ -22,3 +22,25 @@ export function recortar(texto, maximo) {
   const corte = t.lastIndexOf(" ", maximo);
   return `${t.slice(0, corte > 0 ? corte : maximo)}…`;
 }
+
+/** Siglas y palabras que van siempre en mayúsculas o en minúsculas al mostrar un nombre (legible). */
+const SIGLAS = new Set(["ANR", "PLRA", "PEN", "PDP", "PPQ", "PPC", "PPS", "CN", "PL", "RR"]);
+const MINUSCULAS = new Set(["de", "del", "la", "las", "el", "los", "y", "en"]);
+
+/**
+ * Nombre de un partido o una bancada para mostrar, sin todo en mayúsculas (#80). Solo cambia los textos
+ * sin ninguna minúscula; las letras no se tocan, así que un acento que falta en la fuente sigue faltando.
+ * El dato oficial no cambia y queda en las descargas.
+ */
+export function legible(texto) {
+  if (texto == null || /\p{Ll}/u.test(texto)) return texto;
+  let primera = true;
+  return texto.replace(/\p{L}+/gu, (palabra) => {
+    const inicial = primera;
+    primera = false;
+    if (SIGLAS.has(palabra) || palabra.length === 1) return palabra;
+    const baja = palabra.toLocaleLowerCase("es");
+    if (!inicial && MINUSCULAS.has(baja)) return baja;
+    return baja[0].toLocaleUpperCase("es") + baja.slice(1);
+  });
+}

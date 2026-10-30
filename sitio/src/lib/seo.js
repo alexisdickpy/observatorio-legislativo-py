@@ -146,6 +146,7 @@ export function direccionesDelSitemap() {
     rutas.votacionesNominales(),
     rutas.coincidencia(),
     rutas.rankings(),
+    rutas.estadisticas(),
     rutas.votaciones(),
     ...votacionesDelPeriodo(periodos().find((p) => p.vigente).id).anios.map((a) => a.url),
     ...votacionesDelPeriodo(periodos().find((p) => p.vigente).id).votaciones.map((v) => v.pagina),

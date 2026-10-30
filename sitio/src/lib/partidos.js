@@ -33,6 +33,20 @@ export function siglaDe(partidoOficial) {
   return entradaDe(partidoOficial)?.sigla ?? texto;
 }
 
+/** Partidos con color propio (tokens.css), por su sigla. */
+const CLASES_PARTIDO = { ANR: "partido-anr", PLRA: "partido-plra", CN: "partido-cn", "Yo Creo": "partido-yo-creo", PEN: "partido-pen", PDP: "partido-pdp", PPQ: "partido-ppq", PPS: "partido-pps", PPC: "partido-ppc" };
+
+/**
+ * Clase del color de un partido, a partir de su texto oficial o de su nombre unificado. Los demás
+ * (independientes, sin registrar), un color neutro.
+ */
+export function clasePartido(partido) {
+  // Algunas listas agregan al nombre el conocido, entre paréntesis.
+  const texto = String(partido ?? "").trim().replace(/\s*\([^)]*\)$/, "");
+  const e = partidosConocidos().find((p) => p.partidoPolitico === texto || p.nombreUnificado === texto);
+  return CLASES_PARTIDO[e?.sigla] ?? "partido-otro";
+}
+
 /**
  * Partido unificado de un texto oficial: { id, nombre, enTabla }, o null si el texto está vacío.
  * `enTabla` es false si el texto todavía no figura en la tabla (queda solo).

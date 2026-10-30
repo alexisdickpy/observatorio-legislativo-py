@@ -342,6 +342,14 @@ El bot de Telegram del proyecto avisa de la actividad del Congreso. Al empezar, 
 
 **Privacidad.** El bot guarda en Cloudflare solo el número de chat de Telegram y los avisos elegidos, sin nombre, usuario ni teléfono. Ese dato no está en el repositorio ni en los datos abiertos. El comando `/baja`, o bloquear el bot, lo borra. El registro público `datos/propios/avisos-telegram.json` solo dice qué leyes, votaciones y proyectos ya se procesaron.
 
+## Presentación de nombres, composición y estadísticas
+
+- **Nombres.** Los partidos y bancadas que la API publica todo en mayúsculas se muestran con mayúscula inicial (`legible` en `lib/texto.js`), sin cambiar letras ni agregar acentos. Las descargas conservan el texto oficial.
+- **Composición.** Los hemiciclos de composición muestran a los legisladores en ejercicio según la API, sin los senadores vitalicios, que no ocupan ninguna de las 45 bancas. Los puntos no están en la ubicación real de las bancas.
+- **Colores de partidos.** Identifican a cada partido y siempre van junto a su sigla o nombre. No implican valoración. Los partidos sin color propio llevan un color neutro.
+- **Votos por tema.** La página muestra solo el reparto por partido. La tabla descargable conserva también el de bancadas.
+- **Estadísticas.** Son recuentos propios sobre los datos abiertos. Una ley cuenta una vez por número. La API no publica el género de los legisladores, por lo que no hay cifras por género.
+
 ## Números de ley
 
 El número de ley se usa como URL (`/leyes/{número}/`). El importador verifica en cada ejecución que ningún número del período figure en otra legislatura, comparando con el listado histórico completo de la API. El resultado se informa en el resumen de cada ejecución.

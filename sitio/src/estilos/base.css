@@ -11,8 +11,12 @@
 }
 
 html {
-  color-scheme: light dark;
+  color-scheme: dark;
   -webkit-text-size-adjust: 100%;
+}
+
+html[data-modo="claro"] {
+  color-scheme: light;
 }
 
 body {
@@ -22,13 +26,17 @@ body {
   font-family: var(--fuente-texto);
   font-size: var(--tamano-base);
   line-height: var(--interlineado);
+  font-variant-numeric: lining-nums tabular-nums;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
 h2,
 h3 {
+  font-family: var(--fuente-titulo);
   line-height: var(--interlineado-titulo);
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-titulo);
+  letter-spacing: -0.01em;
   margin: var(--espacio-5) 0 var(--espacio-3);
 }
 h1 {
@@ -51,6 +59,7 @@ dl {
 a {
   color: var(--color-enlace);
   text-underline-offset: 0.15em;
+  text-decoration-thickness: 1px;
 }
 a:visited {
   color: var(--color-enlace-visitado);
@@ -101,7 +110,7 @@ code {
 .saltar {
   position: absolute;
   left: var(--espacio-2);
-  top: calc(-1 * var(--espacio-6));
+  top: calc(-2 * var(--espacio-6));
   background: var(--color-acento);
   color: var(--color-sobre-acento);
   padding: var(--espacio-2) var(--espacio-3);
@@ -136,6 +145,52 @@ button {
   cursor: pointer;
 }
 
+/* Enlace con aspecto de botón: la acción principal de una sección. */
+.boton,
+.boton:visited {
+  display: inline-block;
+  padding: var(--espacio-2) var(--espacio-4);
+  border-radius: var(--radio);
+  background: var(--color-acento);
+  color: var(--color-sobre-acento);
+  font-weight: var(--peso-fuerte);
+  text-decoration: none;
+}
+
+/* Punto de un voto (el mismo código del hemiciclo): relleno por voto, AUSENTE solo con contorno. */
+.punto {
+  display: inline-block;
+  width: var(--tamano-punto);
+  height: var(--tamano-punto);
+  border-radius: 50%;
+}
+.punto.voto-ausente {
+  background: none;
+  border: var(--borde-grueso) solid var(--color-voto-ausente);
+}
+
+/* Marca de un partido: un punto con su color (tokens.css), siempre junto a su sigla o nombre. */
+.pip {
+  display: inline-block;
+  flex: none;
+  width: var(--tamano-pip);
+  height: var(--tamano-pip);
+  border-radius: 50%;
+  background: var(--color-partido, var(--color-partido-otro));
+  border: var(--borde-ancho) solid var(--borde-partido, transparent);
+  vertical-align: -0.05em;
+}
+.partido-anr { --color-partido: var(--color-partido-anr); }
+.partido-plra { --color-partido: var(--color-partido-plra); }
+.partido-cn { --color-partido: var(--color-partido-cn); --borde-partido: var(--borde-partido-cn); }
+.partido-yo-creo { --color-partido: var(--color-partido-yo-creo); }
+.partido-pen { --color-partido: var(--color-partido-pen); }
+.partido-pdp { --color-partido: var(--color-partido-pdp); }
+.partido-ppq { --color-partido: var(--color-partido-ppq); }
+.partido-pps { --color-partido: var(--color-partido-pps); }
+.partido-ppc { --color-partido: var(--color-partido-ppc); }
+.partido-otro { --color-partido: var(--color-partido-otro); }
+
 label {
   display: block;
   font-size: var(--tamano-chico);
@@ -143,14 +198,11 @@ label {
   margin-bottom: var(--espacio-1);
 }
 
-/* Etiqueta de un tema de la clasificación propia (#36): un recuadro con el color del tema (tokens.css). */
+/* Etiqueta de un tema de la clasificación propia (#36): una marca con el color del tema (tokens.css). */
 .tema {
   display: inline-block;
   padding: 0 var(--espacio-2);
-  border: var(--borde-ancho) solid var(--color-tema, var(--color-borde));
-  border-left-width: var(--foco-ancho);
-  border-radius: var(--radio);
-  background: color-mix(in srgb, var(--color-tema, var(--color-borde)) var(--mezcla-fondo-tema), var(--color-fondo));
+  border-left: var(--foco-ancho) solid var(--color-tema, var(--color-borde));
   color: var(--color-texto);
   font-size: var(--tamano-chico);
   line-height: var(--interlineado);
@@ -162,7 +214,7 @@ a.tema:visited {
 .temas {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--espacio-1);
+  gap: var(--espacio-2) var(--espacio-3);
 }
 [data-tema="presupuesto"] {
   --color-tema: var(--color-tema-presupuesto);

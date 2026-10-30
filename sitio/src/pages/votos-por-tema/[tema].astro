@@ -1,6 +1,6 @@
 ---
-// Votos de partidos y bancadas en un tema (lib/votosPorTema.js, alcance acordado en #37): por cámara, el
-// reparto de los votos de cada partido y de cada bancada en las categorías oficiales, con su
+// Votos de partidos en un tema (lib/votosPorTema.js, alcance acordado en #37): por cámara, el reparto de
+// los votos de cada partido en las categorías oficiales, con su
 // denominador, y la lista de las votaciones del tema con su etapa. Sin cifra única de apoyo.
 import Base from "../../layouts/Base.astro";
 import RepartoTema from "../../components/RepartoTema.astro";
@@ -22,21 +22,21 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
 
 <Base
   titulo={`Votos de partidos en ${tema.nombre}`}
-  descripcion={`Cómo votaron los legisladores de cada partido y de cada bancada en las ${numero(tema.total)} votaciones nominales sobre proyectos de ley del tema ${tema.nombre}, período legislativo ${periodo}, en cada cámara.`}
+  descripcion={`Cómo votaron los legisladores de cada partido en las ${numero(tema.total)} votaciones nominales sobre proyectos de ley del tema ${tema.nombre}, período legislativo ${periodo}, en cada cámara.`}
 >
   <p class="chico"><a href={rutas.votosPorTema()}>← Votos de partidos por tema</a></p>
   <h1>Votos de partidos en {tema.nombre}</h1>
   <div class="lectura">
     {tema.definicion && <p class="texto-suave">{tema.definicion}</p>}
     <p>
-      Votos de cada partido y de cada bancada en las {plural(tema.total, "votación nominal", "votaciones nominales")}
+      Votos de cada partido en las {plural(tema.total, "votación nominal", "votaciones nominales")}
       de este tema, sobre todos sus votos registrados (con AUSENTE y NO VOTA).{" "}
       <a href={rutas.metodologia(rutas.anclasMetodologia.votosPorTema)}>Cómo se calcula</a>
     </p>
     <p class="chico texto-suave">
       Un NO puede ser a una modificación o a una objeción del Poder Ejecutivo, y no a la ley. Por eso la
-      lista de votaciones muestra la etapa de cada una. Partido y bancada son los que la API registra para
-      el período, no necesariamente los de la fecha de cada votación.
+      lista de votaciones muestra la etapa de cada una. El partido es el que la API registra para
+      el período, no necesariamente el de la fecha de cada votación.
     </p>
   </div>
 
@@ -49,7 +49,6 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
           {c.leyenda.map((l: any) => <li><span class={`muestra ${l.clase}`}></span>{l.categoria}</li>)}
         </ul>
         <RepartoTema titulo="Por partido" categorias={c.categorias} filas={c.partidos} />
-        <RepartoTema titulo="Por bancada" categorias={c.categorias} filas={c.bancadas} />
         <details>
           <summary>Ver las {plural(c.votaciones.length, "votación", "votaciones")} de la {c.camara}</summary>
           <VotacionesTema votaciones={c.votaciones} />

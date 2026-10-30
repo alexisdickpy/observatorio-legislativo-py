@@ -1,9 +1,12 @@
 ---
 // Estructura común de todas las páginas, con las etiquetas para buscadores y redes sociales
 // (preparadas por lib/seo.js).
+import "@fontsource-variable/newsreader/opsz.css";
+import "@fontsource-variable/public-sans/wght.css";
 import "../estilos/tokens.css";
 import "../estilos/base.css";
 import Encabezado from "../components/Encabezado.astro";
+import Paginador from "../components/Paginador.astro";
 import PiePagina from "../components/PiePagina.astro";
 import { imagenDe, nombreSitio } from "../lib/seo.js";
 import * as rutas from "../lib/rutas.js";
@@ -34,6 +37,7 @@ const json = datos && JSON.stringify(datos).replace(/</g, "\\u003c");
     <title>{tituloCompleto}</title>
     <meta name="description" content={descripcion} />
     {indexar ? <link rel="canonical" href={canonica} /> : <meta name="robots" content="noindex" />}
+    <script is:inline src="/modo.js"></script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href={rutas.sitemap()} />
     <meta property="og:site_name" content={nombreSitio} />
@@ -56,5 +60,6 @@ const json = datos && JSON.stringify(datos).replace(/</g, "\\u003c");
       <slot />
     </main>
     <PiePagina />
+    <Paginador />
   </body>
 </html>
