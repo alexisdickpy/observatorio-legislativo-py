@@ -11,7 +11,8 @@ Se ejecuta en la sincronización diaria, después de importar. Compara los datos
   en un resumen anterior, sin las votaciones de ese mismo día. Si no hay ninguna, no envía nada.
 
 En los proyectos, a cada autor se le agrega su partido y un círculo de color (COLOR_PARTIDO), y del título se
-omite la parte final «presentado por...», que repetiría a los autores. En las votaciones se agrega el voto por partido.
+omite la parte final «presentado por...», que repetiría a los autores. En las votaciones, además, se agregan el
+voto por partido y los enlaces a la votación y al proyecto en SILpy.
 
 La primera ejecución marca todo lo existente como procesado y no envía nada. Si la lista de suscriptores no
 se puede obtener, o un mensaje no llega a nadie, ese aviso se reintenta en la próxima ejecución. Un fallo de
@@ -139,10 +140,30 @@ def en_mensajes(encabezado, bloques):
     return mensajes
 
 
+def siglas_de_partidos(salida):
+    """Sigla propia de cada texto oficial de partido."""
+    return {p["partidoPolitico"]: p["sigla"] for p in (leer_json(salida / "propios" / "partidos.json") or {"partidos": []})["partidos"]}
+
+
 def siglas_de_legisladores(salida):
     """Sigla del partido de cada legislador. La API da el partido actual, no el de cada fecha."""
-    siglas = {p["partidoPolitico"]: p["sigla"] for p in (leer_json(salida / "propios" / "partidos.json") or {"partidos": []})["partidos"]}
+    siglas = siglas_de_partidos(salida)
     return {l["idLegislador"]: siglas.get(l.get("partidoPolitico")) for l in tablas(salida, "legisladores") if l.get("idLegislador")}
+
+
+def autores_de_votaciones(salida):
+    """{idProyecto: textos de autores con su partido}, según autores.json. Cada autor lleva el partido de su período."""
+    siglas, por_proyecto = siglas_de_partidos(salida), {}
+    for fila in tablas(salida, "autores"):
+        legislador = fila.get("legislador") or {}
+        partido = legislador.get("partidoPolitico")
+        nombre = f"{legislador.get('nombres') or ''} {legislador.get('apellidos') or ''}".strip()
+        por_proyecto.setdefault(fila["idProyecto"], []).append(nombre_con_partido(nombre, siglas.get(partido) or partido))
+    return por_proyecto
+
+
+def nombre_con_partido(nombre, partido):
+    return f"{color_partido(partido)} {nombre} ({partido})" if partido else nombre
 
 
 def color_partido(sigla):
@@ -165,14 +186,14 @@ def votos_por_partido(salida, ids, siglas):
 
 
 def barra_votos(si, no, abstencion, sin_voto):
-    """Barra de ANCHO_BARRA cuadros, proporcional; la suma acumulada evita que el redondeo cambie el ancho."""
-    total, acumulado, puestos, barra = si + no + abstencion + sin_voto, 0, 0, ""
-    for cantidad, cuadro in ((si, "🟩"), (no, "🟥"), (abstencion, "🟨"), (sin_voto, "⬜")):
-        acumulado += cantidad
-        hasta = round(acumulado * ANCHO_BARRA / total)
-        barra += cuadro * (hasta - puestos)
-        puestos = hasta
-    return barra
+    """Barra de ANCHO_BARRA cuadros, proporcional. Toda categoría con votos tiene al menos un cuadro."""
+    cantidades = (si, no, abstencion, sin_voto)
+    total = sum(cantidades)
+    cuadros = [max(1, round(n * ANCHO_BARRA / total)) if n else 0 for n in cantidades]
+    while sum(cuadros) != ANCHO_BARRA:
+        mayor = cuadros.index(max(cuadros))
+        cuadros[mayor] += 1 if sum(cuadros) < ANCHO_BARRA else -1
+    return "".join(c * n for c, n in zip("🟩🟥🟨⬜", cuadros))
 
 
 def lineas_por_partido(partidos):
@@ -187,8 +208,20 @@ def lineas_por_partido(partidos):
     return lineas
 
 
-def bloque_votacion(v, base, partidos=None):
-    bloque = f"{acortar((v.get('proyecto') or {}).get('acapite'))}\n{resultado_votacion(v, base)}"
+def bloque_votacion(v, base, partidos=None, autores=None):
+    """Una votación. Sin autores se conserva el título entero, porque «presentado por» sería el único dato de origen."""
+    proyecto = v.get("proyecto") or {}
+    titulo = proyecto.get("acapite")
+    lineas = []
+    if autores:
+        titulo = PRESENTADO_POR.sub("", titulo or "") or titulo
+        lineas.append("Presentado por " + ", ".join(autores))
+    lineas.append(resultado_votacion(v, base))
+    if v.get("appURL"):
+        lineas.append(f"Votación en SILpy {v['appURL']}")
+    if proyecto.get("appURL"):
+        lineas.append(f"Proyecto en SILpy {proyecto['appURL']}")
+    bloque = "\n".join([acortar(titulo)] + lineas)
     return bloque + "\n\nPor partido\n" + "\n".join(lineas_por_partido(partidos)) if partidos else bloque
 
 
@@ -196,9 +229,8 @@ def autores_con_partido(p, siglas):
     """Autores de un proyecto con su partido, si la API da su identificador; si no, tal como se publican."""
     autores = []
     for a in p.get("autores") or []:
-        sigla = siglas.get(a.get("idLegislador"))
         nombre = f"{a.get('nombres') or ''} {a.get('apellidos') or ''}".strip()
-        autores.append(f"{color_partido(sigla)} {nombre} ({sigla})" if sigla else nombre)
+        autores.append(nombre_con_partido(nombre, siglas.get(a.get("idLegislador"))))
     return ", ".join(autores) or (p.get("_propio") or {}).get("autores")
 
 
@@ -244,7 +276,9 @@ def mensajes_de(tipo, pendientes, votaciones, base, salida):
     if tipo == "votaciones":
         encabezado = f"Votaciones nominales nuevas de proyectos de ley\n\n{LEYENDA_VOTOS}"
         por_partido = votos_por_partido(salida, set(pendientes), siglas)
-        bloques = [bloque_votacion(v, base, por_partido.get(i)) for i, v in pendientes.items()]
+        autores = autores_de_votaciones(salida)
+        bloques = [bloque_votacion(v, base, por_partido.get(i), autores.get((v.get("proyecto") or {}).get("idProyecto")))
+                   for i, v in pendientes.items()]
     else:
         encabezado = "Proyectos de ley nuevos presentados"
         bloques = [bloque_proyecto(p, siglas) for p in pendientes.values()]
