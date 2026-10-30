@@ -7,7 +7,7 @@ Se ejecuta en la sincronización diaria, después de importar. Compara los datos
   solo mensaje si hay más de LIMITE_LEYES;
 - votaciones: un mensaje con las votaciones nominales nuevas de proyectos de ley, solo si hay;
 - proyectos: un mensaje con los proyectos de ley nuevos de cualquier iniciativa y sus autores, solo si hay;
-- resumen: con --resumen (el flujo lo pasa los lunes a la noche), las leyes y las votaciones que no estuvieron
+- resumen: con --resumen (el flujo lo pasa los lunes al mediodía), las leyes y las votaciones que no estuvieron
   en un resumen anterior, sin las votaciones de ese mismo día. Si no hay ninguna, no envía nada.
 
 La primera ejecución marca todo lo existente como procesado y no envía nada. Si la lista de suscriptores no
