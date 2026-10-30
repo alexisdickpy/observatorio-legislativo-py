@@ -42,6 +42,13 @@ class ApiSimulada:
         self.rutas["comision?idCamara=S"] = [{k: v for k, v in comision.items() if k != "miembros"}]
         self.rutas["comision?idCamara=D"] = [{**self.rutas["comision?idCamara=S"][0], "idComision": 32}]
         self.rutas["comision/5/miembros/100267"] = [comision]
+        base = {"tipoProyecto": "PROYECTO DE LEY", "iniciativa": "PODER EJECUTIVO", "acapite": "Mensaje"}
+        self.rutas["proyecto"] = [{**base, "idProyecto": 903, "fechaIngresoExpediente": "20/10/2026"},
+                                  {**base, "idProyecto": 902, "fechaIngresoExpediente": "21/10/2026", "tipoProyecto": "PEDIDO DE INFORMES"},
+                                  {**base, "idProyecto": 901, "fechaIngresoExpediente": "01/01/2026"},
+                                  {**base, "idProyecto": 900, "fechaIngresoExpediente": "01/01/2020"}]
+        self.rutas["proyecto/903/tramitaciones"] = [{"autores": [{"idLegislador": 1, "nombres": "Ana", "apellidos": "Paz", "emailParlamentario": "a@b.c"}],
+                                                     "ministerios": ["MINISTERIO"]}]
         self.guardadas = []
 
     def datos(self, ruta, params=None, reutilizable=False, guardada=False):
@@ -156,6 +163,15 @@ class Importar(unittest.TestCase):
                           for c in comisiones], [(5, 100267, 1, True), (5, 100267, 2, False)])
         self.assertNotIn("emailParlamentario", comisiones[0])
         self.assertEqual(resultado["cantidades"]["comisiones"], 2)
+
+    def test_proyectos_recientes_de_cualquier_iniciativa(self):
+        self.correr()
+        proyectos = self.leer("fuente/2023-2028/proyectos-recientes.json")
+        self.assertEqual([p["idProyecto"] for p in proyectos], [903])
+        self.assertEqual(proyectos[0]["iniciativa"], "PODER EJECUTIVO")
+        self.assertEqual(proyectos[0]["_propio"]["autores"], "Ana Paz")
+        self.assertEqual(proyectos[0]["ministerios"], ["MINISTERIO"])
+        self.assertNotIn("emailParlamentario", proyectos[0]["autores"][0])
 
     def test_comisiones_de_periodos_terminados_guardadas(self):
         api = ApiSimulada()

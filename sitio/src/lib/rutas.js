@@ -53,6 +53,7 @@ export const anclasMetodologia = {
   mapa: "mapa-de-diputados-por-departamento",
   expedientes: "expedientes-presentados",
   comisiones: "comisiones",
+  avisos: "avisos-del-bot-de-telegram",
 };
 
 /** Repositorio público del proyecto: código, datos y licencias. */

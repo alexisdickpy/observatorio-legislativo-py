@@ -6,7 +6,7 @@
 
 | Período | Datos actualizados por última vez |
 |---|---|
-| 2023-2028 | 2026-10-29T22:04:23Z |
+| 2023-2028 | 2026-10-30T08:21:04Z |
 
 La última comprobación de la fuente (aunque no haya cambios) figura en [`estado.json`](estado.json).
 
@@ -352,3 +352,35 @@ Se publica en `propios/clasificacion-temas.json` y `propios/clasificacion-temas.
 | `temas[].palabraClave` | propio | texto | Palabra clave que asignó el tema. Solo en los temas con origen `regla`. *Solo en el JSON.* |
 | `pendiente` | propio | booleano | Si el proyecto está pendiente de clasificación, sin ningún tema. |
 | `revisado` | propio | booleano | Si la clasificación se revisó a mano. Las revisadas no se recalculan; las demás salen de las reglas en cada actualización. |
+
+## avisos-telegram
+
+Registro propio de lo que el bot de Telegram ya procesó, para no repetir avisos. Lo escribe python -m importador.avisos en la sincronización diaria. No contiene datos de quienes usan el bot.
+
+Se publica en `propios/avisos-telegram.json`.
+
+| Campo | Origen | Tipo | Descripción |
+|---|---|---|---|
+| `iniciales` | propio | objeto | Identificadores de leyes, votaciones y proyectos que ya estaban en los datos cuando empezó el servicio. No se avisan. |
+| `avisados.tipo` | propio | texto | Tipo de aviso (leyes, votaciones o proyectos). |
+| `avisados.id` | propio | entero | Identificador oficial de la ley, la votación o el proyecto. |
+| `avisados.fecha` | propio | fecha y hora | Momento en que se procesó (UTC, ISO 8601). |
+| `avisados.resumido` | propio | booleano | true si ya se incluyó en un resumen semanal. |
+| `ultimoResumen` | propio | fecha | Día del último resumen semanal enviado. |
+
+## proyectos-recientes
+
+Proyectos de ley de cualquier iniciativa ingresados en los últimos 90 días (proyecto y proyecto/{id}/tramitaciones), para los avisos del bot de Telegram. Cambia a diario porque la ventana avanza. Solo en JSON.
+
+Se publica en `fuente/{período}/proyectos-recientes.json`.
+
+| Campo | Origen | Tipo | Descripción |
+|---|---|---|---|
+| `idProyecto` | oficial | entero | Identificador oficial del proyecto. |
+| `acapite` | oficial | texto | Título oficial. |
+| `iniciativa` | oficial | texto | Origen de la iniciativa (PARLAMENTARIA, PODER EJECUTIVO…). |
+| `fechaIngresoExpediente` | oficial | texto | Fecha de ingreso (dd/mm/aaaa), tal como la publica la API. |
+| `autores` | oficial | lista | Legisladores autores, con idLegislador, apellidos y nombres. Vacía si la API no publica autores. |
+| `ministerios` | oficial | lista | Ministerios de la iniciativa, tal como los publica la API. |
+| `_propio.fechaIngreso` | propio | fecha | Fecha de ingreso en formato ISO. |
+| `_propio.autores` | propio | texto | Nombres de los autores, unidos para mostrarlos en los avisos. |

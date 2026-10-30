@@ -19,7 +19,7 @@ import sys
 import time
 import traceback
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from . import abiertos, fotos, temas
@@ -32,6 +32,7 @@ from .transformar import (
     PROPIO,
     Notas,
     filas_autores,
+    fila_proyecto_reciente,
     filas_comisiones,
     filas_expedientes,
     filas_tramitaciones,
@@ -62,6 +63,9 @@ REGISTROS_MAXIMOS = 90
 
 class DatosIncompletos(ErrorAPI):
     """La API respondió, pero con muchos menos registros que la vez anterior."""
+
+
+DIAS_PROYECTOS_RECIENTES = 90  # ventana de proyectos-recientes.json; no se cuenta en la protección de cantidades
 
 
 def elegir_periodo(periodos, id_periodo):
@@ -326,6 +330,32 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
         progreso(f"  comisiones de la cámara {camara}: {len(listado)}")
     comisiones.sort(key=lambda c: (c["idPeriodoParlamentario"], c["idComision"], c[PROPIO]["orden"]))
 
+    # --- Proyectos de ley ingresados hace poco, de cualquier iniciativa, para los avisos del bot (#66) ---
+    # El listado va del más nuevo al más viejo por identificador, con fechas desordenadas (hay expedientes
+    # nuevos con fecha vieja): se corta tras una serie larga de fechas viejas. Los autores de cada proyecto
+    # se reutilizan de la copia guardada.
+    hoy_fecha = date.fromisoformat(ahora[:10])
+    desde_recientes = (hoy_fecha - timedelta(days=DIAS_PROYECTOS_RECIENTES)).isoformat()
+    corte_recientes = (hoy_fecha - timedelta(days=DIAS_PROYECTOS_RECIENTES + 30)).isoformat()
+    proyectos_recientes = []
+    listado_con_datos = False
+    viejos_seguidos = 0
+    for proyecto in cliente.paginar("proyecto", 500):
+        listado_con_datos = True
+        fecha_ingreso = a_iso(proyecto.get("fechaIngresoExpediente"))[0]
+        viejos_seguidos = viejos_seguidos + 1 if fecha_ingreso and fecha_ingreso < corte_recientes else 0
+        if viejos_seguidos >= 200:
+            break
+        if (proyecto.get("tipoProyecto") != "PROYECTO DE LEY" or not fecha_ingreso
+                or fecha_ingreso < max(desde_recientes, inicio)):
+            continue
+        tramitaciones = cliente.datos(f"proyecto/{proyecto['idProyecto']}/tramitaciones", guardada=True)
+        proyectos_recientes.append(fila_proyecto_reciente(proyecto, tramitaciones, fecha_ingreso))
+    if not listado_con_datos:
+        raise ErrorAPI("La API no devolvió el listado de proyectos")
+    proyectos_recientes.sort(key=lambda p: p["idProyecto"])
+    progreso(f"Proyectos de ley de los últimos {DIAS_PROYECTOS_RECIENTES} días: {len(proyectos_recientes)}")
+
     # --- Notas: se reemplazan las del importador para este período y se conservan las demás
     ruta_notas = salida / "propios" / "notas.json"
     anteriores = (leer_json(ruta_notas) or {"notas": []})["notas"]
@@ -369,6 +399,7 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
         carpeta / "autores.json": json_bytes(autores),
         carpeta / "expedientes.json": json_bytes(expedientes),
         carpeta / "comisiones.json": json_bytes(comisiones),
+        carpeta / "proyectos-recientes.json": json_bytes(proyectos_recientes),
         ruta_personas: json_bytes({"personas": personas}),
         ruta_notas: json_bytes({"notas": todas_las_notas}),
         salida / "periodos.json": json_bytes(documento_periodos),

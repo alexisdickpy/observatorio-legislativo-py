@@ -328,6 +328,19 @@ La página `/legisladores/mapa/` (#65) agrupa a los diputados en ejercicio por e
 - Colores. Cinco tramos según la cantidad de diputados (1, 2 a 3, 4 a 5, 6 a 8, 9 o más), nunca según el partido.
 - Comprobación. Las pruebas revisan que cada departamento de los diputados en ejercicio tenga su zona, que la suma del mapa sea el total de diputados en ejercicio y que los valores desconocidos queden aparte.
 
+## Avisos del bot de Telegram
+
+El bot de Telegram del proyecto avisa de la actividad del Congreso. Al empezar, todos los avisos están activados, y cada persona desactiva en un menú los que no quiera. Ningún aviso se envía si no hay novedades.
+
+- **Leyes nuevas sancionadas.** Un mensaje por número de ley, con su título oficial, fecha de sanción y enlace a su ficha. Si la ley tiene votaciones nominales publicadas, incluye el resultado oficial y los totales de las últimas seis. Si en un día aparecen más de cinco leyes, un solo mensaje las reúne.
+- **Votaciones nominales de proyectos de ley.** Un mensaje por día con las votaciones nuevas, cada una con su cámara, fecha, resultado oficial, totales y enlace. Las votaciones sobre otros tipos de expediente no se avisan.
+- **Proyectos de ley presentados.** Un mensaje por día con los proyectos nuevos de cualquier iniciativa (consulta `proyecto`). Si la API publica autores, los nombra. Si no, como en los proyectos del Poder Ejecutivo, indica la iniciativa oficial y los ministerios. Si otro autor figura más tarde, el aviso ya enviado no cambia.
+- **Resumen de la semana anterior.** Los lunes, 22:00 en Paraguay, después de una sincronización. Reúne las leyes y las votaciones de proyectos de ley que aparecieron en los datos desde el resumen anterior. Las votaciones de ese mismo lunes quedan para el resumen siguiente. Cada cosa aparece en un solo resumen.
+
+«Nuevo» significa que apareció en los datos desde la sincronización anterior, no que ocurrió ese día. Como la API publica con demora, la fecha oficial puede ser anterior a la del aviso. Lo que ya estaba en los datos cuando empezó el servicio no se avisa. En las listas, los títulos largos se acortan y el enlace lleva al texto completo.
+
+**Privacidad.** El bot guarda en Cloudflare solo el número de chat de Telegram y los avisos elegidos, sin nombre, usuario ni teléfono. Ese dato no está en el repositorio ni en los datos abiertos. El comando `/baja`, o bloquear el bot, lo borra. El registro público `datos/propios/avisos-telegram.json` solo dice qué leyes, votaciones y proyectos ya se procesaron.
+
 ## Números de ley
 
 El número de ley se usa como URL (`/leyes/{número}/`). El importador verifica en cada ejecución que ningún número del período figure en otra legislatura, comparando con el listado histórico completo de la API. El resultado se informa en el resumen de cada ejecución.

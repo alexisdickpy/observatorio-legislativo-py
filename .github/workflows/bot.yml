@@ -1,0 +1,71 @@
+# Despliega el bot de Telegram (bot/) en Cloudflare Workers y le dice a Telegram adónde enviar los
+# mensajes. Se ejecuta al cambiar bot/ en main o a mano. Sin el secreto CLOUDFLARE_API_TOKEN no hace nada.
+# Pasos para ponerlo en marcha en bot/README.md.
+
+name: Despliegue del bot
+
+on:
+  push:
+    branches: [main]
+    paths: ["bot/**", ".github/workflows/bot.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - name: Comprobar los secretos
+        id: secretos
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::notice::El bot todavía no está configurado (bot/README.md). No se despliega."
+            echo "listo=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "listo=si" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v7
+        if: steps.secretos.outputs.listo == 'si'
+
+      - name: Completar el identificador del espacio KV
+        if: steps.secretos.outputs.listo == 'si'
+        env:
+          KV_ID: ${{ secrets.KV_SUSCRIPTORES_ID }}
+        run: sed -i "s/KV_SUSCRIPTORES_ID/$KV_ID/" bot/wrangler.toml
+
+      - name: Desplegar
+        id: desplegar
+        if: steps.secretos.outputs.listo == 'si'
+        uses: cloudflare/wrangler-action@v3
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          WEBHOOK_SECRETO: ${{ secrets.WEBHOOK_SECRETO }}
+          CLAVE_ENVIO: ${{ secrets.BOT_CLAVE }}
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: bot
+          secrets: |
+            TELEGRAM_TOKEN
+            WEBHOOK_SECRETO
+            CLAVE_ENVIO
+
+      - name: Conectar el bot con Telegram
+        if: steps.secretos.outputs.listo == 'si'
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          WEBHOOK_SECRETO: ${{ secrets.WEBHOOK_SECRETO }}
+          URL_BOT: ${{ steps.desplegar.outputs.deployment-url }}
+        run: |
+          curl -sS --fail -o /dev/null "https://api.telegram.org/bot$TELEGRAM_TOKEN/setWebhook" \
+            --data-urlencode "url=$URL_BOT/telegram" \
+            --data-urlencode "secret_token=$WEBHOOK_SECRETO" \
+            --data-urlencode 'allowed_updates=["message","callback_query","my_chat_member"]'
+          curl -sS --fail -o /dev/null "https://api.telegram.org/bot$TELEGRAM_TOKEN/setMyCommands" \
+            --data-urlencode 'commands=[{"command":"avisos","description":"Elegir qué avisos recibir"},{"command":"baja","description":"Dejar de recibir avisos y borrar este chat"}]'
+          echo "Bot conectado. Su dirección es $URL_BOT"

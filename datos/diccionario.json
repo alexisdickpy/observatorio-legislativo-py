@@ -1443,6 +1443,106 @@
           "descripcion": "Si la clasificación se revisó a mano. Las revisadas no se recalculan; las demás salen de las reglas en cada actualización."
         }
       ]
+    },
+    "avisos-telegram": {
+      "descripcion": "Registro propio de lo que el bot de Telegram ya procesó, para no repetir avisos. Lo escribe python -m importador.avisos en la sincronización diaria. No contiene datos de quienes usan el bot.",
+      "archivos": [
+        "propios/avisos-telegram.json"
+      ],
+      "campos": [
+        {
+          "campo": "iniciales",
+          "origen": "propio",
+          "tipo": "objeto",
+          "descripcion": "Identificadores de leyes, votaciones y proyectos que ya estaban en los datos cuando empezó el servicio. No se avisan."
+        },
+        {
+          "campo": "avisados.tipo",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Tipo de aviso (leyes, votaciones o proyectos)."
+        },
+        {
+          "campo": "avisados.id",
+          "origen": "propio",
+          "tipo": "entero",
+          "descripcion": "Identificador oficial de la ley, la votación o el proyecto."
+        },
+        {
+          "campo": "avisados.fecha",
+          "origen": "propio",
+          "tipo": "fecha y hora",
+          "descripcion": "Momento en que se procesó (UTC, ISO 8601)."
+        },
+        {
+          "campo": "avisados.resumido",
+          "origen": "propio",
+          "tipo": "booleano",
+          "descripcion": "true si ya se incluyó en un resumen semanal."
+        },
+        {
+          "campo": "ultimoResumen",
+          "origen": "propio",
+          "tipo": "fecha",
+          "descripcion": "Día del último resumen semanal enviado."
+        }
+      ]
+    },
+    "proyectos-recientes": {
+      "descripcion": "Proyectos de ley de cualquier iniciativa ingresados en los últimos 90 días (proyecto y proyecto/{id}/tramitaciones), para los avisos del bot de Telegram. Cambia a diario porque la ventana avanza. Solo en JSON.",
+      "archivos": [
+        "fuente/{período}/proyectos-recientes.json"
+      ],
+      "campos": [
+        {
+          "campo": "idProyecto",
+          "origen": "oficial",
+          "tipo": "entero",
+          "descripcion": "Identificador oficial del proyecto."
+        },
+        {
+          "campo": "acapite",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Título oficial."
+        },
+        {
+          "campo": "iniciativa",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Origen de la iniciativa (PARLAMENTARIA, PODER EJECUTIVO…)."
+        },
+        {
+          "campo": "fechaIngresoExpediente",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Fecha de ingreso (dd/mm/aaaa), tal como la publica la API."
+        },
+        {
+          "campo": "autores",
+          "origen": "oficial",
+          "tipo": "lista",
+          "descripcion": "Legisladores autores, con idLegislador, apellidos y nombres. Vacía si la API no publica autores."
+        },
+        {
+          "campo": "ministerios",
+          "origen": "oficial",
+          "tipo": "lista",
+          "descripcion": "Ministerios de la iniciativa, tal como los publica la API."
+        },
+        {
+          "campo": "_propio.fechaIngreso",
+          "origen": "propio",
+          "tipo": "fecha",
+          "descripcion": "Fecha de ingreso en formato ISO."
+        },
+        {
+          "campo": "_propio.autores",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Nombres de los autores, unidos para mostrarlos en los avisos."
+        }
+      ]
     }
   }
 }

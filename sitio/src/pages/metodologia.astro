@@ -467,6 +467,21 @@ const TOTAL_PREGUNTAS = preguntasTest.length;
       este proyecto, sin servicios de mapas externos. El color depende solo de la cantidad de diputados.
     </p>
 
+    <h2 id={anclas.avisos}>Avisos del bot de Telegram</h2>
+    <p>
+      El bot de Telegram del proyecto avisa de cuatro cosas. Al empezar, todas están activadas, y cada persona
+      desactiva las que no quiera. Las leyes nuevas sancionadas, con el resultado de sus votaciones nominales
+      si están publicadas. Las votaciones nominales de proyectos de ley, en un mensaje por día. Los proyectos
+      de ley presentados, de cualquier iniciativa y con sus autores, en un mensaje por día. Y los lunes a la
+      noche, un resumen de la semana anterior con las leyes y votaciones. Si no hay novedades, no se envía nada.
+    </p>
+    <p>
+      «Nuevo» significa que apareció en los datos desde la actualización anterior, no que ocurrió ese día,
+      porque la fuente publica con demora. Cuando la fuente no publica autores, como en los proyectos del
+      Poder Ejecutivo, se indica la iniciativa oficial y los ministerios. El bot guarda solo el número de chat y los avisos elegidos, y el comando
+      /baja o bloquear el bot los borra.
+    </p>
+
     <h2 id={anclas.afiliacion}>Partido y bancada</h2>
     <p>
       La API publica un único partido y una única bancada por legislador y período, sin fecha. Si un
