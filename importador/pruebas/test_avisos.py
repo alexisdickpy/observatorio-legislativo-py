@@ -106,7 +106,7 @@ class Avisos(unittest.TestCase):
         texto, = self.textos("votaciones")
         self.assertTrue(texto.startswith("Votaciones nominales nuevas de proyectos de ley\n"))
         self.assertIn("Proyecto 2", texto)
-        self.assertIn("Resultado oficial APROBADO. Sí 30, No 5, Abstención 1", texto)
+        self.assertIn("Resultado oficial: APROBADO. Sí 30, No 5, Abstención 1", texto)
         self.assertIn(f"{BASE}/votacion/3/", texto)
         self.assertNotIn("Proyecto 4", texto)
 
@@ -208,7 +208,7 @@ class Avisos(unittest.TestCase):
         self.correr()
         texto, = self.textos("leyes")
         self.assertIn("Votaciones nominales (1)", texto)
-        self.assertIn("Resultado oficial APROBADO. Sí 30, No 5, Abstención 1", texto)
+        self.assertIn("Resultado oficial: APROBADO. Sí 30, No 5, Abstención 1", texto)
         self.assertIn(f"{BASE}/votacion/1/", texto)
 
     def test_ley_sin_votaciones_no_las_menciona(self):
@@ -312,7 +312,7 @@ class Avisos(unittest.TestCase):
         self.assertEqual(tipo, "votaciones")
         self.assertIn("sin votación nominal publicada", texto)
         self.assertIn("Plenario 2\n", texto)
-        self.assertIn("Resultado oficial RECHAZADO", texto)
+        self.assertIn("Resultado oficial: RECHAZADO", texto)
         self.assertIn("Ana Pérez", texto)
         self.assertIn("https://silpy.test/expediente/502", texto)
         self.assertNotIn("Plenario 1", texto)

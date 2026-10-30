@@ -101,7 +101,7 @@ def tramite_votacion(v):
     tramite = v.get("tramitacion") or {}
     totales = f"Sí {v.get('totalSI', 0)}, No {v.get('totalNO', 0)}, Abstención {v.get('totalAbstencion', 0)}"
     return (f"{tramite.get('camaraTramite') or 'Cámara sin dato'}, {tramite.get('fechaTramite') or 'fecha sin dato'}\n"
-            f"Resultado oficial {tramite.get('resultadoTramite') or 'sin dato'}. {totales}")
+            f"Resultado oficial: {tramite.get('resultadoTramite') or 'sin dato'}. {totales}")
 
 
 def url_votacion(v, base):
@@ -272,15 +272,15 @@ def bloque_decision(d, siglas):
     tramite = d["tramitacion"]
     autores = autores_con_partido(d, siglas)
     titulo = d.get("acapite")
-    partes = []
+    encabezado = acortar(titulo)
     if autores:
         titulo = PRESENTADO_POR.sub("", titulo or "") or titulo
-        partes.append(f"Presentado por {autores}")
-    partes.append(f"{tramite.get('camaraTramite') or 'Cámara sin dato'}, {tramite.get('fechaTramite') or 'fecha sin dato'}\n"
-                  f"Resultado oficial {tramite.get('resultadoTramite')}")
+        encabezado = f"{acortar(titulo)}\nPresentado por {autores}"
+    partes = [encabezado, f"{tramite.get('camaraTramite') or 'Cámara sin dato'}, {tramite.get('fechaTramite') or 'fecha sin dato'}",
+              f"Resultado oficial: {tramite.get('resultadoTramite')}"]
     if d.get("appURL"):
         partes.append(f"Proyecto en SILpy {d['appURL']}")
-    return "\n".join([acortar(titulo)] + partes)
+    return "\n\n".join(partes)
 
 
 def decisiones_sin_nominal(salida):
