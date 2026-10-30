@@ -6,6 +6,8 @@ Se ejecuta en la sincronización diaria, después de importar. Compara los datos
 - leyes: un mensaje por número de ley nuevo, con el resultado de sus votaciones nominales si las hay, o un
   solo mensaje si hay más de LIMITE_LEYES;
 - votaciones: un mensaje con las votaciones nominales nuevas de proyectos de ley, solo si hay;
+- plenario: para quienes eligieron las votaciones, un mensaje con las decisiones nuevas del plenario sobre
+  proyectos de ley que no tienen votación nominal publicada (decisiones-plenario.json), solo si hay;
 - proyectos: un mensaje con los proyectos de ley nuevos de cualquier iniciativa y sus autores, solo si hay;
 - resumen: con --resumen (el flujo lo pasa los lunes), las leyes y las votaciones que no estuvieron
   en un resumen anterior, sin las votaciones de ese mismo día. Si no hay ninguna, no envía nada.
@@ -13,6 +15,9 @@ Se ejecuta en la sincronización diaria, después de importar. Compara los datos
 En los proyectos, a cada autor se le agrega su partido y un círculo de color (COLOR_PARTIDO), y del título se
 omite la parte final «presentado por...», que repetiría a los autores. En las votaciones, además, se agregan el
 voto por partido y los enlaces a la votación y al proyecto en SILpy.
+
+Una decisión del plenario espera DIAS_ESPERA_PLENARIO desde su fecha oficial, por si su votación nominal se publica
+después. Si ya hay votación nominal de ese trámite, no se avisa como decisión del plenario.
 
 La primera ejecución marca todo lo existente como procesado y no envía nada. Si la lista de suscriptores no
 se puede obtener, o un mensaje no llega a nadie, ese aviso se reintenta en la próxima ejecución. Un fallo de
@@ -59,6 +64,8 @@ COLOR_PARTIDO = {"ANR": "🔴", "PLRA": "🔵", "CN": "⚫", "Yo Creo": "🟠", 
 SIN_COLOR_PARTIDO = "⚪"
 LEYENDA_VOTOS = "🟩 Sí  🟥 No  🟨 Abstención  ⬜ Sin voto"
 ANCHO_BARRA = 10
+DIAS_ESPERA_PLENARIO = 2
+ENVIO_DE_TIPO = {"plenario": "votaciones"}  # tipos sin opción propia en el menú del bot
 PRESENTADO_POR = re.compile(r"[\s,.]*\bpresentado por\b.*$", re.IGNORECASE | re.DOTALL)
 
 
@@ -262,8 +269,38 @@ def bloque_proyecto(p, siglas):
             f"{p.get('appURL') or ''}".rstrip())
 
 
-def novedades(salida):
-    """Lo que cada tipo de aviso sigue, por identificador: leyes, votaciones y proyectos de ley."""
+def bloque_decision(d, siglas):
+    """Una decisión del plenario de decisiones-plenario.json, con su resultado oficial."""
+    tramite = d["tramitacion"]
+    autores = autores_con_partido(d, siglas)
+    titulo = d.get("acapite")
+    partes = []
+    if autores:
+        titulo = PRESENTADO_POR.sub("", titulo or "") or titulo
+        partes.append(f"Presentado por {autores}")
+    partes.append(f"{tramite.get('camaraTramite') or 'Cámara sin dato'}, {tramite.get('fechaTramite') or 'fecha sin dato'}\n"
+                  f"Resultado oficial {tramite.get('resultadoTramite')}")
+    if d.get("appURL"):
+        partes.append(f"Proyecto en SILpy {d['appURL']}")
+    return "\n".join([acortar(titulo)] + partes)
+
+
+def decisiones_sin_nominal(salida, hoy):
+    """Decisiones del plenario sin votación nominal de ese trámite, y con la espera cumplida."""
+    nominales = {(v.get("tramitacion") or {}).get("idTramitacion") for v in tablas(salida, "votaciones")}
+    limite = (hoy - timedelta(days=DIAS_ESPERA_PLENARIO)).isoformat()
+    pendientes = {}
+    for periodo in (leer_json(salida / "periodos.json") or {"periodos": []})["periodos"]:
+        documento = leer_json(salida / "fuente" / periodo["id"] / "decisiones-plenario.json") or {"decisiones": []}
+        for d in documento["decisiones"]:
+            tramite = d["tramitacion"]
+            if tramite["idTramitacion"] not in nominales and (tramite.get("_propio") or {}).get("fechaTramite", "") <= limite:
+                pendientes[tramite["idTramitacion"]] = d
+    return pendientes
+
+
+def novedades(salida, hoy):
+    """Lo que cada tipo de aviso sigue, por identificador: leyes, votaciones, decisiones del plenario y proyectos de ley."""
     leyes = sorted(tablas(salida, "leyes"), key=lambda l: (l["_propio"].get("fechaSancion") or "", l["_propio"]["numeroLey"], l["idLey"]))
     votaciones = sorted((v for v in tablas(salida, "votaciones") if (v.get("proyecto") or {}).get("tipoProyecto") == PROYECTO_DE_LEY),
                         key=lambda v: ((v.get("tramitacion") or {}).get("_propio", {}).get("fechaTramite") or "", v["idVotacion"]))
@@ -271,6 +308,7 @@ def novedades(salida):
                                                     key=lambda p: ((p.get("_propio") or {}).get("fechaIngreso") or "", p["idProyecto"]))}
     return {"leyes": {l["idLey"]: l for l in leyes},
             "votaciones": {v["idVotacion"]: v for v in votaciones},
+            "plenario": decisiones_sin_nominal(salida, hoy),
             "proyectos": proyectos}
 
 
@@ -291,6 +329,9 @@ def mensajes_de(tipo, pendientes, votaciones, base, salida):
         autores = autores_de_votaciones(salida)
         bloques = [bloque_votacion(v, base, por_partido.get(i), autores.get((v.get("proyecto") or {}).get("idProyecto")))
                    for i, v in pendientes.items()]
+    elif tipo == "plenario":
+        encabezado = "Decisiones del plenario sobre proyectos de ley, sin votación nominal publicada"
+        bloques = [bloque_decision(d, siglas) for d in pendientes.values()]
     else:
         encabezado = "Proyectos de ley nuevos presentados"
         bloques = [bloque_proyecto(p, siglas) for p in pendientes.values()]
@@ -345,7 +386,7 @@ def avisar(salida, enviar, base, ahora=None, salida_texto=print, resumen=False):
     hoy = datetime.fromisoformat(ahora.replace("Z", "+00:00")).astimezone(ASUNCION).date()
     ruta = salida / "propios" / "avisos-telegram.json"
     registro = leer_json(ruta)
-    ids = novedades(salida)
+    ids = novedades(salida, hoy)
     resultado = {"enviados": 0, "errores": [], "primera": registro is None}
 
     if registro is None:
@@ -353,7 +394,7 @@ def avisar(salida, enviar, base, ahora=None, salida_texto=print, resumen=False):
                      + ". Se marcan como procesados, sin enviar mensajes"
                      + (" (modo de prueba, no se registra)." if enviar is None else "."))
         if enviar is not None:
-            escribir_si_cambia(ruta, json_bytes({"iniciales": {t: sorted(v) for t, v in ids.items()},
+            escribir_si_cambia(ruta, json_bytes({"iniciales": {t: sorted(v) for t, v in ids.items() if v or t != "plenario"},
                                                  "avisados": [], "ultimoResumen": None}))
         return resultado
 
@@ -361,13 +402,18 @@ def avisar(salida, enviar, base, ahora=None, salida_texto=print, resumen=False):
         if enviar is None:
             salida_texto(f"--- Mensaje de {tipo} (modo de prueba, sin enviar) ---\n{texto}")
             return True
-        error = enviar(tipo, texto)
+        error = enviar(ENVIO_DE_TIPO.get(tipo, tipo), texto)
         if error:
             resultado["errores"].append(error)
             salida_texto(f"AVISO: no se pudo enviar un aviso de {tipo} ({error}). Se reintentará en la próxima ejecución.")
             return False
         resultado["enviados"] += 1
         return True
+
+    # Un tipo de aviso que se agrega después empieza igual que la primera ejecución, sin enviar lo que ya existe.
+    for tipo, elementos in ids.items():
+        if tipo not in registro["iniciales"] and elementos:
+            registro["iniciales"][tipo] = sorted(elementos)
 
     nuevos = []
     for tipo, elementos in ids.items():

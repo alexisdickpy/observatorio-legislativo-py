@@ -294,6 +294,24 @@ def fila_proyecto_reciente(proyecto, tramitaciones, fecha_ingreso):
     }
 
 
+def es_decision_de_plenario(tramitacion):
+    """Trámite de discusión en el plenario con un resultado oficial que decide sobre el proyecto (docs/metodologia.md)."""
+    resultado = (tramitacion.get("resultadoTramite") or "").strip().upper()
+    return ((tramitacion.get("descripcionSubEtapa") or "").upper().startswith("DISCUSIÓN PLENARIO") and bool(resultado)
+            and resultado != "POSTERGADO" and not resultado.startswith("SE ENVÍA A COMISIÓN"))
+
+
+def filas_decisiones_plenario(proyecto, tramitaciones, notas):
+    """Registros de decisiones-plenario.json para un proyecto, con sus campos oficiales y sus autores sin contacto."""
+    detalle = (tramitaciones or [{}])[0]
+    id_proyecto = proyecto["idProyecto"]
+    comunes = {"idProyecto": id_proyecto, "acapite": proyecto.get("acapite"), "appURL": proyecto.get("appURL"),
+               "autores": [{c: a.get(c) for c in CAMPOS_MIEMBRO} for a in detalle.get("autores") or []]}
+    return [{**comunes, "tramitacion": fila["tramitacion"]}
+            for fila in filas_tramitaciones(id_proyecto, detalle.get("tramitaciones"), notas)
+            if es_decision_de_plenario(fila["tramitacion"])]
+
+
 def verificar_numeros_ley(leyes_periodo, historico, inicio, fin, notas):
     """Comprueba que los números de ley del período no se repiten en otras legislaturas.
 

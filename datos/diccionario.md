@@ -384,3 +384,18 @@ Se publica en `fuente/{período}/proyectos-recientes.json`.
 | `ministerios` | oficial | lista | Ministerios de la iniciativa, tal como los publica la API. |
 | `_propio.fechaIngreso` | propio | fecha | Fecha de ingreso en formato ISO. |
 | `_propio.autores` | propio | texto | Nombres de los autores, unidos para mostrarlos en los avisos. |
+
+## decisiones-plenario
+
+Decisiones del plenario sobre proyectos de ley en trámite ingresados desde 2023 (proyecto/{id}/tramitaciones), para los avisos del bot de Telegram. El documento tiene dos listas, `seguidos` con los identificadores de los proyectos que se consultan y `decisiones` con estos registros. Solo en JSON.
+
+Se publica en `fuente/{período}/decisiones-plenario.json`.
+
+| Campo | Origen | Tipo | Descripción |
+|---|---|---|---|
+| `idProyecto` | oficial | entero | Identificador oficial del proyecto. |
+| `acapite` | oficial | texto | Título oficial. |
+| `appURL` | oficial | texto | Enlace al proyecto en SILpy. |
+| `autores` | oficial | lista | Legisladores autores, con idLegislador, apellidos y nombres. Vacía si la API no publica autores. |
+| `tramitacion` | oficial | objeto | Trámite tal como lo publica la API, con su resultado oficial. |
+| `tramitacion._propio.fechaTramite` | propio | fecha | Fecha del trámite en formato ISO. |

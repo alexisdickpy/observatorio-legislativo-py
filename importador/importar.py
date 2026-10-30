@@ -34,6 +34,7 @@ from .transformar import (
     filas_autores,
     fila_proyecto_reciente,
     filas_comisiones,
+    filas_decisiones_plenario,
     filas_expedientes,
     filas_tramitaciones,
     numero_ley,
@@ -66,6 +67,7 @@ class DatosIncompletos(ErrorAPI):
 
 
 DIAS_PROYECTOS_RECIENTES = 90  # ventana de proyectos-recientes.json; no se cuenta en la protección de cantidades
+INGRESO_SEGUIDOS = "2023-01-01"  # proyectos en trámite cuyas tramitaciones se consultan en cada ejecución (#76)
 
 
 def elegir_periodo(periodos, id_periodo):
@@ -336,16 +338,20 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
     # se reutilizan de la copia guardada.
     hoy_fecha = date.fromisoformat(ahora[:10])
     desde_recientes = (hoy_fecha - timedelta(days=DIAS_PROYECTOS_RECIENTES)).isoformat()
-    corte_recientes = (hoy_fecha - timedelta(days=DIAS_PROYECTOS_RECIENTES + 30)).isoformat()
     proyectos_recientes = []
     listado_con_datos = False
     viejos_seguidos = 0
+    de_ley_listados, en_tramite = {}, set()
     for proyecto in cliente.paginar("proyecto", 500):
         listado_con_datos = True
         fecha_ingreso = a_iso(proyecto.get("fechaIngresoExpediente"))[0]
-        viejos_seguidos = viejos_seguidos + 1 if fecha_ingreso and fecha_ingreso < corte_recientes else 0
+        viejos_seguidos = viejos_seguidos + 1 if fecha_ingreso and fecha_ingreso < INGRESO_SEGUIDOS else 0
         if viejos_seguidos >= 200:
             break
+        if proyecto.get("tipoProyecto") == "PROYECTO DE LEY" and fecha_ingreso and fecha_ingreso >= INGRESO_SEGUIDOS:
+            de_ley_listados[proyecto["idProyecto"]] = proyecto
+            if proyecto.get("estadoProyecto") == "EN TRAMITE":
+                en_tramite.add(proyecto["idProyecto"])
         if (proyecto.get("tipoProyecto") != "PROYECTO DE LEY" or not fecha_ingreso
                 or fecha_ingreso < max(desde_recientes, inicio)):
             continue
@@ -355,6 +361,30 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
         raise ErrorAPI("La API no devolvió el listado de proyectos")
     proyectos_recientes.sort(key=lambda p: p["idProyecto"])
     progreso(f"Proyectos de ley de los últimos {DIAS_PROYECTOS_RECIENTES} días: {len(proyectos_recientes)}")
+
+    # --- Decisiones del plenario de proyectos en trámite, para los avisos del bot (#76) -----------
+    # Cada proyecto seguido se consulta en todas las ejecuciones. El que dejó de estar en trámite se consulta
+    # una vez más, porque su última decisión pudo ser la que lo sacó. Si una consulta falla, se reintenta.
+    ruta_decisiones = salida / "fuente" / nombre / "decisiones-plenario.json"
+    anteriores_decisiones = leer_json(ruta_decisiones) or {"seguidos": [], "decisiones": []}
+    decisiones = {d["tramitacion"]["idTramitacion"]: d for d in anteriores_decisiones["decisiones"]}
+    sin_respuesta = set()
+    por_consultar = sorted(en_tramite | set(anteriores_decisiones["seguidos"]))
+    for i, id_proyecto in enumerate(por_consultar, 1):
+        try:
+            tramitaciones = cliente.datos(f"proyecto/{id_proyecto}/tramitaciones")
+        except ErrorAPI:
+            sin_respuesta.add(id_proyecto)
+            continue
+        proyecto = de_ley_listados.get(id_proyecto) or {"idProyecto": id_proyecto}
+        for fila in filas_decisiones_plenario(proyecto, tramitaciones, notas):
+            decisiones[fila["tramitacion"]["idTramitacion"]] = fila
+        if i % 200 == 0 or i == len(por_consultar):
+            progreso(f"  tramitaciones de proyectos en trámite: {i}/{len(por_consultar)}")
+    if sin_respuesta:
+        avisos.append(f"Tramitaciones sin respuesta de {len(sin_respuesta)} proyectos en trámite; se reintentan en la próxima ejecución")
+    decisiones_plenario = {"seguidos": sorted(en_tramite | sin_respuesta),
+                           "decisiones": [decisiones[i] for i in sorted(decisiones)]}
 
     # --- Notas: se reemplazan las del importador para este período y se conservan las demás
     ruta_notas = salida / "propios" / "notas.json"
@@ -400,6 +430,7 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
         carpeta / "expedientes.json": json_bytes(expedientes),
         carpeta / "comisiones.json": json_bytes(comisiones),
         carpeta / "proyectos-recientes.json": json_bytes(proyectos_recientes),
+        ruta_decisiones: json_bytes(decisiones_plenario),
         ruta_personas: json_bytes({"personas": personas}),
         ruta_notas: json_bytes({"notas": todas_las_notas}),
         salida / "periodos.json": json_bytes(documento_periodos),

@@ -1543,6 +1543,50 @@
           "descripcion": "Nombres de los autores, unidos para mostrarlos en los avisos."
         }
       ]
+    },
+    "decisiones-plenario": {
+      "descripcion": "Decisiones del plenario sobre proyectos de ley en trámite ingresados desde 2023 (proyecto/{id}/tramitaciones), para los avisos del bot de Telegram. El documento tiene dos listas, `seguidos` con los identificadores de los proyectos que se consultan y `decisiones` con estos registros. Solo en JSON.",
+      "archivos": [
+        "fuente/{período}/decisiones-plenario.json"
+      ],
+      "campos": [
+        {
+          "campo": "idProyecto",
+          "origen": "oficial",
+          "tipo": "entero",
+          "descripcion": "Identificador oficial del proyecto."
+        },
+        {
+          "campo": "acapite",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Título oficial."
+        },
+        {
+          "campo": "appURL",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Enlace al proyecto en SILpy."
+        },
+        {
+          "campo": "autores",
+          "origen": "oficial",
+          "tipo": "lista",
+          "descripcion": "Legisladores autores, con idLegislador, apellidos y nombres. Vacía si la API no publica autores."
+        },
+        {
+          "campo": "tramitacion",
+          "origen": "oficial",
+          "tipo": "objeto",
+          "descripcion": "Trámite tal como lo publica la API, con su resultado oficial."
+        },
+        {
+          "campo": "tramitacion._propio.fechaTramite",
+          "origen": "propio",
+          "tipo": "fecha",
+          "descripcion": "Fecha del trámite en formato ISO."
+        }
+      ]
     }
   }
 }
