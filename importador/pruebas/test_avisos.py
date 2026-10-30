@@ -332,15 +332,21 @@ class Avisos(unittest.TestCase):
         self.assertIn("Votaciones nominales nuevas", self.enviados[0][1])
         self.assertNotIn("sin votación nominal publicada", self.enviados[0][1])
 
-    def test_decision_espera_por_si_aparece_la_nominal(self):
+    def test_decision_nueva_entra_en_el_resumen_una_vez(self):
         self.correr()
         self.poner_decisiones(decision(1))
         self.correr()
-        self.poner_decisiones(decision(1), decision(2, fecha="2026-10-26"))
+        self.poner_decisiones(decision(1), decision(2))
         self.correr()
-        self.assertEqual(self.enviados, [])
-        self.correr(ahora="2026-10-28T12:00:00Z")
+        self.enviados.clear()
+        self.correr(ahora=LUNES, resumen=True)
         self.assertEqual(len(self.enviados), 1)
+        self.assertEqual(self.enviados[0][0], "resumen")
+        self.assertIn("sin votación nominal publicada (1)", self.enviados[0][1])
+        self.assertIn("RECHAZADO, 1", self.enviados[0][1])
+        self.enviados.clear()
+        self.correr(ahora="2026-11-09T12:00:00Z", resumen=True)
+        self.assertEqual(self.enviados, [])
 
     def test_rutas_iguales_a_las_del_sitio(self):
         rutas = (RAIZ / "sitio" / "src" / "lib" / "rutas.js").read_text(encoding="utf-8")

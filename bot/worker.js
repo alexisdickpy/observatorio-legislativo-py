@@ -14,7 +14,7 @@
 
 export const TIPOS = [
   { id: "leyes", nombre: "Leyes nuevas sancionadas" },
-  { id: "votaciones", nombre: "Votaciones de proyectos de ley, nominales o no, con su resultado oficial" },
+  { id: "votaciones", nombre: "Votaciones de proyectos de ley con sus resultados" },
   { id: "proyectos", nombre: "Proyectos de ley nuevos presentados, con sus autores" },
   { id: "resumen", nombre: "Resumen de la semana anterior (los lunes)" },
 ];

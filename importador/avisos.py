@@ -16,8 +16,7 @@ En los proyectos, a cada autor se le agrega su partido y un círculo de color (C
 omite la parte final «presentado por...», que repetiría a los autores. En las votaciones, además, se agregan el
 voto por partido y los enlaces a la votación y al proyecto en SILpy.
 
-Una decisión del plenario espera DIAS_ESPERA_PLENARIO desde su fecha oficial, por si su votación nominal se publica
-después. Si ya hay votación nominal de ese trámite, no se avisa como decisión del plenario.
+Si ya hay votación nominal de un trámite, no se avisa como decisión del plenario.
 
 La primera ejecución marca todo lo existente como procesado y no envía nada. Si la lista de suscriptores no
 se puede obtener, o un mensaje no llega a nadie, ese aviso se reintenta en la próxima ejecución. Un fallo de
@@ -64,7 +63,6 @@ COLOR_PARTIDO = {"ANR": "🔴", "PLRA": "🔵", "CN": "⚫", "Yo Creo": "🟠", 
 SIN_COLOR_PARTIDO = "⚪"
 LEYENDA_VOTOS = "🟩 Sí  🟥 No  🟨 Abstención  ⬜ Sin voto"
 ANCHO_BARRA = 10
-DIAS_ESPERA_PLENARIO = 2
 ENVIO_DE_TIPO = {"plenario": "votaciones"}  # tipos sin opción propia en el menú del bot
 PRESENTADO_POR = re.compile(r"[\s,.]*\bpresentado por\b.*$", re.IGNORECASE | re.DOTALL)
 
@@ -285,21 +283,20 @@ def bloque_decision(d, siglas):
     return "\n".join([acortar(titulo)] + partes)
 
 
-def decisiones_sin_nominal(salida, hoy):
-    """Decisiones del plenario sin votación nominal de ese trámite, y con la espera cumplida."""
+def decisiones_sin_nominal(salida):
+    """Decisiones del plenario sin votación nominal de ese trámite."""
     nominales = {(v.get("tramitacion") or {}).get("idTramitacion") for v in tablas(salida, "votaciones")}
-    limite = (hoy - timedelta(days=DIAS_ESPERA_PLENARIO)).isoformat()
     pendientes = {}
     for periodo in (leer_json(salida / "periodos.json") or {"periodos": []})["periodos"]:
         documento = leer_json(salida / "fuente" / periodo["id"] / "decisiones-plenario.json") or {"decisiones": []}
         for d in documento["decisiones"]:
             tramite = d["tramitacion"]
-            if tramite["idTramitacion"] not in nominales and (tramite.get("_propio") or {}).get("fechaTramite", "") <= limite:
+            if tramite["idTramitacion"] not in nominales:
                 pendientes[tramite["idTramitacion"]] = d
     return pendientes
 
 
-def novedades(salida, hoy):
+def novedades(salida):
     """Lo que cada tipo de aviso sigue, por identificador: leyes, votaciones, decisiones del plenario y proyectos de ley."""
     leyes = sorted(tablas(salida, "leyes"), key=lambda l: (l["_propio"].get("fechaSancion") or "", l["_propio"]["numeroLey"], l["idLey"]))
     votaciones = sorted((v for v in tablas(salida, "votaciones") if (v.get("proyecto") or {}).get("tipoProyecto") == PROYECTO_DE_LEY),
@@ -308,7 +305,7 @@ def novedades(salida, hoy):
                                                     key=lambda p: ((p.get("_propio") or {}).get("fechaIngreso") or "", p["idProyecto"]))}
     return {"leyes": {l["idLey"]: l for l in leyes},
             "votaciones": {v["idVotacion"]: v for v in votaciones},
-            "plenario": decisiones_sin_nominal(salida, hoy),
+            "plenario": decisiones_sin_nominal(salida),
             "proyectos": proyectos}
 
 
@@ -348,8 +345,8 @@ def para_el_resumen(registro, ids, hoy):
     elegidas = []
     for a in registro["avisados"]:
         elemento = ids.get(a["tipo"], {}).get(a["id"])
-        if a["tipo"] in ("leyes", "votaciones") and not a.get("resumido") and elemento:
-            if not (a["tipo"] == "votaciones" and fecha_votacion(elemento) >= hoy.isoformat()):
+        if a["tipo"] in ("leyes", "votaciones", "plenario") and not a.get("resumido") and elemento:
+            if not (a["tipo"] != "leyes" and fecha_votacion(elemento) >= hoy.isoformat()):
                 elegidas.append(a)
     return elegidas
 
@@ -362,7 +359,8 @@ def mensaje_resumen(elegidas, ids, base, hoy):
             ley = ids["leyes"][a["id"]]
             leyes.setdefault(ley["_propio"]["numeroLey"], ley)
     votaciones = [ids["votaciones"][a["id"]] for a in elegidas if a["tipo"] == "votaciones"]
-    if not leyes and not votaciones:
+    decisiones = [ids["plenario"][a["id"]] for a in elegidas if a["tipo"] == "plenario"]
+    if not leyes and not votaciones and not decisiones:
         return []
     bloques = []
     if leyes:
@@ -373,6 +371,10 @@ def mensaje_resumen(elegidas, ids, base, hoy):
         bloques.append(f"Votaciones nominales de proyectos de ley ({len(votaciones)})\n"
                        + "\n".join(f"{r}, {n}" for r, n in sorted(por_resultado.items()))
                        + f"\n{base}/legisladores/votaciones-nominales/")
+    if decisiones:
+        por_resultado = Counter(d["tramitacion"].get("resultadoTramite") for d in decisiones)
+        bloques.append(f"Decisiones del plenario sobre proyectos de ley, sin votación nominal publicada ({len(decisiones)})\n"
+                       + "\n".join(f"{r}, {n}" for r, n in sorted(por_resultado.items())))
     return en_mensajes(f"Resumen de la semana anterior, al {fecha_legible(hoy.isoformat())}. Incluye lo que apareció "
                        "en los datos desde el resumen anterior, aunque su fecha oficial sea más vieja.", bloques)
 
@@ -386,7 +388,7 @@ def avisar(salida, enviar, base, ahora=None, salida_texto=print, resumen=False):
     hoy = datetime.fromisoformat(ahora.replace("Z", "+00:00")).astimezone(ASUNCION).date()
     ruta = salida / "propios" / "avisos-telegram.json"
     registro = leer_json(ruta)
-    ids = novedades(salida, hoy)
+    ids = novedades(salida)
     resultado = {"enviados": 0, "errores": [], "primera": registro is None}
 
     if registro is None:
