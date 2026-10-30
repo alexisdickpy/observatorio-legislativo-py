@@ -231,14 +231,14 @@ def bloque_votacion(v, base, partidos=None, autores=None):
     partes.append(tramite_votacion(v))
     enlaces = []
     if v.get("appURL"):
-        enlaces.append(f"Votación en SILpy {v['appURL']}")
+        enlaces.append(f"Votación en SILpy: {v['appURL']}")
     if proyecto.get("appURL"):
-        enlaces.append(f"Proyecto en SILpy {proyecto['appURL']}")
+        enlaces.append(f"Proyecto en SILpy: {proyecto['appURL']}")
     if enlaces:
         partes.append("\n".join(enlaces))
     if partidos:
         partes.append("Votación por partido\n" + "\n".join(lineas_por_partido(partidos)))
-    partes.append(f"Análisis completo {url_votacion(v, base)}")
+    partes.append(f"Análisis completo: {url_votacion(v, base)}")
     return "\n\n".join([acortar(titulo)] + partes)
 
 
@@ -279,7 +279,7 @@ def bloque_decision(d, siglas):
     partes = [encabezado, f"{tramite.get('camaraTramite') or 'Cámara sin dato'}, {tramite.get('fechaTramite') or 'fecha sin dato'}",
               f"Resultado oficial: {tramite.get('resultadoTramite')}"]
     if d.get("appURL"):
-        partes.append(f"Proyecto en SILpy {d['appURL']}")
+        partes.append(f"Proyecto en SILpy: {d['appURL']}")
     return "\n\n".join(partes)
 
 

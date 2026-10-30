@@ -188,10 +188,10 @@ class Avisos(unittest.TestCase):
         self.correr()
         texto, = self.textos("votaciones")
         self.assertIn("Proyecto de Ley “QUE CREA ALGO”\n\nPresentado por 🔴 Ana Pérez (ANR), ⚪ Luis Gómez (Otro partido)\n\nCAMARA", texto)
-        self.assertIn("Votación en SILpy https://silpy.test/votacion/2", texto)
-        self.assertIn("Proyecto en SILpy https://silpy.test/expediente/50", texto)
+        self.assertIn("Votación en SILpy: https://silpy.test/votacion/2", texto)
+        self.assertIn("Proyecto en SILpy: https://silpy.test/expediente/50", texto)
         self.assertIn("Mensaje, presentado por el Poder Ejecutivo", texto)
-        self.assertIn(f"Análisis completo {BASE}/votacion/2/", texto)
+        self.assertIn(f"Análisis completo: {BASE}/votacion/2/", texto)
         self.assertLess(texto.index("Proyecto en SILpy"), texto.index("Análisis completo"))
 
     def test_sin_novedades_no_se_envia_nada(self):
