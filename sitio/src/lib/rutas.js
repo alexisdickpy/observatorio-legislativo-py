@@ -63,6 +63,9 @@ export const licenciaCodigo = () => `${repositorio}/blob/main/LICENSE`;
 export const licenciaDatos = () => `${repositorio}/blob/main/LICENSE-DATOS.md`;
 export const metodologiaTecnica = () => `${repositorio}/blob/main/docs/metodologia.md`;
 
+/** Bot de Telegram con los avisos de actividad del Congreso (bot/README.md). */
+export const botTelegram = () => "https://t.me/ObservatorioLegislativoPyBot";
+
 /** Archivo de datos/ servido en /datos/… con la misma ruta que en el repositorio. */
 export const archivoDatos = (ruta) => `/datos/${ruta}`;
 /** Archivo calculado por este proyecto en la compilación (lib/calculados.js), no guardado en datos/. */

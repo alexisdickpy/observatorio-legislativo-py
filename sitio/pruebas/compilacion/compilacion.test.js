@@ -577,6 +577,7 @@ test("todas las páginas tienen el pie común: aviso, enlaces, licencias y firma
       "Desarrollado por Alexis Dick con asistencia de IA.",
       `href="${rutas.metodologia()}"`,
       `href="${rutas.privacidad()}"`,
+      `href="${rutas.botTelegram()}"`,
       `href="${rutas.codigoFuente()}"`,
       `href="${rutas.licenciaDatos()}"`,
       `href="${rutas.licenciaCodigo()}"`,
