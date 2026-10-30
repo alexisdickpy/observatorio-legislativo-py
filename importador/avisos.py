@@ -92,12 +92,19 @@ def url_ley(base, ley):
     return f"{base}/leyes/{urllib.parse.quote(ley['_propio']['numeroLey'])}/"
 
 
-def resultado_votacion(v, base):
+def tramite_votacion(v):
     tramite = v.get("tramitacion") or {}
     totales = f"Sí {v.get('totalSI', 0)}, No {v.get('totalNO', 0)}, Abstención {v.get('totalAbstencion', 0)}"
     return (f"{tramite.get('camaraTramite') or 'Cámara sin dato'}, {tramite.get('fechaTramite') or 'fecha sin dato'}\n"
-            f"Resultado oficial {tramite.get('resultadoTramite') or 'sin dato'}. {totales}\n"
-            f"{base}/votacion/{v['idVotacion']}/")
+            f"Resultado oficial {tramite.get('resultadoTramite') or 'sin dato'}. {totales}")
+
+
+def url_votacion(v, base):
+    return f"{base}/votacion/{v['idVotacion']}/"
+
+
+def resultado_votacion(v, base):
+    return f"{tramite_votacion(v)}\n{url_votacion(v, base)}"
 
 
 def fecha_votacion(v):
@@ -212,17 +219,22 @@ def bloque_votacion(v, base, partidos=None, autores=None):
     """Una votación. Sin autores se conserva el título entero, porque «presentado por» sería el único dato de origen."""
     proyecto = v.get("proyecto") or {}
     titulo = proyecto.get("acapite")
-    lineas = []
+    partes = []
     if autores:
         titulo = PRESENTADO_POR.sub("", titulo or "") or titulo
-        lineas.append("Presentado por " + ", ".join(autores))
-    lineas.append(resultado_votacion(v, base))
+        partes.append("Presentado por " + ", ".join(autores))
+    partes.append(tramite_votacion(v))
+    enlaces = []
     if v.get("appURL"):
-        lineas.append(f"Votación en SILpy {v['appURL']}")
+        enlaces.append(f"Votación en SILpy {v['appURL']}")
     if proyecto.get("appURL"):
-        lineas.append(f"Proyecto en SILpy {proyecto['appURL']}")
-    bloque = "\n".join([acortar(titulo)] + lineas)
-    return bloque + "\n\nPor partido\n" + "\n".join(lineas_por_partido(partidos)) if partidos else bloque
+        enlaces.append(f"Proyecto en SILpy {proyecto['appURL']}")
+    if enlaces:
+        partes.append("\n".join(enlaces))
+    if partidos:
+        partes.append("Votación por partido\n" + "\n".join(lineas_por_partido(partidos)))
+    partes.append(f"Detalle voto por voto {url_votacion(v, base)}")
+    return "\n\n".join([acortar(titulo)] + partes)
 
 
 def autores_con_partido(p, siglas):
