@@ -848,8 +848,8 @@
         "nombres": "Regina Lizarella"
       }
     ],
-    "descripcionEtapa": "SEGUNDO TRÁMITE CONSTITUCIONAL",
-    "descripcionSubEtapa": "RESOLUCIÓN SANCION COMPLETA",
+    "descripcionEtapa": "TRÁMITE DE ESPERA OBJECIÓN/PROMULGACIÓN",
+    "descripcionSubEtapa": "INGRESO DE OBJECIÓN/PROMULGACIÓN DEL EJECUTIVO",
     "estadoProyecto": "EN TRAMITE",
     "expedienteCamara": "S-2603870",
     "fechaIngresoExpediente": "12/08/2026",
@@ -1965,7 +1965,7 @@
     "appURL": "https://silpy.congreso.gov.py/expediente/158621",
     "autores": [],
     "descripcionEtapa": "PRIMER TRÁMITE CONSTITUCIONAL",
-    "descripcionSubEtapa": "DICTAMEN DE COMISIÓN",
+    "descripcionSubEtapa": "DISCUSIÓN PLENARIO",
     "estadoProyecto": "EN TRAMITE",
     "expedienteCamara": "C-2603984",
     "fechaIngresoExpediente": "04/09/2026",

@@ -3,6 +3,53 @@
     {
       "archivosModificados": [
         "fuente/2023-2028/votaciones.json",
+        "fuente/2023-2028/comisiones.json",
+        "fuente/2023-2028/proyectos-recientes.json",
+        "fuente/2023-2028/decisiones-plenario.json",
+        "fuente/2023-2028/votaciones.csv",
+        "fuente/2023-2028/comisiones.csv",
+        "diccionario.md"
+      ],
+      "cambios": {
+        "legisladores": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 0
+        },
+        "leyes": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 0
+        },
+        "votaciones": {
+          "agregados": 0,
+          "eliminados": 0,
+          "modificados": 3
+        }
+      },
+      "cantidades": {
+        "autores": 2182,
+        "comisiones": 2864,
+        "expedientes": 17664,
+        "legisladores": 143,
+        "legisladoresVigentes": 127,
+        "leyes": 556,
+        "numerosDeLey": 541,
+        "tramitaciones": 13601,
+        "votaciones": 1165,
+        "votos": 82680
+      },
+      "consultas": 957,
+      "expedientesActualizados": false,
+      "fecha": "2026-10-30T14:22:49Z",
+      "leyesNuevas": [],
+      "modo": "incremental",
+      "periodo": "2023-2028",
+      "resultado": "correcta"
+    },
+    {
+      "archivosModificados": [
+        "fuente/2023-2028/votaciones.json",
         "fuente/2023-2028/autores.json",
         "fuente/2023-2028/expedientes.json",
         "fuente/2023-2028/votaciones.csv",
