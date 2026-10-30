@@ -233,7 +233,7 @@ def bloque_votacion(v, base, partidos=None, autores=None):
         partes.append("\n".join(enlaces))
     if partidos:
         partes.append("Votación por partido\n" + "\n".join(lineas_por_partido(partidos)))
-    partes.append(f"Detalle voto por voto {url_votacion(v, base)}")
+    partes.append(f"Análisis completo {url_votacion(v, base)}")
     return "\n\n".join([acortar(titulo)] + partes)
 
 

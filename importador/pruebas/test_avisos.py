@@ -157,7 +157,7 @@ class Avisos(unittest.TestCase):
         self.correr()
         texto, = self.textos("votaciones")
         self.assertIn("🟩 Sí  🟥 No  🟨 Abstención  ⬜ Sin voto", texto)
-        self.assertLess(texto.index("Votación por partido\n"), texto.index("Detalle voto por voto"))
+        self.assertLess(texto.index("Votación por partido\n"), texto.index("Análisis completo"))
         self.assertIn("🔴 ANR " + "🟩" * 8 + "⬜" * 2 + " 3 Sí, 1 sin voto", texto)
         self.assertIn("🔷 PPQ " + "🟥" * 10 + " 1 No", texto)
 
@@ -184,8 +184,8 @@ class Avisos(unittest.TestCase):
         self.assertIn("Votación en SILpy https://silpy.test/votacion/2", texto)
         self.assertIn("Proyecto en SILpy https://silpy.test/expediente/50", texto)
         self.assertIn("Mensaje, presentado por el Poder Ejecutivo", texto)
-        self.assertIn(f"Detalle voto por voto {BASE}/votacion/2/", texto)
-        self.assertLess(texto.index("Proyecto en SILpy"), texto.index("Detalle voto por voto"))
+        self.assertIn(f"Análisis completo {BASE}/votacion/2/", texto)
+        self.assertLess(texto.index("Proyecto en SILpy"), texto.index("Análisis completo"))
 
     def test_sin_novedades_no_se_envia_nada(self):
         self.correr()
