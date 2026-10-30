@@ -25,10 +25,10 @@ def votacion(i, tipo="PROYECTO DE LEY"):
                             "resultadoTramite": "APROBADO", "_propio": {"fechaTramite": "2026-10-14"}}}
 
 
-def expediente(proyecto, legislador, tipo="PROYECTO DE LEY"):
-    return {"idProyecto": proyecto, "idLegislador": legislador, "tipoProyecto": tipo, "acapite": f"Expediente {proyecto}",
-            "fechaIngresoExpediente": "20/10/2026", "expedienteCamara": f"S-{proyecto}",
-            "appURL": f"https://silpy.test/expediente/{proyecto}", "_propio": {"fechaIngreso": "2026-10-20"}}
+def proyecto(i, autores="", iniciativa="PARLAMENTARIA", ministerios=()):
+    return {"idProyecto": i, "tipoProyecto": "PROYECTO DE LEY", "acapite": f"Expediente {i}", "iniciativa": iniciativa,
+            "fechaIngresoExpediente": "20/10/2026", "expedienteCamara": f"S-{i}", "ministerios": list(ministerios),
+            "appURL": f"https://silpy.test/expediente/{i}", "_propio": {"fechaIngreso": "2026-10-20", "autores": autores}}
 
 
 class Avisos(unittest.TestCase):
@@ -36,13 +36,14 @@ class Avisos(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.salida = Path(self.tmp.name)
         (self.salida / "periodos.json").write_bytes(json_bytes({"periodos": [{"id": "2023-2028"}]}))
-        self.poner(leyes=[ley(1)], votaciones=[votacion(1)], expedientes=[expediente(1, 10)],
-                   legisladores=[{"idLegislador": 10, "nombres": "Ana", "apellidos": "Pérez"},
-                                 {"idLegislador": 11, "nombres": "Luis", "apellidos": "Gómez"}])
+        self.poner(leyes=[ley(1)], votaciones=[votacion(1)], **{"proyectos-recientes": [proyecto(1, "Ana Pérez")]})
         self.enviados = []
 
     def tearDown(self):
         self.tmp.cleanup()
+
+    def poner_proyectos(self, *proyectos):
+        self.poner(**{"proyectos-recientes": list(proyectos)})
 
     def poner(self, **tablas):
         carpeta = self.salida / "fuente" / "2023-2028"
@@ -101,36 +102,76 @@ class Avisos(unittest.TestCase):
         self.assertIn(f"{BASE}/votacion/3/", texto)
         self.assertNotIn("Proyecto 4", texto)
 
-    def test_proyectos_de_ley_nuevos_con_todos_sus_autores(self):
+    def test_proyectos_nuevos_con_autores_o_iniciativa(self):
         self.correr()
-        self.poner(expedientes=[expediente(1, 10), expediente(2, 10), expediente(2, 11), expediente(3, 10, "PEDIDO DE INFORMES")])
+        self.poner_proyectos(proyecto(1, "Ana Pérez"), proyecto(2, "Ana Pérez, Luis Gómez"),
+                             proyecto(3, iniciativa="PODER EJECUTIVO", ministerios=["MINISTERIO DE SALUD"]),
+                             proyecto(4, iniciativa="PODER JUDICIAL"))
         self.correr()
         texto, = self.textos("proyectos")
-        self.assertIn("Expediente 2", texto)
         self.assertIn("Presentado por Ana Pérez, Luis Gómez", texto)
         self.assertIn("https://silpy.test/expediente/2", texto)
-        self.assertNotIn("Expediente 3", texto)
+        self.assertIn("Iniciativa PODER EJECUTIVO. MINISTERIO DE SALUD", texto)
+        self.assertIn("Iniciativa PODER JUDICIAL", texto)
         self.assertNotIn("Expediente 1\n", texto)
 
-    def test_resumen_los_lunes_una_sola_vez(self):
+    def test_sin_novedades_no_se_envia_nada(self):
+        self.correr()
+        self.correr(ahora=LUNES)
+        self.correr(ahora=LUNES, resumen=True)
+        self.assertEqual(self.enviados, [])
+
+    def test_ley_con_el_resultado_de_sus_votaciones(self):
+        self.correr()
+        nueva = ley(2)
+        nueva["_propio"]["idVotaciones"] = [1, 99]
+        self.poner(leyes=[ley(1), nueva])
+        self.correr()
+        texto, = self.textos("leyes")
+        self.assertIn("Votaciones nominales (1)", texto)
+        self.assertIn("Resultado oficial APROBADO. Sí 30, No 5, Abstención 1", texto)
+        self.assertIn(f"{BASE}/votacion/1/", texto)
+
+    def test_ley_sin_votaciones_no_las_menciona(self):
+        self.correr()
+        self.poner(leyes=[ley(1), ley(2)])
+        self.correr()
+        self.assertNotIn("Votaciones nominales", self.textos("leyes")[0])
+
+    def test_un_mensaje_por_numero_de_ley_con_varios_registros(self):
+        self.correr()
+        otra = ley(3, "OTRO PROYECTO.")
+        otra["_propio"]["numeroLey"] = "7002"
+        self.poner(leyes=[ley(1), ley(2, "UN PROYECTO."), otra])
+        self.correr()
+        texto, = self.textos("leyes")
+        self.assertIn("UN PROYECTO.", texto)
+        self.assertIn("OTRO PROYECTO.", texto)
+        self.assertEqual(len(self.registro()["avisados"]), 2)
+
+    def test_resumen_solo_cuando_se_pide_y_una_sola_vez(self):
         self.correr()
         self.poner(leyes=[ley(1), ley(2)], votaciones=[votacion(1), votacion(2)])
         self.correr(ahora="2026-10-29T12:00:00Z")
-        self.assertEqual(self.textos("resumen"), [])
         self.correr(ahora=LUNES)
+        self.assertEqual(self.textos("resumen"), [])
+        self.correr(ahora=LUNES, resumen=True)
         texto, = self.textos("resumen")
         self.assertIn("Ley 7002", texto)
         self.assertIn("Votaciones nominales de proyectos de ley (1)", texto)
         self.assertIn("APROBADO, 1", texto)
-        self.correr(ahora=LUNES)
+        self.correr(ahora=LUNES, resumen=True)
         self.assertEqual(len(self.textos("resumen")), 1)
 
-    def test_resumen_sin_novedades_lo_dice_y_no_incluye_lo_viejo(self):
+    def test_votacion_del_mismo_dia_queda_para_el_resumen_siguiente(self):
         self.correr()
-        self.poner(leyes=[ley(1), ley(2)])
-        self.correr(ahora="2026-10-01T12:00:00Z")
-        self.correr(ahora=LUNES)
-        self.assertIn("No aparecieron leyes", self.textos("resumen")[0])
+        hoy = votacion(2)
+        hoy["tramitacion"]["_propio"]["fechaTramite"] = "2026-11-02"
+        self.poner(votaciones=[votacion(1), hoy])
+        self.correr(ahora=LUNES, resumen=True)
+        self.assertEqual(self.textos("resumen"), [])
+        self.correr(ahora="2026-11-09T12:00:00Z", resumen=True)
+        self.assertEqual(len(self.textos("resumen")), 1)
 
     def test_fallo_del_envio_no_registra_y_se_reintenta(self):
         self.correr()

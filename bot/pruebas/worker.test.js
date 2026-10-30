@@ -39,9 +39,9 @@ afterEach(() => {
 const mensaje = (text, chat = 7, type = "private") => ({ message: { text, chat: { id: chat, type } } });
 const toque = (data, chat = 7) => ({ callback_query: { id: "q", data, message: { message_id: 1, chat: { id: chat, type: "private" } } } });
 
-test("/start suscribe con leyes activadas, muestra el menú y no guarda más que las preferencias", async () => {
+test("/start suscribe con todos los avisos activados, muestra el menú y no guarda más que las preferencias", async () => {
   await atender(mensaje("/start"), env);
-  assert.deepEqual(env.SUSCRIPTORES.datos.get("7"), { leyes: true, votaciones: false, proyectos: false, resumen: false });
+  assert.deepEqual(env.SUSCRIPTORES.datos.get("7"), { leyes: true, votaciones: true, proyectos: true, resumen: true });
   assert.equal(llamadas[0].metodo, "sendMessage");
   assert.equal(llamadas[0].cuerpo.reply_markup.inline_keyboard.length, TIPOS.length);
   assert.ok(llamadas[0].cuerpo.text.includes("/baja"));
@@ -51,17 +51,17 @@ test("/start de nuevo conserva lo elegido", async () => {
   await atender(mensaje("/start"), env);
   await atender(toque("t:votaciones"), env);
   await atender(mensaje("/start"), env);
-  assert.equal(env.SUSCRIPTORES.datos.get("7").votaciones, true);
+  assert.equal(env.SUSCRIPTORES.datos.get("7").votaciones, false);
 });
 
 test("tocar una opción la cambia y actualiza el menú", async () => {
   await atender(mensaje("/start"), env);
   await atender(toque("t:resumen"), env);
-  assert.equal(env.SUSCRIPTORES.datos.get("7").resumen, true);
-  const edicion = llamadas.find((l) => l.metodo === "editMessageReplyMarkup");
-  assert.ok(edicion.cuerpo.reply_markup.inline_keyboard.flat().some((b) => b.text.startsWith("✅") && b.callback_data === "t:resumen"));
-  await atender(toque("t:resumen"), env);
   assert.equal(env.SUSCRIPTORES.datos.get("7").resumen, false);
+  const edicion = llamadas.find((l) => l.metodo === "editMessageReplyMarkup");
+  assert.ok(edicion.cuerpo.reply_markup.inline_keyboard.flat().some((b) => b.text.startsWith("⬜") && b.callback_data === "t:resumen"));
+  await atender(toque("t:resumen"), env);
+  assert.equal(env.SUSCRIPTORES.datos.get("7").resumen, true);
 });
 
 test("una opción desconocida no cambia nada", async () => {
@@ -89,7 +89,7 @@ test("los grupos se ignoran", async () => {
 test("la lista de suscriptores trae el chat y sus avisos", async () => {
   await atender(mensaje("/start", 7), env);
   await atender(toque("t:proyectos", 7), env);
-  assert.deepEqual(await suscriptores(env), [{ chat: 7, avisos: ["leyes", "proyectos"] }]);
+  assert.deepEqual(await suscriptores(env), [{ chat: 7, avisos: ["leyes", "votaciones", "resumen"] }]);
 });
 
 test("las rutas exigen sus claves", async () => {

@@ -280,6 +280,20 @@ def filas_comisiones(comision, periodo_parlamentario, respuesta, slugs):
     return filas
 
 
+def fila_proyecto_reciente(proyecto, tramitaciones, fecha_ingreso):
+    """Registro de proyectos-recientes.json: los campos oficiales del proyecto, sus autores sin datos de
+    contacto y sus ministerios, tal como los publica la API."""
+    detalle = (tramitaciones or [{}])[0]
+    autores = [{c: a.get(c) for c in CAMPOS_MIEMBRO} for a in detalle.get("autores") or []]
+    return {
+        **proyecto,
+        "autores": autores,
+        "ministerios": detalle.get("ministerios") or [],
+        PROPIO: {"fechaIngreso": fecha_ingreso,
+                 "autores": ", ".join(f"{a.get('nombres') or ''} {a.get('apellidos') or ''}".strip() for a in autores)},
+    }
+
+
 def verificar_numeros_ley(leyes_periodo, historico, inicio, fin, notas):
     """Comprueba que los números de ley del período no se repiten en otras legislaturas.
 

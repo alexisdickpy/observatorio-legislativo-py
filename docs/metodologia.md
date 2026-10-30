@@ -103,7 +103,7 @@ La ficha de cada legislador cuenta los expedientes del período en que figura en
 
 La cantidad de expedientes no mide la calidad ni el esfuerzo de un legislador. Los pedidos de informe son control al Poder Ejecutivo, no producción de leyes. Un expediente con varios autores cuenta para cada uno, porque la API no distingue al autor principal. El estado es el de la última actualización, y muchos proyectos siguen en trámite. Por eso el sitio no calcula una cifra única de proyectos aprobados ni ordena a los legisladores por cantidad de expedientes.
 
-Los expedientes se descargan una vez por día, con una consulta por legislador.
+Los expedientes se descargan una vez por semana, los martes, con una consulta por legislador. Los demás días se usa la copia guardada.
 
 ## Comisiones
 
@@ -330,12 +330,12 @@ La página `/legisladores/mapa/` (#65) agrupa a los diputados en ejercicio por e
 
 ## Avisos del bot de Telegram
 
-El bot de Telegram del proyecto avisa de la actividad del Congreso. Cada persona elige en un menú qué avisos recibir.
+El bot de Telegram del proyecto avisa de la actividad del Congreso. Al empezar, todos los avisos están activados, y cada persona desactiva en un menú los que no quiera. Ningún aviso se envía si no hay novedades.
 
-- **Leyes nuevas sancionadas.** Un mensaje por ley, con su número, título oficial, fecha de sanción y enlace a su ficha. Si en un día aparecen más de cinco, un solo mensaje las reúne.
+- **Leyes nuevas sancionadas.** Un mensaje por número de ley, con su título oficial, fecha de sanción y enlace a su ficha. Si la ley tiene votaciones nominales publicadas, incluye el resultado oficial y los totales de las últimas seis. Si en un día aparecen más de cinco leyes, un solo mensaje las reúne.
 - **Votaciones nominales de proyectos de ley.** Un mensaje por día con las votaciones nuevas, cada una con su cámara, fecha, resultado oficial, totales y enlace. Las votaciones sobre otros tipos de expediente no se avisan.
-- **Proyectos de ley presentados.** Un mensaje por día con los proyectos nuevos y sus autores. Salen de los expedientes de cada legislador, así que no incluyen los proyectos sin un legislador entre los autores, como los del Poder Ejecutivo. Si otro autor figura más tarde, el aviso ya enviado no cambia.
-- **Resumen semanal.** Los lunes, las leyes y las votaciones de proyectos de ley que aparecieron en los datos en los últimos siete días.
+- **Proyectos de ley presentados.** Un mensaje por día con los proyectos nuevos de cualquier iniciativa (consulta `proyecto`). Si la API publica autores, los nombra. Si no, como en los proyectos del Poder Ejecutivo, indica la iniciativa oficial y los ministerios. Si otro autor figura más tarde, el aviso ya enviado no cambia.
+- **Resumen de la semana anterior.** Los lunes, 22:00 en Paraguay, después de una sincronización. Reúne las leyes y las votaciones de proyectos de ley que aparecieron en los datos desde el resumen anterior. Las votaciones de ese mismo lunes quedan para el resumen siguiente. Cada cosa aparece en un solo resumen.
 
 «Nuevo» significa que apareció en los datos desde la sincronización anterior, no que ocurrió ese día. Como la API publica con demora, la fecha oficial puede ser anterior a la del aviso. Lo que ya estaba en los datos cuando empezó el servicio no se avisa. En las listas, los títulos largos se acortan y el enlace lleva al texto completo.
 

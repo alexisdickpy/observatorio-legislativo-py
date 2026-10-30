@@ -14,16 +14,16 @@
 
 export const TIPOS = [
   { id: "leyes", nombre: "Leyes nuevas sancionadas" },
-  { id: "votaciones", nombre: "Votaciones nominales de proyectos de ley (una vez por día)" },
-  { id: "proyectos", nombre: "Proyectos de ley presentados, con sus autores (una vez por día)" },
-  { id: "resumen", nombre: "Resumen semanal (los lunes)" },
+  { id: "votaciones", nombre: "Votaciones nominales de proyectos de ley (por día, si hay)" },
+  { id: "proyectos", nombre: "Proyectos de ley presentados, con sus autores (por día, si hay)" },
+  { id: "resumen", nombre: "Resumen de la semana anterior (los lunes a la noche)" },
 ];
-const INICIALES = { leyes: true, votaciones: false, proyectos: false, resumen: false };
+const INICIALES = { leyes: true, votaciones: true, proyectos: true, resumen: true };
 const CITA = "Origen de los datos: Datos Abiertos Poder Legislativo.";
 
 export const textoBienvenida = (sitio) =>
   "Hola. Este bot avisa de la actividad del Congreso Nacional del Paraguay con los datos que publica el " +
-  "propio Congreso.\n\nElegí abajo qué avisos querés recibir. Podés cambiarlos cuando quieras con /avisos " +
+  "propio Congreso.\n\nTodos los avisos están activados. Tocá abajo los que no quieras recibir. Podés cambiarlos cuando quieras con /avisos " +
   "y dejar de recibir todo con /baja.\n\nSolo se guarda el número de este chat y los avisos elegidos. " +
   `Más información en ${sitio}/metodologia/\n\n${CITA}`;
 const TEXTO_MENU = "Tocá cada aviso para activarlo o desactivarlo.";

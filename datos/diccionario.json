@@ -1003,7 +1003,7 @@
       ]
     },
     "expedientes": {
-      "descripcion": "Un registro por cada expediente del que un legislador del período figura como autor (legislador/{id}/expedientes), con fecha de ingreso dentro del período. Incluye todos los tipos de expediente. Un expediente con varios autores aparece una vez por cada uno; la API no distingue autor principal. Se descarga una vez por día.",
+      "descripcion": "Un registro por cada expediente del que un legislador del período figura como autor (legislador/{id}/expedientes), con fecha de ingreso dentro del período. Incluye todos los tipos de expediente. Un expediente con varios autores aparece una vez por cada uno; la API no distingue autor principal. Se descarga una vez por semana.",
       "archivos": [
         "fuente/{período}/expedientes.json",
         "fuente/{período}/expedientes.csv"
@@ -1475,10 +1475,72 @@
           "descripcion": "Momento en que se procesó (UTC, ISO 8601)."
         },
         {
+          "campo": "avisados.resumido",
+          "origen": "propio",
+          "tipo": "booleano",
+          "descripcion": "true si ya se incluyó en un resumen semanal."
+        },
+        {
           "campo": "ultimoResumen",
           "origen": "propio",
           "tipo": "fecha",
           "descripcion": "Día del último resumen semanal enviado."
+        }
+      ]
+    },
+    "proyectos-recientes": {
+      "descripcion": "Proyectos de ley de cualquier iniciativa ingresados en los últimos 90 días (proyecto y proyecto/{id}/tramitaciones), para los avisos del bot de Telegram. Cambia a diario porque la ventana avanza. Solo en JSON.",
+      "archivos": [
+        "fuente/{período}/proyectos-recientes.json"
+      ],
+      "campos": [
+        {
+          "campo": "idProyecto",
+          "origen": "oficial",
+          "tipo": "entero",
+          "descripcion": "Identificador oficial del proyecto."
+        },
+        {
+          "campo": "acapite",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Título oficial."
+        },
+        {
+          "campo": "iniciativa",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Origen de la iniciativa (PARLAMENTARIA, PODER EJECUTIVO…)."
+        },
+        {
+          "campo": "fechaIngresoExpediente",
+          "origen": "oficial",
+          "tipo": "texto",
+          "descripcion": "Fecha de ingreso (dd/mm/aaaa), tal como la publica la API."
+        },
+        {
+          "campo": "autores",
+          "origen": "oficial",
+          "tipo": "lista",
+          "descripcion": "Legisladores autores, con idLegislador, apellidos y nombres. Vacía si la API no publica autores."
+        },
+        {
+          "campo": "ministerios",
+          "origen": "oficial",
+          "tipo": "lista",
+          "descripcion": "Ministerios de la iniciativa, tal como los publica la API."
+        },
+        {
+          "campo": "_propio.fechaIngreso",
+          "origen": "propio",
+          "tipo": "fecha",
+          "descripcion": "Fecha de ingreso en formato ISO."
+        },
+        {
+          "campo": "_propio.autores",
+          "origen": "propio",
+          "tipo": "texto",
+          "descripcion": "Nombres de los autores, unidos para mostrarlos en los avisos."
         }
       ]
     }

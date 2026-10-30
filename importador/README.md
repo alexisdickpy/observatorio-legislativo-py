@@ -39,7 +39,8 @@ La ejecuta GitHub Actions ([`.github/workflows/sincronizacion.yml`](../.github/w
 
 - **lunes a sábado, 04:23 (hora de Paraguay)**: incremental;
 - **domingos, 03:41**: completa;
-- **todos los días programados** también vuelve a descargar los expedientes de cada legislador (`--actualizar-expedientes`, unas 140 consultas más, unos 20 minutos), para avisar de los proyectos de ley nuevos;
+- **los martes**, la incremental también vuelve a descargar los expedientes de cada legislador (`--actualizar-expedientes`, unas 140 consultas más);
+- **lunes, 22:00**: una incremental más, que al terminar envía el resumen semanal del bot;
 - a mano, desde la pestaña *Actions* del repositorio → *Sincronización de datos* → *Run workflow*.
 
 Las respuestas crudas se guardan entre ejecuciones en la caché de GitHub Actions. Si la caché se pierde, la incremental descarga todo, como una completa.
@@ -59,7 +60,7 @@ python -m unittest discover -s importador/pruebas -t .
 - Compara con `datos/propios/avisos-telegram.json`. La primera vez marca todo lo existente como procesado y no envía nada.
 - Pide la lista de suscriptores al bot en cada ejecución y no la guarda ni la muestra.
 - Si no consigue la lista, o un mensaje no llega a nadie, ese aviso se reintenta en la próxima ejecución y la sincronización sigue. Si alguien bloqueó el bot, lo da de baja.
-- Necesita `TELEGRAM_TOKEN`, `BOT_URL` y `BOT_CLAVE`, secretos del repositorio en GitHub Actions. Sin ellos, o con `--prueba`, solo muestra los mensajes y no modifica el registro. `--resumen` envía el resumen semanal aunque no sea lunes.
+- Necesita `TELEGRAM_TOKEN`, `BOT_URL` y `BOT_CLAVE`, secretos del repositorio en GitHub Actions. Sin ellos, o con `--prueba`, solo muestra los mensajes y no modifica el registro. `--resumen` envía también el resumen semanal; el flujo lo pasa los lunes a la noche.
 - Si la sincronización falla al confirmar en `main` después de enviar, un aviso podría repetirse una vez.
 
 ## Qué descarga
@@ -77,6 +78,7 @@ python -m unittest discover -s importador/pruebas -t .
 | `votacion` (paginado) | Votaciones nominales con sus votos individuales |
 | `comision?idCamara={S\|D}` | Comisiones de cada cámara, de todos los tipos |
 | `comision/{id}/miembros/{idPeriodoParlamentario}` | Miembros de cada comisión en cada período parlamentario. Los de períodos parlamentarios ya terminados se reutilizan de la copia guardada |
+| `proyecto` (paginado) | Proyectos de ley de cualquier iniciativa ingresados en los últimos 90 días, para los avisos del bot. Solo se recorren las páginas necesarias |
 | `legislador/{id}/expedientes` | Expedientes en que cada legislador del período figura entre los autores, de todos los tipos. Se guardan los que ingresaron dentro del período |
 
 No usa `votacion/parlamentario/{id}`, que devuelve siempre la misma votación (ver la [auditoría](../docs/auditoria-datos.md)).
