@@ -16,7 +16,7 @@ export const TIPOS = [
   { id: "leyes", nombre: "Leyes nuevas sancionadas" },
   { id: "votaciones", nombre: "Votaciones nominales de proyectos de ley" },
   { id: "proyectos", nombre: "Proyectos de ley presentados, con sus autores" },
-  { id: "resumen", nombre: "Resumen de la semana anterior (los lunes al mediodía)" },
+  { id: "resumen", nombre: "Resumen de la semana anterior (los lunes)" },
 ];
 const INICIALES = { leyes: true, votaciones: true, proyectos: true, resumen: true };
 const CITA = "Origen de los datos: Datos Abiertos Poder Legislativo.";

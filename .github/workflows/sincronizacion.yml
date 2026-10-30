@@ -7,7 +7,7 @@
 #   correcciones en registros que ya existían.
 # - Martes, además, vuelve a descargar los expedientes de cada legislador (unas 140 consultas
 #   más, unos 20 minutos). Los demás días se reutiliza la copia guardada.
-# - Lunes, 13:00 en Paraguay, una incremental más que al terminar envía el resumen semanal del bot.
+# - Lunes, 15:00 en Paraguay (GitHub suele arrancar con horas de demora), una incremental más que al terminar envía el resumen semanal del bot.
 # - También se puede lanzar a mano desde la pestaña Actions ("Run workflow").
 # - Si la importación salió bien, envía los avisos del bot de Telegram (python -m importador.avisos,
 #   #66). Usa los secretos TELEGRAM_TOKEN, BOT_URL y BOT_CLAVE; sin ellos solo muestra los mensajes.
@@ -23,7 +23,7 @@ on:
   schedule:
     - cron: "23 7 * * 1-6" # incremental: lunes a sábado, 04:23 en Paraguay (UTC-3)
     - cron: "41 6 * * 0" # completa: domingos, 03:41 en Paraguay
-    - cron: "0 16 * * 1" # incremental y resumen semanal: lunes, 13:00 en Paraguay
+    - cron: "0 18 * * 1" # incremental y resumen semanal: lunes, 15:00 en Paraguay
   workflow_dispatch:
     inputs:
       modo:
@@ -36,7 +36,7 @@ on:
         type: boolean
         default: false
       resumen:
-        description: "Enviar el resumen semanal del bot (se hace solo los lunes al mediodía)"
+        description: "Enviar el resumen semanal del bot (se hace solo los lunes)"
         type: boolean
         default: false
       permitir_disminucion:
@@ -87,7 +87,7 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           BOT_URL: ${{ secrets.BOT_URL }}
           BOT_CLAVE: ${{ secrets.BOT_CLAVE }}
-          RESUMEN: ${{ (github.event.schedule == '0 16 * * 1' || inputs.resumen) && '--resumen' || '' }}
+          RESUMEN: ${{ (github.event.schedule == '0 18 * * 1' || inputs.resumen) && '--resumen' || '' }}
         run: |
           set -o pipefail
           python3 -m importador.avisos $RESUMEN 2>&1 | tee tmp/avisos.txt
