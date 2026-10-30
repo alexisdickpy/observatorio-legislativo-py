@@ -100,7 +100,7 @@ def url_ley(base, ley):
 def tramite_votacion(v):
     tramite = v.get("tramitacion") or {}
     totales = f"Sí {v.get('totalSI', 0)}, No {v.get('totalNO', 0)}, Abstención {v.get('totalAbstencion', 0)}"
-    return (f"{tramite.get('camaraTramite') or 'Cámara sin dato'}, {tramite.get('fechaTramite') or 'fecha sin dato'}\n"
+    return (f"{tramite.get('camaraTramite') or 'Cámara sin dato'}, {tramite.get('fechaTramite') or 'fecha sin dato'}\n\n"
             f"Resultado oficial: {tramite.get('resultadoTramite') or 'sin dato'}. {totales}")
 
 
