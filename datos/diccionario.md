@@ -229,7 +229,7 @@ Se publica en `fuente/{período}/autores.json` y `fuente/{período}/autores.csv`
 
 ## expedientes
 
-Un registro por cada expediente del que un legislador del período figura como autor (legislador/{id}/expedientes), con fecha de ingreso dentro del período. Incluye todos los tipos de expediente. Un expediente con varios autores aparece una vez por cada uno; la API no distingue autor principal. Se descarga una vez por semana.
+Un registro por cada expediente del que un legislador del período figura como autor (legislador/{id}/expedientes), con fecha de ingreso dentro del período. Incluye todos los tipos de expediente. Un expediente con varios autores aparece una vez por cada uno; la API no distingue autor principal. Se descarga una vez por día.
 
 Se publica en `fuente/{período}/expedientes.json` y `fuente/{período}/expedientes.csv`, con 17664 registros en total.
 
@@ -352,3 +352,17 @@ Se publica en `propios/clasificacion-temas.json` y `propios/clasificacion-temas.
 | `temas[].palabraClave` | propio | texto | Palabra clave que asignó el tema. Solo en los temas con origen `regla`. *Solo en el JSON.* |
 | `pendiente` | propio | booleano | Si el proyecto está pendiente de clasificación, sin ningún tema. |
 | `revisado` | propio | booleano | Si la clasificación se revisó a mano. Las revisadas no se recalculan; las demás salen de las reglas en cada actualización. |
+
+## avisos-telegram
+
+Registro propio de lo que el bot de Telegram ya procesó, para no repetir avisos. Lo escribe python -m importador.avisos en la sincronización diaria. No contiene datos de quienes usan el bot.
+
+Se publica en `propios/avisos-telegram.json`.
+
+| Campo | Origen | Tipo | Descripción |
+|---|---|---|---|
+| `iniciales` | propio | objeto | Identificadores de leyes, votaciones y proyectos que ya estaban en los datos cuando empezó el servicio. No se avisan. |
+| `avisados.tipo` | propio | texto | Tipo de aviso (leyes, votaciones o proyectos). |
+| `avisados.id` | propio | entero | Identificador oficial de la ley, la votación o el proyecto. |
+| `avisados.fecha` | propio | fecha y hora | Momento en que se procesó (UTC, ISO 8601). |
+| `ultimoResumen` | propio | fecha | Día del último resumen semanal enviado. |

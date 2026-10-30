@@ -139,7 +139,7 @@ const TOTAL_PREGUNTAS = preguntasTest.length;
       cada uno, porque la fuente no distingue al autor principal. El estado es el de la última
       actualización, y muchos proyectos siguen en trámite. Por eso el sitio no calcula una cifra única de
       proyectos aprobados ni ordena a los legisladores por cantidad de expedientes. Los expedientes se
-      actualizan una vez por semana.
+      actualizan una vez por día.
     </p>
 
     <h2 id={anclas.comisiones}>Comisiones</h2>
@@ -465,6 +465,20 @@ const TOTAL_PREGUNTAS = preguntasTest.length;
     <p>
       El contorno de los departamentos es de Natural Earth (dominio público), simplificado y guardado por
       este proyecto, sin servicios de mapas externos. El color depende solo de la cantidad de diputados.
+    </p>
+
+    <h2 id={anclas.avisos}>Avisos del bot de Telegram</h2>
+    <p>
+      El bot de Telegram del proyecto avisa de cuatro cosas, y cada persona elige cuáles recibir. Las leyes
+      nuevas sancionadas, con un mensaje por ley. Las votaciones nominales de proyectos de ley, con un
+      mensaje por día. Los proyectos de ley presentados por legisladores, con sus autores, en un mensaje por
+      día. Y un resumen semanal, los lunes, con las leyes y votaciones de los últimos siete días.
+    </p>
+    <p>
+      «Nuevo» significa que apareció en los datos desde la actualización anterior, no que ocurrió ese día,
+      porque la fuente publica con demora. Los proyectos sin un legislador entre los autores, como los del
+      Poder Ejecutivo, no se avisan. El bot guarda solo el número de chat y los avisos elegidos, y el comando
+      /baja o bloquear el bot los borra.
     </p>
 
     <h2 id={anclas.afiliacion}>Partido y bancada</h2>

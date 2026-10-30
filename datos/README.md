@@ -22,7 +22,7 @@ No editar estos archivos a mano, salvo las notas manuales de `propios/notas.json
 | `fuente/{período}/votos.csv` | Un voto individual por fila, con las columnas `idVotacion`, `idDetalleVotacion`, `idLegislador`, `idSentidoVotacion`, `sentidoVotacion`, `observacion`. |
 | `fuente/{período}/legisladores.json` y `.csv` | Legisladores del período, vigentes o no. |
 | `fuente/{período}/autores.json` y `.csv` | Autores de cada proyecto con ley y de cada proyecto de ley con votaciones en el período (`idProyecto` + `legislador`), en el orden que publica la API. |
-| `fuente/{período}/expedientes.json` y `.csv` | Un registro por cada expediente del período en que un legislador figura entre los autores (`idLegislador` + los campos oficiales del expediente), de todos los tipos. Se descarga los martes. |
+| `fuente/{período}/expedientes.json` y `.csv` | Un registro por cada expediente del período en que un legislador figura entre los autores (`idLegislador` + los campos oficiales del expediente), de todos los tipos. Se descarga todos los días. |
 | `fuente/{período}/comisiones.json` y `.csv` | Un registro por cada miembro de cada comisión en cada período parlamentario (`idComision` + `idPeriodoParlamentario` + `idLegislador`), de las dos cámaras y de todos los tipos. Sin cargo dentro de la comisión: la API no lo publica. |
 | `fotos/{período}/{idLegislador}.jpg` | Copia de la foto que publica el Congreso en el `fotoURL` de cada legislador, sin cambios. No figura en el diccionario porque no es una tabla. |
 | `propios/personas.json` | Identificador estable (slug) de cada persona y sus `idLegislador` por período. |
@@ -30,6 +30,7 @@ No editar estos archivos a mano, salvo las notas manuales de `propios/notas.json
 | `propios/partidos.json` | Una entrada por cada texto oficial de partido (`partidoPolitico`), con su partido unificado (los textos que corresponden al mismo partido comparten identificador) y el fundamento de la agrupación. Cada entrada lleva también una sigla corta y algunas, el nombre por el que se conoce al partido. Son agregados propios; el texto oficial no cambia. |
 | `propios/temas.json` | Temas de la clasificación temática propia, con la definición de cada uno y las palabras clave de sus reglas. |
 | `propios/test-afinidad.json` | Preguntas del test de afinidad, cada una con su ley, su tema, una explicación breve con sus fuentes, las votaciones nominales que compara y el voto oficial que equivale a «A favor». Es un dato propio. |
+| `propios/avisos-telegram.json` | Leyes, votaciones y proyectos de ley que el bot de Telegram ya procesó, para no repetir avisos (`iniciales`, `avisados`, `ultimoResumen`). Lo escribe `python -m importador.avisos`. No contiene datos de quienes usan el bot. |
 | `propios/clasificacion-temas.json` y `.csv` | Temas de cada proyecto de ley con ley o con votación nominal en el período, con la regla o la revisión que asignó cada uno, o «pendiente de clasificación». Es una clasificación propia, no oficial. |
 
 ## Convenciones

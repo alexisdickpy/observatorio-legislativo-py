@@ -19,6 +19,14 @@ jobs:
       - name: Pruebas del importador
         run: python3 -m unittest discover -s importador/pruebas -t . -v
 
+  bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Pruebas del bot de Telegram
+        working-directory: bot
+        run: npm test
+
   sitio:
     runs-on: ubuntu-latest
     timeout-minutes: 15

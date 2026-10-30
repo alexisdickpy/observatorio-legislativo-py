@@ -1,0 +1,14 @@
+# Configuración del Worker del bot de Telegram (#66). La despliega .github/workflows/bot.yml.
+# El identificador del espacio KV se completa en el despliegue con el secreto KV_SUSCRIPTORES_ID;
+# los secretos del Worker (TELEGRAM_TOKEN, WEBHOOK_SECRETO, CLAVE_ENVIO) se cargan en Cloudflare.
+name = "observatorio-legislativo-bot"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[vars]
+SITIO = "https://congreso.alexisdick.com"
+
+[[kv_namespaces]]
+binding = "SUSCRIPTORES"
+id = "KV_SUSCRIPTORES_ID"

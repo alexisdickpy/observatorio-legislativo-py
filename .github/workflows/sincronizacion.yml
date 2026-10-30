@@ -5,9 +5,12 @@
 #   caché de GitHub Actions; si la caché no está, descarga todo.
 # - Domingos, completa: vuelve a descargar todo (unas 1.500 consultas) para detectar
 #   correcciones en registros que ya existían.
-# - Martes, además, vuelve a descargar los expedientes de cada legislador (unas 140 consultas
-#   más, unos 20 minutos). Los demás días se reutiliza la copia guardada.
+# - Todos los días programados vuelve a descargar los expedientes de cada legislador (unas 140
+#   consultas más, unos 20 minutos), para avisar de los proyectos de ley nuevos.
 # - También se puede lanzar a mano desde la pestaña Actions ("Run workflow").
+# - Si la importación salió bien, envía los avisos del bot de Telegram (python -m importador.avisos,
+#   #66). Usa los secretos TELEGRAM_TOKEN, BOT_URL y BOT_CLAVE; sin ellos solo muestra los mensajes.
+#   Un fallo de los avisos no interrumpe la sincronización.
 #
 # Si la API falla o devuelve datos incompletos, no se confirma ningún dato: el sitio sigue con
 # la última copia válida, el error queda anotado en datos/sincronizaciones.json y la ejecución
@@ -27,7 +30,7 @@ on:
         options: [incremental, completo]
         default: incremental
       expedientes:
-        description: "Volver a descargar los expedientes de cada legislador (se hace solo los martes)"
+        description: "Volver a descargar los expedientes de cada legislador (las ejecuciones programadas siempre lo hacen)"
         type: boolean
         default: false
       permitir_disminucion:
@@ -66,10 +69,27 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p tmp
-          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(TZ=America/Asuncion date +%u)" = "2" ]; then
+          if [ "${{ github.event_name }}" = "schedule" ]; then
             EXPEDIENTES=--actualizar-expedientes
           fi
           python3 -m importador --modo "$MODO" $PERMITIR $EXPEDIENTES 2>&1 | tee tmp/resumen.txt
+
+      - name: Avisos del bot de Telegram
+        if: ${{ steps.importar.outcome == 'success' }}
+        continue-on-error: true
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          BOT_URL: ${{ secrets.BOT_URL }}
+          BOT_CLAVE: ${{ secrets.BOT_CLAVE }}
+        run: |
+          set -o pipefail
+          python3 -m importador.avisos 2>&1 | tee tmp/avisos.txt
+          {
+            echo '### Avisos de Telegram'
+            echo '```'
+            cat tmp/avisos.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Resumen
         if: ${{ !cancelled() }}

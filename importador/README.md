@@ -39,7 +39,7 @@ La ejecuta GitHub Actions ([`.github/workflows/sincronizacion.yml`](../.github/w
 
 - **lunes a sábado, 04:23 (hora de Paraguay)**: incremental;
 - **domingos, 03:41**: completa;
-- **los martes**, la incremental también vuelve a descargar los expedientes de cada legislador (`--actualizar-expedientes`, unas 140 consultas más);
+- **todos los días programados** también vuelve a descargar los expedientes de cada legislador (`--actualizar-expedientes`, unas 140 consultas más, unos 20 minutos), para avisar de los proyectos de ley nuevos;
 - a mano, desde la pestaña *Actions* del repositorio → *Sincronización de datos* → *Run workflow*.
 
 Las respuestas crudas se guardan entre ejecuciones en la caché de GitHub Actions. Si la caché se pierde, la incremental descarga todo, como una completa.
@@ -51,6 +51,16 @@ Pruebas:
 ```bash
 python -m unittest discover -s importador/pruebas -t .
 ```
+
+## Avisos del bot de Telegram
+
+`python -m importador.avisos` envía los avisos que cada persona eligió en el bot (ver [`bot/README.md`](../bot/README.md) y la [metodología](../docs/metodologia.md#avisos-del-bot-de-telegram)). La sincronización lo ejecuta después de importar, solo si la importación salió bien.
+
+- Compara con `datos/propios/avisos-telegram.json`. La primera vez marca todo lo existente como procesado y no envía nada.
+- Pide la lista de suscriptores al bot en cada ejecución y no la guarda ni la muestra.
+- Si no consigue la lista, o un mensaje no llega a nadie, ese aviso se reintenta en la próxima ejecución y la sincronización sigue. Si alguien bloqueó el bot, lo da de baja.
+- Necesita `TELEGRAM_TOKEN`, `BOT_URL` y `BOT_CLAVE`, secretos del repositorio en GitHub Actions. Sin ellos, o con `--prueba`, solo muestra los mensajes y no modifica el registro. `--resumen` envía el resumen semanal aunque no sea lunes.
+- Si la sincronización falla al confirmar en `main` después de enviar, un aviso podría repetirse una vez.
 
 ## Qué descarga
 
@@ -81,6 +91,7 @@ No usa `votacion/parlamentario/{id}`, que devuelve siempre la misma votación (v
 | `fechas.py` | Fechas `dd/mm/aaaa` a ISO, sin corregir por suposición |
 | `personas.py` | Slug estable de cada persona |
 | `escribir.py` | Escritura determinista de JSON y CSV |
+| `avisos.py` | Avisos del bot de Telegram (ver arriba) |
 | `pruebas/` | Pruebas con ejemplos reales de la API |
 
 Las convenciones de los archivos generados están en [`datos/README.md`](../datos/README.md) y las transformaciones, en la [metodología](../docs/metodologia.md).
