@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from importador.avisos import CITA, LIMITE_LEYES, LIMITE_TELEGRAM, RAIZ, avisar, en_mensajes, sitio
+from importador.avisos import CITA, LIMITE_LEYES, LIMITE_TELEGRAM, RAIZ, avisar, barra_votos, en_mensajes, sitio
 from importador.escribir import json_bytes
 
 BASE = "https://ejemplo.test"
@@ -157,8 +157,35 @@ class Avisos(unittest.TestCase):
         self.correr()
         texto, = self.textos("votaciones")
         self.assertIn("🟩 Sí  🟥 No  🟨 Abstención  ⬜ Sin voto", texto)
+        self.assertLess(texto.index("Votación por partido\n"), texto.index("Análisis completo"))
         self.assertIn("🔴 ANR " + "🟩" * 8 + "⬜" * 2 + " 3 Sí, 1 sin voto", texto)
         self.assertIn("🔷 PPQ " + "🟥" * 10 + " 1 No", texto)
+
+    def test_barra_muestra_toda_categoria_con_votos(self):
+        barra = barra_votos(1, 14, 1, 10)
+        self.assertEqual(len(barra), 10)
+        self.assertEqual(barra, "🟩" + "🟥" * 4 + "🟨" + "⬜" * 4)
+
+    def test_votacion_con_autores_y_enlaces_a_silpy(self):
+        self.correr()
+        self.poner_partidos()
+        nueva = votacion(2)
+        nueva["appURL"] = "https://silpy.test/votacion/2"
+        nueva["proyecto"].update(idProyecto=50, appURL="https://silpy.test/expediente/50",
+                                 acapite="Proyecto de Ley “QUE CREA ALGO”, presentado por los senadores Ana Pérez y Luis Gómez.")
+        sin_autores = votacion(3)
+        sin_autores["proyecto"].update(idProyecto=51, acapite="Mensaje, presentado por el Poder Ejecutivo")
+        self.poner(votaciones=[votacion(1), nueva, sin_autores], autores=[
+            {"idProyecto": 50, "legislador": {"nombres": "Ana", "apellidos": "Pérez", "partidoPolitico": "Partido A"}},
+            {"idProyecto": 50, "legislador": {"nombres": "Luis", "apellidos": "Gómez", "partidoPolitico": "Otro partido"}}])
+        self.correr()
+        texto, = self.textos("votaciones")
+        self.assertIn("Proyecto de Ley “QUE CREA ALGO”\n\nPresentado por 🔴 Ana Pérez (ANR), ⚪ Luis Gómez (Otro partido)\n\nCAMARA", texto)
+        self.assertIn("Votación en SILpy https://silpy.test/votacion/2", texto)
+        self.assertIn("Proyecto en SILpy https://silpy.test/expediente/50", texto)
+        self.assertIn("Mensaje, presentado por el Poder Ejecutivo", texto)
+        self.assertIn(f"Análisis completo {BASE}/votacion/2/", texto)
+        self.assertLess(texto.index("Proyecto en SILpy"), texto.index("Análisis completo"))
 
     def test_sin_novedades_no_se_envia_nada(self):
         self.correr()
