@@ -54,7 +54,7 @@ PROYECTO_DE_LEY = "PROYECTO DE LEY"
 PAUSA_ENVIO = 0.05  # Telegram admite unos 30 mensajes por segundo
 ASUNCION = timezone(timedelta(hours=-3))
 # Color de cada partido por su sigla (propios/partidos.json). Independientes y otros, SIN_COLOR_PARTIDO.
-COLOR_PARTIDO = {"ANR": "🔴", "PLRA": "🔵", "CN": "⚫", "Yo Creo": "🟠", "PEN": "🟡", "PDP": "🟢", "PPQ": "🩵", "PPS": "🟣", "PPC": "🟤"}
+COLOR_PARTIDO = {"ANR": "🔴", "PLRA": "🔵", "CN": "⚫", "Yo Creo": "🟠", "PEN": "🟡", "PDP": "🟢", "PPQ": "🔷", "PPS": "🟣", "PPC": "🟤"}
 SIN_COLOR_PARTIDO = "⚪"
 LEYENDA_VOTOS = "🟩 Sí  🟥 No  🟨 Abstención  ⬜ Sin voto"
 ANCHO_BARRA = 10

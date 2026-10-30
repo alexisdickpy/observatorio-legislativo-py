@@ -137,7 +137,7 @@ class Avisos(unittest.TestCase):
         self.assertTrue(texto.startswith("Proyectos de ley nuevos presentados\n"))
         self.assertIn("QUE CREA ALGO\n", texto)
         self.assertEqual(texto.lower().count("presentado por"), 1)
-        self.assertIn("Presentado por 🔴 Ana Pérez (ANR), 🩵 Luis Gómez (PPQ), Eva Díaz", texto)
+        self.assertIn("Presentado por 🔴 Ana Pérez (ANR), 🔷 Luis Gómez (PPQ), Eva Díaz", texto)
 
     def test_proyecto_sin_autores_conserva_el_titulo_entero(self):
         self.correr()
@@ -158,7 +158,7 @@ class Avisos(unittest.TestCase):
         texto, = self.textos("votaciones")
         self.assertIn("🟩 Sí  🟥 No  🟨 Abstención  ⬜ Sin voto", texto)
         self.assertIn("🔴 ANR " + "🟩" * 8 + "⬜" * 2 + " 3 Sí, 1 sin voto", texto)
-        self.assertIn("🩵 PPQ " + "🟥" * 10 + " 1 No", texto)
+        self.assertIn("🔷 PPQ " + "🟥" * 10 + " 1 No", texto)
 
     def test_sin_novedades_no_se_envia_nada(self):
         self.correr()
