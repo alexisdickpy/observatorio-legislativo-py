@@ -10,6 +10,9 @@ Se ejecuta en la sincronización diaria, después de importar. Compara los datos
 - resumen: con --resumen (el flujo lo pasa los lunes), las leyes y las votaciones que no estuvieron
   en un resumen anterior, sin las votaciones de ese mismo día. Si no hay ninguna, no envía nada.
 
+En los proyectos, a cada autor se le agrega su partido y un círculo de color (COLOR_PARTIDO), y del título se
+omite la parte final «presentado por...», que repetiría a los autores. En las votaciones se agrega el voto por partido.
+
 La primera ejecución marca todo lo existente como procesado y no envía nada. Si la lista de suscriptores no
 se puede obtener, o un mensaje no llega a nadie, ese aviso se reintenta en la próxima ejecución. Un fallo de
 los avisos nunca interrumpe la sincronización. Los números de chat no se guardan ni se muestran aquí.
@@ -25,6 +28,7 @@ Uso, desde la raíz del repositorio:
 """
 
 import argparse
+import csv
 import json
 import os
 import re
@@ -49,6 +53,11 @@ API_TELEGRAM = "https://api.telegram.org"
 PROYECTO_DE_LEY = "PROYECTO DE LEY"
 PAUSA_ENVIO = 0.05  # Telegram admite unos 30 mensajes por segundo
 ASUNCION = timezone(timedelta(hours=-3))
+COLOR_PARTIDO = {"ANR": "🔴", "PLRA": "🔵"}  # colores tradicionales; el resto, SIN_COLOR_PARTIDO
+SIN_COLOR_PARTIDO = "⚪"
+LEYENDA_VOTOS = "🟩 Sí  🟥 No  🟨 Abstención  ⬜ Sin voto"
+ANCHO_BARRA = 10
+PRESENTADO_POR = re.compile(r"[\s,.]*\bpresentado por\b.*$", re.IGNORECASE | re.DOTALL)
 
 
 def sitio(raiz=RAIZ):
@@ -72,11 +81,6 @@ def fecha_legible(iso):
     return f"{iso[8:10]}/{iso[5:7]}/{iso[:4]}" if iso else "sin dato"
 
 
-def cita(actualizacion):
-    """Cita obligatoria de la fuente, con la fecha de actualización de los datos (aaaa-mm-dd)."""
-    return f"{CITA}. Actualizados el {fecha_legible(actualizacion)}."
-
-
 def acortar(texto, largo=LARGO_TITULO):
     texto = " ".join((texto or "Sin título publicado").split())
     return texto if len(texto) <= largo else texto[:largo - 1].rstrip() + "…"
@@ -98,7 +102,7 @@ def fecha_votacion(v):
     return (v.get("tramitacion") or {}).get("_propio", {}).get("fechaTramite") or ""
 
 
-def mensaje_ley(registros, votaciones, base, actualizacion):
+def mensaje_ley(registros, votaciones, base):
     """Mensaje de un número de ley, que puede tener varios registros si reúne proyectos acumulados."""
     ley = registros[0]
     titulos = "\n".join((l.get("proyecto") or {}).get("acapite") or "Sin título publicado" for l in registros)
@@ -111,19 +115,19 @@ def mensaje_ley(registros, votaciones, base, actualizacion):
         otras = len(suyas) - len(mostradas)
         partes.append(f"Votaciones nominales ({len(suyas)})\n\n" + "\n\n".join(resultado_votacion(v, base) for v in mostradas)
                       + (f"\n\nY {otras} anteriores en la ficha de la ley." if otras else ""))
-    return "\n\n".join(partes + [cita(actualizacion)])
+    return "\n\n".join(partes + [f"{CITA}."])
 
 
-def mensaje_varias_leyes(numeros, base, actualizacion):
+def mensaje_varias_leyes(numeros, base):
     cantidad = len(numeros)
     numeros = ", ".join(numeros)
     return (f"{cantidad} leyes sancionadas nuevas en los datos del Congreso\n\n"
-            f"Leyes {numeros}\n\n{base}/leyes/\n\n{cita(actualizacion)}")
+            f"Leyes {numeros}\n\n{base}/leyes/\n\n{CITA}.")
 
 
-def en_mensajes(encabezado, bloques, actualizacion):
+def en_mensajes(encabezado, bloques):
     """Reparte los bloques en mensajes dentro del límite de Telegram, con encabezado y cita en cada uno."""
-    pie = "\n\n" + cita(actualizacion)
+    pie = f"\n\n{CITA}."
     mensajes, actual = [], encabezado
     for bloque in bloques:
         if len(actual) + len(bloque) + 2 + len(pie) > LIMITE_TELEGRAM and actual != encabezado:
@@ -134,19 +138,80 @@ def en_mensajes(encabezado, bloques, actualizacion):
     return mensajes
 
 
-def bloque_votacion(v, base):
-    return f"{acortar((v.get('proyecto') or {}).get('acapite'))}\n{resultado_votacion(v, base)}"
+def siglas_de_legisladores(salida):
+    """Sigla del partido de cada legislador. La API da el partido actual, no el de cada fecha."""
+    siglas = {p["partidoPolitico"]: p["sigla"] for p in (leer_json(salida / "propios" / "partidos.json") or {"partidos": []})["partidos"]}
+    return {l["idLegislador"]: siglas.get(l.get("partidoPolitico")) for l in tablas(salida, "legisladores") if l.get("idLegislador")}
 
 
-def bloque_proyecto(p):
+def color_partido(sigla):
+    return COLOR_PARTIDO.get(sigla, SIN_COLOR_PARTIDO)
+
+
+def votos_por_partido(salida, ids, siglas):
+    """{idVotacion: {sigla: Counter de sentidos}} de las votaciones pedidas, según los votos.csv de cada período."""
+    por_votacion = {}
+    for periodo in (leer_json(salida / "periodos.json") or {"periodos": []})["periodos"]:
+        ruta = salida / "fuente" / periodo["id"] / "votos.csv"
+        if not ruta.exists():
+            continue
+        with ruta.open(encoding="utf-8-sig", newline="") as archivo:
+            for voto in csv.DictReader(archivo):
+                if int(voto["idVotacion"]) in ids:
+                    sigla = siglas.get(int(voto["idLegislador"])) or "Sin dato"
+                    por_votacion.setdefault(int(voto["idVotacion"]), {}).setdefault(sigla, Counter())[voto["sentidoVotacion"]] += 1
+    return por_votacion
+
+
+def barra_votos(si, no, abstencion, sin_voto):
+    """Barra de ANCHO_BARRA cuadros, proporcional; la suma acumulada evita que el redondeo cambie el ancho."""
+    total, acumulado, puestos, barra = si + no + abstencion + sin_voto, 0, 0, ""
+    for cantidad, cuadro in ((si, "🟩"), (no, "🟥"), (abstencion, "🟨"), (sin_voto, "⬜")):
+        acumulado += cantidad
+        hasta = round(acumulado * ANCHO_BARRA / total)
+        barra += cuadro * (hasta - puestos)
+        puestos = hasta
+    return barra
+
+
+def lineas_por_partido(partidos):
+    """Una línea por partido, de mayor a menor cantidad de legisladores."""
+    lineas = []
+    for sigla, votos in sorted(partidos.items(), key=lambda x: (-sum(x[1].values()), x[0])):
+        si, no = votos["SI"], votos["NO"]
+        abstencion = sum(n for s, n in votos.items() if s.startswith("ABST"))
+        sin_voto = sum(votos.values()) - si - no - abstencion
+        cifras = ", ".join(f"{n} {t}" for n, t in ((si, "Sí"), (no, "No"), (abstencion, "Abst."), (sin_voto, "sin voto")) if n)
+        lineas.append(f"{color_partido(sigla)} {sigla} {barra_votos(si, no, abstencion, sin_voto)} {cifras}")
+    return lineas
+
+
+def bloque_votacion(v, base, partidos=None):
+    bloque = f"{acortar((v.get('proyecto') or {}).get('acapite'))}\n{resultado_votacion(v, base)}"
+    return bloque + "\n\nPor partido\n" + "\n".join(lineas_por_partido(partidos)) if partidos else bloque
+
+
+def autores_con_partido(p, siglas):
+    """Autores de un proyecto con su partido, si la API da su identificador; si no, tal como se publican."""
+    autores = []
+    for a in p.get("autores") or []:
+        sigla = siglas.get(a.get("idLegislador"))
+        nombre = f"{a.get('nombres') or ''} {a.get('apellidos') or ''}".strip()
+        autores.append(f"{color_partido(sigla)} {nombre} ({sigla})" if sigla else nombre)
+    return ", ".join(autores) or (p.get("_propio") or {}).get("autores")
+
+
+def bloque_proyecto(p, siglas):
     """Un proyecto de ley de proyectos-recientes.json. Sin autores, indica la iniciativa y los ministerios."""
-    autores = (p.get("_propio") or {}).get("autores")
+    autores = autores_con_partido(p, siglas)
+    titulo = p.get("acapite")
     if autores:
         origen = f"Presentado por {autores}"
+        titulo = PRESENTADO_POR.sub("", titulo or "") or titulo
     else:
         ministerios = ", ".join(p.get("ministerios") or [])
         origen = f"Iniciativa {p.get('iniciativa') or 'sin dato'}" + (f". {ministerios}" if ministerios else "")
-    return (f"{acortar(p.get('acapite'))}\n"
+    return (f"{acortar(titulo)}\n"
             f"{origen}\n"
             f"Ingresó el {p.get('fechaIngresoExpediente') or 'sin dato'}. Expediente {p.get('expedienteCamara') or 'sin dato'}\n"
             f"{p.get('appURL') or ''}".rstrip())
@@ -164,24 +229,26 @@ def novedades(salida):
             "proyectos": proyectos}
 
 
-def mensajes_de(tipo, pendientes, votaciones, base, actualizacion):
+def mensajes_de(tipo, pendientes, votaciones, base, salida):
     """Lista de (identificadores, texto) de un tipo de aviso."""
     if tipo == "leyes":
         por_numero = {}
         for l in pendientes.values():
             por_numero.setdefault(l["_propio"]["numeroLey"], []).append(l)
         if len(por_numero) > LIMITE_LEYES:
-            return [(list(pendientes), mensaje_varias_leyes(list(por_numero), base, actualizacion))]
-        return [([l["idLey"] for l in registros], mensaje_ley(registros, votaciones, base, actualizacion))
+            return [(list(pendientes), mensaje_varias_leyes(list(por_numero), base))]
+        return [([l["idLey"] for l in registros], mensaje_ley(registros, votaciones, base))
                 for registros in por_numero.values()]
+    siglas = siglas_de_legisladores(salida)
     if tipo == "votaciones":
-        encabezado = f"Votaciones nominales nuevas de proyectos de ley ({len(pendientes)})"
-        bloques = [bloque_votacion(v, base) for v in pendientes.values()]
+        encabezado = f"Votaciones nominales nuevas de proyectos de ley\n\n{LEYENDA_VOTOS}"
+        por_partido = votos_por_partido(salida, set(pendientes), siglas)
+        bloques = [bloque_votacion(v, base, por_partido.get(i)) for i, v in pendientes.items()]
     else:
-        encabezado = f"Proyectos de ley nuevos presentados ({len(pendientes)})"
-        bloques = [bloque_proyecto(p) for p in pendientes.values()]
+        encabezado = "Proyectos de ley nuevos presentados"
+        bloques = [bloque_proyecto(p, siglas) for p in pendientes.values()]
     # Todos los identificadores van con el último mensaje: si uno falla, el tipo entero se reintenta.
-    textos = en_mensajes(encabezado, bloques, actualizacion)
+    textos = en_mensajes(encabezado, bloques)
     return [([], t) for t in textos[:-1]] + [(list(pendientes), textos[-1])]
 
 
@@ -199,7 +266,7 @@ def para_el_resumen(registro, ids, hoy):
     return elegidas
 
 
-def mensaje_resumen(elegidas, ids, base, actualizacion, hoy):
+def mensaje_resumen(elegidas, ids, base, hoy):
     """Mensajes del resumen semanal, o ninguno si no hay nada que contar."""
     leyes = {}
     for a in elegidas:
@@ -219,7 +286,7 @@ def mensaje_resumen(elegidas, ids, base, actualizacion, hoy):
                        + "\n".join(f"{r}, {n}" for r, n in sorted(por_resultado.items()))
                        + f"\n{base}/legisladores/votaciones-nominales/")
     return en_mensajes(f"Resumen de la semana anterior, al {fecha_legible(hoy.isoformat())}. Incluye lo que apareció "
-                       "en los datos desde el resumen anterior, aunque su fecha oficial sea más vieja.", bloques, actualizacion)
+                       "en los datos desde el resumen anterior, aunque su fecha oficial sea más vieja.", bloques)
 
 
 def avisar(salida, enviar, base, ahora=None, salida_texto=print, resumen=False):
@@ -232,7 +299,6 @@ def avisar(salida, enviar, base, ahora=None, salida_texto=print, resumen=False):
     ruta = salida / "propios" / "avisos-telegram.json"
     registro = leer_json(ruta)
     ids = novedades(salida)
-    actualizacion = ((leer_json(salida / "estado.json") or {}).get("ultimaComprobacion") or ahora)[:10]
     resultado = {"enviados": 0, "errores": [], "primera": registro is None}
 
     if registro is None:
@@ -262,7 +328,7 @@ def avisar(salida, enviar, base, ahora=None, salida_texto=print, resumen=False):
         pendientes = {i: e for i, e in elementos.items() if i not in vistos}
         if not pendientes:
             continue
-        for identificadores, texto in mensajes_de(tipo, pendientes, ids["votaciones"], base, actualizacion):
+        for identificadores, texto in mensajes_de(tipo, pendientes, ids["votaciones"], base, salida):
             if not mandar(tipo, texto):
                 break
             nuevos.extend({"tipo": tipo, "id": i, "fecha": ahora} for i in identificadores)
@@ -270,7 +336,7 @@ def avisar(salida, enviar, base, ahora=None, salida_texto=print, resumen=False):
     registro["avisados"] = registro["avisados"] + nuevos
     if resumen:
         elegidas = para_el_resumen(registro, ids, hoy)
-        mensajes = mensaje_resumen(elegidas, ids, base, actualizacion, hoy)
+        mensajes = mensaje_resumen(elegidas, ids, base, hoy)
         if mensajes and all([mandar("resumen", t) for t in mensajes]):
             for a in elegidas:
                 a["resumido"] = True

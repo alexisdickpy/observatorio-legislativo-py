@@ -15,7 +15,7 @@
 export const TIPOS = [
   { id: "leyes", nombre: "Leyes nuevas sancionadas" },
   { id: "votaciones", nombre: "Votaciones nominales de proyectos de ley" },
-  { id: "proyectos", nombre: "Proyectos de ley presentados, con sus autores" },
+  { id: "proyectos", nombre: "Proyectos de ley nuevos presentados, con sus autores" },
   { id: "resumen", nombre: "Resumen de la semana anterior (los lunes)" },
 ];
 const INICIALES = { leyes: true, votaciones: true, proyectos: true, resumen: true };

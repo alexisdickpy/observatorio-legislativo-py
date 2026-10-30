@@ -79,7 +79,8 @@ class Avisos(unittest.TestCase):
         self.assertIn("QUE CREA ALGO.", texto)
         self.assertIn("Sancionada el 25/08/2026", texto)
         self.assertIn(f"{BASE}/leyes/7002/", texto)
-        self.assertTrue(texto.endswith(f"{CITA}. Actualizados el 27/10/2026."))
+        self.assertTrue(texto.endswith(f"{CITA}."))
+        self.assertNotIn("Actualizados", texto)
         self.correr()
         self.assertEqual(len(self.textos("leyes")), 1)
 
@@ -96,7 +97,7 @@ class Avisos(unittest.TestCase):
         self.poner(votaciones=[votacion(1), votacion(2), votacion(3), votacion(4, "PEDIDO DE INFORMES (Art. 192 CN)")])
         self.correr()
         texto, = self.textos("votaciones")
-        self.assertIn("(2)", texto)
+        self.assertTrue(texto.startswith("Votaciones nominales nuevas de proyectos de ley\n"))
         self.assertIn("Proyecto 2", texto)
         self.assertIn("Resultado oficial APROBADO. Sí 30, No 5, Abstención 1", texto)
         self.assertIn(f"{BASE}/votacion/3/", texto)
@@ -114,6 +115,50 @@ class Avisos(unittest.TestCase):
         self.assertIn("Iniciativa PODER EJECUTIVO. MINISTERIO DE SALUD", texto)
         self.assertIn("Iniciativa PODER JUDICIAL", texto)
         self.assertNotIn("Expediente 1\n", texto)
+
+    def poner_partidos(self):
+        (self.salida / "propios").mkdir(exist_ok=True)
+        (self.salida / "propios" / "partidos.json").write_bytes(json_bytes({"partidos": [
+            {"partidoPolitico": "Partido A", "sigla": "ANR"}, {"partidoPolitico": "Partido B", "sigla": "PPQ"}]}))
+        self.poner(legisladores=[{"idLegislador": 10, "partidoPolitico": "Partido A"},
+                                 {"idLegislador": 11, "partidoPolitico": "Partido B"}])
+
+    def test_proyecto_con_partido_de_cada_autor_sin_repetir_presentado_por(self):
+        self.correr()
+        self.poner_partidos()
+        nuevo = proyecto(2, "Ana Pérez, Luis Gómez, Eva Díaz")
+        nuevo["acapite"] = "QUE CREA ALGO, PRESENTADO POR LA DIPUTADA ANA PÉREZ"
+        nuevo["autores"] = [{"idLegislador": 10, "nombres": "Ana", "apellidos": "Pérez"},
+                            {"idLegislador": 11, "nombres": "Luis", "apellidos": "Gómez"},
+                            {"idLegislador": 99, "nombres": "Eva", "apellidos": "Díaz"}]
+        self.poner_proyectos(proyecto(1, "Ana Pérez"), nuevo)
+        self.correr()
+        texto, = self.textos("proyectos")
+        self.assertTrue(texto.startswith("Proyectos de ley nuevos presentados\n"))
+        self.assertIn("QUE CREA ALGO\n", texto)
+        self.assertEqual(texto.lower().count("presentado por"), 1)
+        self.assertIn("Presentado por 🔴 Ana Pérez (ANR), ⚪ Luis Gómez (PPQ), Eva Díaz", texto)
+
+    def test_proyecto_sin_autores_conserva_el_titulo_entero(self):
+        self.correr()
+        nuevo = proyecto(2, iniciativa="PODER EJECUTIVO")
+        nuevo["acapite"] = "QUE CREA ALGO, PRESENTADO POR EL PODER EJECUTIVO"
+        self.poner_proyectos(proyecto(1, "Ana Pérez"), nuevo)
+        self.correr()
+        self.assertIn("QUE CREA ALGO, PRESENTADO POR EL PODER EJECUTIVO", self.textos("proyectos")[0])
+
+    def test_votacion_con_analisis_por_partido(self):
+        self.correr()
+        self.poner_partidos()
+        (self.salida / "fuente" / "2023-2028" / "votos.csv").write_text(
+            "idVotacion,idLegislador,sentidoVotacion\n2,10,SI\n2,10,SI\n2,10,SI\n2,10,AUSENTE\n2,11,NO\n1,10,NO\n",
+            encoding="utf-8")
+        self.poner(votaciones=[votacion(1), votacion(2)])
+        self.correr()
+        texto, = self.textos("votaciones")
+        self.assertIn("🟩 Sí  🟥 No  🟨 Abstención  ⬜ Sin voto", texto)
+        self.assertIn("🔴 ANR " + "🟩" * 8 + "⬜" * 2 + " 3 Sí, 1 sin voto", texto)
+        self.assertIn("⚪ PPQ " + "🟥" * 10 + " 1 No", texto)
 
     def test_sin_novedades_no_se_envia_nada(self):
         self.correr()
@@ -184,7 +229,7 @@ class Avisos(unittest.TestCase):
 
     def test_lista_larga_se_reparte_y_reintenta_entera(self):
         bloques = [f"Bloque {i} " + "x" * 300 for i in range(40)]
-        mensajes = en_mensajes("Encabezado", bloques, "2026-10-27")
+        mensajes = en_mensajes("Encabezado", bloques)
         self.assertGreater(len(mensajes), 1)
         self.assertTrue(all(len(m) <= LIMITE_TELEGRAM for m in mensajes))
         self.assertTrue(all(m.startswith("Encabezado") and CITA in m for m in mensajes))
