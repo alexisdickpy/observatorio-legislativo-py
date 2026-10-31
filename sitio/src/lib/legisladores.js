@@ -298,6 +298,7 @@ function historialDeVotos(lista, i, estados) {
       return {
         proyecto: proyectoDeVotacion(v, estados),
         id: v.idVotacion,
+        pagina: rutas.votacion(v.idVotacion),
         fecha: valor(t.fechaTramite),
         fechaIso: t._propio?.fechaTramite ?? null,
         etapa: valor(t.descripcionEtapa),

@@ -9,7 +9,7 @@ import { fill } from "../../src/lib/rellenar.js";
 import { textos } from "../textos.js";
 
 const raiz = join(process.cwd(), "..");
-const config = readFileSync(join(raiz, ".pages.yml"), "utf-8");
+const config = readFileSync(join(raiz, ".pages.yml"), "utf-8").replace(/\r/g, "");
 
 /** Nombres de campo de la sección de .pages.yml de un archivo. */
 function camposDe(ruta) {
