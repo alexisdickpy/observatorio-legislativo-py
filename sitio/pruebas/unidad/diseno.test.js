@@ -3,6 +3,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { leyes } from "../../src/lib/catalogo.js";
+import { fuente } from "../../src/lib/datos.js";
+import { decisionesSinNominal } from "../../src/lib/decisiones.js";
+import { nombreDe } from "../../src/lib/ficha.js";
+import { proyectosDeLey } from "../../src/lib/proyectos.js";
 import { estadisticas } from "../../src/lib/estadisticas.js";
 import { ALTO, ANCHO, asientos } from "../../src/lib/hemiciclo.js";
 import { clasePartido } from "../../src/lib/partidos.js";
@@ -51,6 +55,31 @@ test("nombres legibles: solo cambia los textos todo en mayúsculas y no toca las
   assert.equal(legible("BANCADA DE LA ASOCIACIÓN NACIONAL REPUBLICANA ANR - B"), "Bancada de la Asociación Nacional Republicana ANR - B");
   assert.equal(legible("Partido Cruzada Nacional"), "Partido Cruzada Nacional");
   assert.equal(legible(null), null);
+});
+
+test("decisiones sin votación nominal: textos oficiales, sin repetir y ninguna con votación nominal", () => {
+  const lista = decisionesSinNominal(PERIODO);
+  assert.ok(lista.length > 0);
+  assert.equal(new Set(lista.map((d) => d.id)).size, lista.length);
+  const nominales = new Set(fuente(PERIODO, "votaciones.json").map((v) => v.tramitacion?.idTramitacion));
+  for (const d of lista) {
+    assert.ok(!nominales.has(d.id) && d.resultado && d.titulo && d.fechaIso >= "2023-07-01", String(d.id));
+    assert.ok(!["POSTERGADO"].includes(d.resultado));
+  }
+});
+
+test("proyectos de ley: sin repetir, con y sin votación nominal, y con los de cada ley", () => {
+  const lista = proyectosDeLey(PERIODO);
+  assert.equal(new Set(lista.map((p) => p.id)).size, lista.length);
+  assert.ok(lista.some((p) => p.votaciones > 0) && lista.some((p) => p.votaciones === 0));
+  const ids = new Set(lista.map((p) => p.id));
+  for (const l of fuente(PERIODO, "leyes.json")) assert.ok(ids.has(l.proyecto.idProyecto), String(l.idLey));
+  for (const p of lista) assert.ok(p.titulo && (p.votacion !== null) === (p.votaciones > 0), String(p.id));
+});
+
+test("nombres de legisladores sin todo en mayúsculas", () => {
+  assert.equal(nombreDe({ nombres: "MARÍA ROCÍO", apellidos: "ABED DE ZACARÍAS" }), "María Rocío Abed de Zacarías");
+  assert.equal(nombreDe({ nombres: "Silvio", apellidos: "Ovelar Benítez" }), "Silvio Ovelar Benítez");
 });
 
 test("la votación de la portada es siempre la más reciente, con un punto por voto", () => {

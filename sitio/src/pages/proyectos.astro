@@ -1,0 +1,100 @@
+---
+// Listado general de proyectos de ley del período (lib/proyectos.js), con o sin votación nominal, con su
+// estado oficial y su enlace. Filtros en el navegador; sin JavaScript se ve la lista completa.
+import Base from "../layouts/Base.astro";
+import { periodos } from "../lib/datos.js";
+import { proyectosDeLey } from "../lib/proyectos.js";
+import * as rutas from "../lib/rutas.js";
+
+const periodo = periodos().find((p) => p.vigente).id;
+const proyectos = proyectosDeLey(periodo);
+const sinNominal = proyectos.filter((p: any) => !p.votaciones).length;
+const estados = [...new Map(proyectos.map((p: any) => [p.estadoFiltro, p.estado ?? "Sin dato"])).entries()].sort((a: any, b: any) => a[1].localeCompare(b[1], "es"));
+const anios = [...new Set(proyectos.map((p: any) => p.anio).filter(Boolean))].sort().reverse();
+const numero = (n: number) => n.toLocaleString("es-PY");
+---
+
+<Base
+  titulo="Proyectos de ley"
+  descripcion={`${numero(proyectos.length)} proyectos de ley del Congreso Nacional del Paraguay en el período legislativo ${periodo}, con su estado oficial y su enlace, tengan o no votación nominal.`}
+>
+  <h1>Proyectos de ley</h1>
+  <div class="lectura">
+    <p>
+      {numero(proyectos.length)} proyectos de ley del período legislativo {periodo}, con su estado oficial y su
+      expediente. {numero(sinNominal)} no tienen votación nominal publicada.
+    </p>
+    <p class="chico texto-suave">
+      Los proyectos sin votación nominal no entran en los cálculos por partido, porque no hay votos individuales.
+      El título se recorta en esta lista y el completo está en el expediente. <a href={rutas.metodologia(rutas.anclasMetodologia.proyectos)}>Cómo se arma esta lista</a>
+    </p>
+  </div>
+
+  <form class="filtro" id="filtro-proyectos" role="search" hidden>
+    <div class="texto"><label for="proyecto-texto">Palabras del título o expediente</label><input type="search" id="proyecto-texto" autocomplete="off" /></div>
+    <div><label for="proyecto-estado">Estado</label><select id="proyecto-estado" data-campo="estado"><option value="">Todos</option>{estados.map(([v, t]) => <option value={v as string}>{t}</option>)}</select></div>
+    <div><label for="proyecto-votacion">Votación nominal</label><select id="proyecto-votacion" data-campo="nominal"><option value="">Con o sin</option><option value="si">Con votación nominal</option><option value="no">Sin votación nominal</option></select></div>
+    <div><label for="proyecto-anio">Año de ingreso</label><select id="proyecto-anio" data-campo="anio"><option value="">Todos</option>{anios.map((a) => <option value={a as string}>{a}</option>)}</select></div>
+    <p class="chico texto-suave" id="proyecto-estado-filtro" aria-live="polite"></p>
+  </form>
+
+  <ol class="proyectos" data-paginar>
+    {proyectos.map((p: any) => <li data-proyecto={p.id} data-estado={p.estadoFiltro} data-nominal={p.votaciones ? "si" : "no"} data-anio={p.anio ?? ""}><p>{p.url ? <a href={p.url}>Expediente {p.expediente ?? "en SILpy"}</a> : `Expediente ${p.expediente ?? "sin dato"}`} <span class="texto-suave">{p.titulo}</span></p><p class="chico texto-suave"><strong>{p.estado ?? "Sin dato"}</strong>{p.ley && <Fragment> · <a href={p.ley.url}>Ley {p.ley.numero}</a></Fragment>}{p.votacion ? <Fragment> · <a href={p.votacion}>{p.votaciones === 1 ? "1 votación nominal" : `${p.votaciones} votaciones nominales, ver la última`}</a></Fragment> : " · Sin votación nominal"}{p.decision && ` · ${p.decision.resultado} en el plenario, ${p.decision.fecha}`}</p></li>)}
+  </ol>
+</Base>
+
+<script>
+  const form = document.getElementById("filtro-proyectos") as HTMLFormElement;
+  const estado = document.getElementById("proyecto-estado-filtro")!;
+  const texto = document.getElementById("proyecto-texto") as HTMLInputElement;
+  const items = [...document.querySelectorAll<HTMLElement>("[data-proyecto]")];
+  const selectores = [...form.querySelectorAll("select")];
+  const normalizar = (t: string) => t.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+  const textos = new Map(items.map((i) => [i, normalizar(i.firstElementChild!.textContent ?? "")]));
+  const aplicar = () => {
+    const buscado = normalizar(texto.value.trim());
+    let cantidad = 0;
+    for (const item of items) {
+      const visible = selectores.every((s) => !s.value || item.dataset[s.dataset.campo!] === s.value) && textos.get(item)!.includes(buscado);
+      item.hidden = !visible;
+      if (visible) cantidad++;
+    }
+    estado.textContent = `Se muestran ${cantidad.toLocaleString("es-PY")} de ${items.length.toLocaleString("es-PY")} proyectos.`;
+  };
+  form.hidden = false;
+  form.addEventListener("input", aplicar);
+  form.addEventListener("submit", (e) => e.preventDefault());
+  aplicar();
+</script>
+
+<style>
+  .filtro {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: var(--espacio-3);
+    margin: var(--espacio-5) 0 var(--espacio-3);
+  }
+  .filtro[hidden] {
+    display: none;
+  }
+  .filtro .texto,
+  .filtro p {
+    grid-column: 1 / -1;
+  }
+  .filtro p {
+    margin: 0;
+  }
+  .proyectos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .proyectos li {
+    padding: var(--espacio-3) 0;
+    border-top: var(--borde-ancho) solid var(--color-borde);
+    overflow-wrap: anywhere;
+  }
+  .proyectos p {
+    margin: 0 0 var(--espacio-1);
+  }
+</style>

@@ -1,6 +1,7 @@
 // Pruebas del listado y las fichas de legisladores con casos reales de datos/.
 // Los legisladores en ejercicio suman votos con cada ley nueva: para ellos se comprueban votos ya
 // cerrados o un recuento hecho aparte; las cantidades fijas son de quienes ya no ejercen.
+import { legible } from "../../src/lib/texto.js";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
@@ -59,7 +60,7 @@ test("listado: primero la Cámara de Senadores y, dentro de cada cámara, por ap
 test("valores oficiales sin cambios, con el correo y el teléfono que publica la API", () => {
   const oficial = fuente(PERIODO, "legisladores.json").find((l) => l.idLegislador === 101405);
   const r = todas().enEjercicio.find((l) => l.id === 101405);
-  assert.equal(r.nombre, `${oficial.nombres} ${oficial.apellidos}`);
+  assert.equal(r.nombre, legible(`${oficial.nombres} ${oficial.apellidos}`));
   assert.equal(r.camara, "CAMARA DE DIPUTADOS");
   assert.equal(r.departamento, "ALTO PARANÁ");
   assert.equal(r.partido, oficial.partidoPolitico);

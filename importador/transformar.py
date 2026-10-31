@@ -294,6 +294,15 @@ def fila_proyecto_reciente(proyecto, tramitaciones, fecha_ingreso):
     }
 
 
+CAMPOS_PROYECTO_LISTADO = ("idProyecto", "acapite", "appURL", "estadoProyecto", "expedienteCamara", "fechaIngresoExpediente",
+                           "iniciativa", "origenProyecto", "tipoProyecto")
+
+
+def fila_proyecto_listado(proyecto, fecha_ingreso):
+    """Registro de proyectos.json: los campos oficiales de un proyecto de ley del listado general."""
+    return {PROPIO: {"fechaIngreso": fecha_ingreso}, **{c: proyecto.get(c) for c in CAMPOS_PROYECTO_LISTADO}}
+
+
 def es_decision_de_plenario(tramitacion):
     """Trámite de discusión en el plenario con un resultado oficial que decide sobre el proyecto (docs/metodologia.md)."""
     resultado = (tramitacion.get("resultadoTramite") or "").strip().upper()

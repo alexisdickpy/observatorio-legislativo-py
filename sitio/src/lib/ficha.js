@@ -22,7 +22,7 @@ import { fuente, notas } from "./datos.js";
 import { mayoriaDe } from "./mayoria.js";
 import { clasePartido, nombreConocido, siglaDe } from "./partidos.js";
 import * as rutas from "./rutas.js";
-import { recortar, slug } from "./texto.js";
+import { legible, recortar, slug } from "./texto.js";
 
 /** Categorías con total publicado por el Congreso, en el orden en que se muestran. */
 const TOTALES_OFICIALES = [
@@ -109,7 +109,8 @@ export function indice(periodo) {
 
 export { nombreConocido };
 
-export const nombreDe = (l) => [valor(l.nombres), valor(l.apellidos)].filter(Boolean).join(" ") || null;
+/** Nombre para mostrar, sin todo en mayúsculas (#80). Los datos descargables conservan el texto oficial. */
+export const nombreDe = (l) => legible([valor(l.nombres), valor(l.apellidos)].filter(Boolean).join(" ")) || null;
 
 /** Ficha propia de un legislador del período (con slug), o null. */
 const fichaDe = (slug) => (slug ? rutas.legislador(slug) : null);

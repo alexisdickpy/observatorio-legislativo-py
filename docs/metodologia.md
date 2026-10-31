@@ -344,11 +344,19 @@ El bot de Telegram del proyecto avisa de la actividad del Congreso. Al empezar, 
 
 ## Presentación de nombres, composición y estadísticas
 
-- **Nombres.** Los partidos y bancadas que la API publica todo en mayúsculas se muestran con mayúscula inicial (`legible` en `lib/texto.js`), sin cambiar letras ni agregar acentos. Las descargas conservan el texto oficial.
+- **Nombres.** Los partidos, bancadas y legisladores que la API publica todo en mayúsculas se muestran con mayúscula inicial (`legible` en `lib/texto.js`), sin cambiar letras ni agregar acentos. Las descargas conservan el texto oficial.
 - **Composición.** Los hemiciclos de composición muestran a los legisladores en ejercicio según la API, sin los senadores vitalicios, que no ocupan ninguna de las 45 bancas. Los puntos no están en la ubicación real de las bancas.
 - **Colores de partidos.** Identifican a cada partido y siempre van junto a su sigla o nombre. No implican valoración. Los partidos sin color propio llevan un color neutro.
 - **Votos por tema.** La página muestra solo el reparto por partido. La tabla descargable conserva también el de bancadas.
 - **Estadísticas.** Son recuentos propios sobre los datos abiertos. Una ley cuenta una vez por número. La API no publica el género de los legisladores, por lo que no hay cifras por género.
+
+## Listado de proyectos de ley
+
+`/proyectos/` (`lib/proyectos.js`) parte de `proyectos.json`, con todos los proyectos de ley ingresados en el período según el listado general de la API, de cualquier iniciativa y estado. Suma los ingresados antes que figuran en `expedientes.json`, `votaciones.json`, `leyes.json`, `proyectos-recientes.json` y `decisiones-plenario.json`. Los textos son los oficiales. Los que no tienen votación nominal no entran en los cálculos por partido.
+
+## Decisiones sin votación nominal
+
+Trámites de discusión en el plenario sobre proyectos de ley, con un resultado oficial que decide sobre el proyecto, sin votación nominal publicada (`lib/decisiones.js`). Salen de `tramitaciones.json` y `decisiones-plenario.json`, sin repetir trámites, con el mismo criterio de los avisos de Telegram. No hay votos individuales, por lo que no entran en gráficos ni cálculos. La lista cubre las leyes, los proyectos con votaciones nominales y los proyectos en trámite, así que puede no ser completa.
 
 ## Números de ley
 
