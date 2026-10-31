@@ -1,6 +1,7 @@
 // Estadísticas generales del período (#80). Sin HTML. Todo sale de la copia de los datos abiertos, con
 // recuentos propios: no usa datos patrimoniales ni de uso del sitio, ni suma senadores y diputados.
 
+import { decisionesSinNominal } from "./decisiones.js";
 import { valor } from "./ficha.js";
 import { fuente } from "./datos.js";
 import { listado } from "./legisladores.js";
@@ -58,6 +59,7 @@ export function estadisticas(periodo) {
   return {
     leyes: leyes.length,
     votaciones: votaciones.length,
+    decisiones: decisionesSinNominal(periodo),
     leyesPorAnio: contar(leyes.map((l) => (l._propio?.fechaSancion ?? "").slice(0, 4) || "Sin dato")).sort((a, b) => a.texto.localeCompare(b.texto)),
     iniciativas: contar(leyes.map((l) => valor(l.proyecto?.iniciativa) ?? "Sin dato")),
     leyesPorPartido: [...porPartido.values()].map((p) => ({ texto: p.sigla, clase: p.clase, cantidad: p.leyes.size })).sort(deMayorAMenor),
@@ -72,7 +74,8 @@ export function estadisticas(periodo) {
     ],
     camaras: composicion(periodo).map((c) => ({
       ...c,
-      tipos: contar(enEjercicio.filter((f) => f.camara === c.camara).map((f) => f.tipo ?? "Sin dato")),
+      tipos: contar(enEjercicio.filter((f) => f.camara === c.camara && f.tipo !== "VITALICIO").map((f) => f.tipo ?? "Sin dato")),
+      vitalicios: enEjercicio.filter((f) => f.camara === c.camara && f.tipo === "VITALICIO").length,
     })),
   };
 }

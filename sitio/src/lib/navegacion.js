@@ -50,6 +50,7 @@ export const vistasDeAnalisis = () => [
 /** Entradas del menú principal, en orden. */
 export const menuPrincipal = () => [
   { url: rutas.leyes(), texto: "Leyes" },
+  { url: rutas.proyectos(), texto: "Proyectos" },
   { url: rutas.legisladores(), texto: "Legisladores" },
   ...vistasDeAnalisis().map((v) => ({ url: v.url, texto: v.menu, incluye: v.incluye ?? [] })),
   { url: rutas.estadisticas(), texto: "Estadísticas" },

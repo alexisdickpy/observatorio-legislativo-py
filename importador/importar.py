@@ -34,6 +34,7 @@ from .transformar import (
     filas_autores,
     fila_proyecto_reciente,
     filas_comisiones,
+    fila_proyecto_listado,
     filas_decisiones_plenario,
     filas_expedientes,
     filas_tramitaciones,
@@ -339,6 +340,7 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
     hoy_fecha = date.fromisoformat(ahora[:10])
     desde_recientes = (hoy_fecha - timedelta(days=DIAS_PROYECTOS_RECIENTES)).isoformat()
     proyectos_recientes = []
+    proyectos_listado = []
     listado_con_datos = False
     viejos_seguidos = 0
     de_ley_listados, en_tramite = {}, set()
@@ -352,6 +354,9 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
             de_ley_listados[proyecto["idProyecto"]] = proyecto
             if proyecto.get("estadoProyecto") == "EN TRAMITE":
                 en_tramite.add(proyecto["idProyecto"])
+        # Todos los proyectos de ley ingresados en el período, de cualquier iniciativa y estado, para /proyectos/.
+        if proyecto.get("tipoProyecto") == "PROYECTO DE LEY" and fecha_ingreso and inicio <= fecha_ingreso <= fin:
+            proyectos_listado.append(fila_proyecto_listado(proyecto, fecha_ingreso))
         if (proyecto.get("tipoProyecto") != "PROYECTO DE LEY" or not fecha_ingreso
                 or fecha_ingreso < max(desde_recientes, inicio)):
             continue
@@ -360,6 +365,8 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
     if not listado_con_datos:
         raise ErrorAPI("La API no devolvió el listado de proyectos")
     proyectos_recientes.sort(key=lambda p: p["idProyecto"])
+    proyectos_listado.sort(key=lambda p: p["idProyecto"])
+    progreso(f"Proyectos de ley del período en el listado: {len(proyectos_listado)}")
     progreso(f"Proyectos de ley de los últimos {DIAS_PROYECTOS_RECIENTES} días: {len(proyectos_recientes)}")
 
     # --- Decisiones del plenario de proyectos en trámite, para los avisos del bot (#76) -----------
@@ -430,6 +437,7 @@ def importar(cliente, salida, id_periodo=None, ahora=None, progreso=print, permi
         carpeta / "expedientes.json": json_bytes(expedientes),
         carpeta / "comisiones.json": json_bytes(comisiones),
         carpeta / "proyectos-recientes.json": json_bytes(proyectos_recientes),
+        carpeta / "proyectos.json": json_bytes(proyectos_listado),
         ruta_decisiones: json_bytes(decisiones_plenario),
         ruta_personas: json_bytes({"personas": personas}),
         ruta_notas: json_bytes({"notas": todas_las_notas}),

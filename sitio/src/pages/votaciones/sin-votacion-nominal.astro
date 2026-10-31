@@ -1,0 +1,102 @@
+---
+// Decisiones del plenario sobre proyectos de ley sin votación nominal publicada (lib/decisiones.js): solo
+// los textos oficiales, con filtros por año, cámara y resultado, sin gráficos porque no hay votos individuales.
+import Base from "../../layouts/Base.astro";
+import { periodos } from "../../lib/datos.js";
+import { decisionesSinNominal } from "../../lib/decisiones.js";
+import * as rutas from "../../lib/rutas.js";
+
+const periodo = periodos().find((p) => p.vigente).id;
+const decisiones = decisionesSinNominal(periodo);
+const opciones = (clave: string, texto: string) =>
+  [...new Map(decisiones.map((d: any) => [d[clave], d[texto]])).entries()].filter(([v]) => v).sort((a: any, b: any) => String(a[1]).localeCompare(String(b[1]), "es"));
+const anios = opciones("anio", "anio").reverse();
+const camaras = opciones("camaraFiltro", "camara");
+const resultados = opciones("resultadoFiltro", "resultado");
+const numero = (n: number) => n.toLocaleString("es-PY");
+---
+
+<Base
+  titulo="Decisiones sin votación nominal"
+  descripcion={`Resultado oficial de ${numero(decisiones.length)} decisiones del plenario sobre proyectos de ley sin votación nominal publicada, período legislativo ${periodo}.`}
+>
+  <p class="chico"><a href={rutas.votaciones()}>← Votaciones</a></p>
+  <h1>Decisiones sin votación nominal</h1>
+  <div class="lectura">
+    <p>
+      {numero(decisiones.length)} decisiones del plenario sobre proyectos de ley del período legislativo {periodo} sin
+      votación nominal publicada. Se muestra el resultado oficial.
+    </p>
+    <p class="chico texto-suave">
+      Sin votos individuales no se puede saber cómo votó cada legislador o partido, así que estas decisiones no
+      entran en los gráficos ni en los cálculos del sitio. La lista incluye los proyectos cuyo detalle guarda
+      este sitio y puede no ser completa. <a href={rutas.metodologia(rutas.anclasMetodologia.decisiones)}>Cómo se arma esta lista</a>
+    </p>
+  </div>
+
+  <form class="filtro" id="filtro-decisiones" hidden>
+    <div><label for="decision-anio">Año</label><select id="decision-anio" data-campo="anio"><option value="">Todos</option>{anios.map(([v, t]) => <option value={v as string}>{t}</option>)}</select></div>
+    <div><label for="decision-camara">Cámara</label><select id="decision-camara" data-campo="camara"><option value="">Las dos</option>{camaras.map(([v, t]) => <option value={v as string}>{t}</option>)}</select></div>
+    <div><label for="decision-resultado">Resultado</label><select id="decision-resultado" data-campo="resultado"><option value="">Todos</option>{resultados.map(([v, t]) => <option value={v as string}>{t}</option>)}</select></div>
+    <p class="chico texto-suave" id="decision-estado" aria-live="polite"></p>
+  </form>
+
+  <ol class="decisiones" data-paginar>
+    {decisiones.map((d: any) => <li data-decision={d.id} data-anio={d.anio} data-camara={d.camaraFiltro} data-resultado={d.resultadoFiltro}><p class="resultado">{d.resultado}</p><p class="chico texto-suave">{d.fecha} · {d.camara ?? "Sin dato"} · {d.etapa ?? "Sin dato"}</p><p class="titulo">{d.ley && <Fragment><a href={d.ley.url}>Ley {d.ley.numero}</a> </Fragment>}{d.url ? <a href={d.url}>Expediente {d.expediente ?? "en SILpy"}</a> : d.expediente && `Expediente ${d.expediente}`} <span class="texto-suave">{d.titulo}</span></p>{d.sesion && <p class="chico"><a href={d.sesion}>Sesión en SILpy</a></p>}</li>)}
+  </ol>
+</Base>
+
+<script>
+  const form = document.getElementById("filtro-decisiones") as HTMLFormElement;
+  const estado = document.getElementById("decision-estado")!;
+  const items = [...document.querySelectorAll<HTMLElement>("[data-decision]")];
+  const selectores = [...form.querySelectorAll("select")];
+  const aplicar = () => {
+    let cantidad = 0;
+    for (const item of items) {
+      const visible = selectores.every((s) => !s.value || item.dataset[s.dataset.campo!] === s.value);
+      item.hidden = !visible;
+      if (visible) cantidad++;
+    }
+    estado.textContent = `Se muestran ${cantidad.toLocaleString("es-PY")} de ${items.length.toLocaleString("es-PY")} decisiones.`;
+  };
+  form.hidden = false;
+  form.addEventListener("change", aplicar);
+  form.addEventListener("submit", (e) => e.preventDefault());
+  aplicar();
+</script>
+
+<style>
+  .filtro {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--espacio-3);
+    margin: var(--espacio-5) 0 var(--espacio-3);
+  }
+  .filtro[hidden] {
+    display: none;
+  }
+  .filtro p {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+  .decisiones {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .decisiones li {
+    padding: var(--espacio-3) 0;
+    border-top: var(--borde-ancho) solid var(--color-borde);
+  }
+  .decisiones p {
+    margin: 0 0 var(--espacio-1);
+  }
+  .resultado {
+    font-family: var(--fuente-titulo);
+    font-size: var(--tamano-titulo-3);
+  }
+  .titulo {
+    overflow-wrap: anywhere;
+  }
+</style>

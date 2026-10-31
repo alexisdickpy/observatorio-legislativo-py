@@ -481,9 +481,24 @@ const TOTAL_PREGUNTAS = preguntasTest.length;
       Poder Ejecutivo, se indica la iniciativa oficial y los ministerios. El bot guarda solo el número de chat y los avisos elegidos, y el comando
       /baja o bloquear el bot los borra.
     </p>
-    <h2 id="presentacion-nombres">Nombres de partidos y bancadas, y composición</h2>
+    <h2 id={rutas.anclasMetodologia.proyectos}>Listado de proyectos de ley</h2>
     <p>
-      Algunos partidos y bancadas figuran en la API todo en mayúsculas. Para que se lean mejor, el sitio los
+      Reúne todos los proyectos de ley ingresados en el período según el listado general de la API del Congreso,
+      de cualquier iniciativa y estado, más los ingresados antes que se votaron o sancionaron en el período.
+      Título, estado y expediente son los oficiales. Los proyectos sin votación nominal no entran en los cálculos
+      por partido.
+    </p>
+    <h2 id={rutas.anclasMetodologia.decisiones}>Decisiones sin votación nominal</h2>
+    <p>
+      Son trámites de discusión en el plenario sobre proyectos de ley, con un resultado oficial que decide sobre
+      el proyecto, que no tienen una votación nominal publicada. No se cuentan los postergados ni los envíos a
+      comisión. Sin votos individuales no se muestra cómo votó cada legislador o partido, y estas decisiones
+      no entran en ningún cálculo. La lista incluye los proyectos cuyo detalle guarda este sitio, es decir, las
+      leyes, los proyectos con votaciones nominales y los proyectos en trámite, así que puede no ser completa.
+    </p>
+    <h2 id="presentacion-nombres">Nombres de partidos, bancadas y legisladores, y composición</h2>
+    <p>
+      Algunos partidos, bancadas y legisladores figuran en la API todo en mayúsculas. Para que se lean mejor, el sitio los
       muestra con mayúscula inicial, sin cambiar ninguna letra ni agregar acentos. El texto oficial no se
       modifica y es el que está en los datos abiertos que se descargan.
     </p>

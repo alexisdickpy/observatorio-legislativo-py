@@ -5,12 +5,14 @@
 import Base from "../../layouts/Base.astro";
 import ListaVotaciones from "../../components/ListaVotaciones.astro";
 import { periodos } from "../../lib/datos.js";
+import { decisionesSinNominal } from "../../lib/decisiones.js";
 import * as rutas from "../../lib/rutas.js";
 import { CANTIDAD_AJUSTADAS, masAjustadas, votacionesDelPeriodo } from "../../lib/votaciones.js";
 
 const periodo = periodos().find((p) => p.vigente).id;
 const { votaciones, anios, porCamara } = votacionesDelPeriodo(periodo);
 const ajustadas = masAjustadas(periodo);
+const decisiones = decisionesSinNominal(periodo);
 const numero = (n: number) => n.toLocaleString("es-PY");
 const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${n === 1 ? singular : varios}`;
 const porCamaraTexto = (lista: any[]) => lista.map((c) => `${c.camara} ${numero(c.total)}`).join(" · ");
@@ -55,6 +57,11 @@ const porCamaraTexto = (lista: any[]) => lista.map((c) => `${c.camara} ${numero(
       <a href={rutas.coincidencia()}>Coincidencia de votos entre partidos</a>
     </p>
   </div>
+
+  <p class="lectura">
+    <a href={rutas.decisionesSinNominal()}>{numero(decisiones.length)} decisiones sin votación nominal</a>, con su
+    resultado oficial, aparte porque no tienen votos individuales.
+  </p>
 
   <section aria-labelledby="titulo-anios">
     <h2 id="titulo-anios">Votaciones por año</h2>

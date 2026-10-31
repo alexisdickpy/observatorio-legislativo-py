@@ -1,8 +1,7 @@
 ---
 // Tabla de coincidencia de un partido o una bancada con cada uno de los demás grupos: una fila por
-// grupo y una columna por cámara (partidos) o una sola columna (bancadas). Cada celda lleva su
-// numerador y su denominador. Recibe las filas de lib/coincidencia.js. Usa los estilos globales de
-// la tabla comparativa (TablaComparativa).
+// grupo y una columna por cámara (partidos) o una sola columna (bancadas). Cada celda lleva su porcentaje,
+// su numerador y su denominador y una barra proporcional. Recibe las filas de lib/coincidencia.js.
 import { textoDeCoincidencia } from "../lib/coincidencia.js";
 import { clasePartido } from "../lib/partidos.js";
 import { legible } from "../lib/texto.js";
@@ -14,10 +13,11 @@ interface Props {
   filas: { nombre: string; celdas: any[] }[];
 }
 const { titulo, grupo, columnas, filas } = Astro.props;
+const esPartido = grupo === "Partido";
 ---
 
-<div class="tabla-comparativa-desplazable">
-  <table class="tabla-comparativa">
+<div class="coincidencia-contenedor">
+  <table class="tabla-coincidencia">
     <caption class="solo-lectores">{titulo}</caption>
     <thead>
       <tr>
@@ -26,7 +26,82 @@ const { titulo, grupo, columnas, filas } = Astro.props;
       </tr>
     </thead>
     <tbody>
-      {filas.map((f) => <tr data-coincidencia><th scope="row">{grupo === "Partido" && <span class={`pip ${clasePartido(f.nombre)}`}></span>} {legible(f.nombre)}</th>{f.celdas.map((c, n) => <td data-etiqueta={columnas[n]}>{textoDeCoincidencia(c)}</td>)}</tr>)}
+      {filas.map((f) => <tr data-coincidencia class={esPartido ? clasePartido(f.nombre) : undefined}><th scope="row">{esPartido && <span class="pip"></span>} {legible(f.nombre)}</th>{f.celdas.map((c, n) => <td data-etiqueta={columnas[n]}>{c?.suficiente ? <Fragment><span class="solo-lectores">{textoDeCoincidencia(c)}</span><span class="cifras" aria-hidden="true"><strong>{c.porcentajeTexto}</strong> <span class="texto-suave">{c.fraccion}</span></span><span class="pista" aria-hidden="true"><span class="relleno" style={`width:${c.porcentaje * 100}%`}></span></span></Fragment> : <span class="texto-suave">{textoDeCoincidencia(c)}</span>}</td>)}</tr>)}
     </tbody>
   </table>
 </div>
+
+<style is:global>
+  .coincidencia-contenedor {
+    position: relative;
+    margin-bottom: var(--espacio-5);
+  }
+  .tabla-coincidencia {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--tamano-chico);
+  }
+  .tabla-coincidencia th,
+  .tabla-coincidencia td {
+    text-align: left;
+    vertical-align: top;
+    padding: var(--espacio-2) var(--espacio-4) var(--espacio-2) 0;
+    border-bottom: var(--borde-ancho) solid var(--color-borde);
+  }
+  .tabla-coincidencia thead th {
+    border-bottom-color: var(--color-borde-fuerte);
+    color: var(--color-texto-suave);
+  }
+  .tabla-coincidencia tbody th {
+    font-weight: var(--peso-fuerte);
+  }
+  .tabla-coincidencia td {
+    width: 28%;
+    min-width: 11rem;
+  }
+  .tabla-coincidencia .cifras {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--espacio-2);
+    margin-bottom: var(--espacio-1);
+  }
+  .tabla-coincidencia .pista {
+    display: block;
+    height: var(--alto-barra-fina);
+    background: var(--color-superficie);
+  }
+  .tabla-coincidencia .relleno {
+    display: block;
+    height: 100%;
+    background: var(--color-partido, var(--color-borde-fuerte));
+    box-shadow: inset 0 0 0 var(--borde-ancho) var(--borde-partido, transparent);
+  }
+  /* En el celular cada grupo ocupa su bloque, con el nombre de la columna sobre la cifra. 48rem = --punto-quiebre-movil. */
+  @media (max-width: 48rem) {
+    .tabla-coincidencia thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    .tabla-coincidencia tr,
+    .tabla-coincidencia th,
+    .tabla-coincidencia td {
+      display: block;
+      width: auto;
+      min-width: 0;
+      border: 0;
+      padding: var(--espacio-1) 0;
+    }
+    .tabla-coincidencia tbody tr {
+      padding: var(--espacio-2) 0;
+      border-bottom: var(--borde-ancho) solid var(--color-borde);
+    }
+    .tabla-coincidencia td::before {
+      content: attr(data-etiqueta);
+      display: block;
+      color: var(--color-texto-suave);
+    }
+  }
+</style>

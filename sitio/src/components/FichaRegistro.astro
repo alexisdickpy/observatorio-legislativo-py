@@ -1,6 +1,7 @@
 ---
 // Un registro oficial de ley: valores tal como los publica el Congreso, con su iniciativa,
 // autores y votaciones (preparados por lib/ficha.js).
+import { decisionesDeProyecto } from "../lib/decisiones.js";
 import Autores from "./Autores.astro";
 import Votaciones from "./Votaciones.astro";
 
@@ -11,6 +12,7 @@ interface Props {
 }
 const { registro: r, detalle, encabezado } = Astro.props;
 const sinDato = "Sin dato";
+const decisiones = decisionesDeProyecto(r.periodo, r.idProyecto);
 const nivel = encabezado ? 3 : 2;
 const Subtitulo = `h${nivel}`;
 const datos = [
@@ -61,6 +63,16 @@ const datos = [
     }
   </ul>
   <Votaciones votaciones={detalle.votaciones} periodo={detalle.periodo} nivel={nivel} />
+  {
+    decisiones.length > 0 && (
+      <Fragment>
+        <Subtitulo>Decisiones sin votación nominal</Subtitulo>
+        <ul class="chico" data-decisiones-ficha>
+          {decisiones.map((d: any) => <li>{d.fecha} · {d.camara ?? sinDato} · {d.etapa ?? sinDato} · <strong>{d.resultado}</strong></li>)}
+        </ul>
+      </Fragment>
+    )
+  }
 </section>
 
 <style>

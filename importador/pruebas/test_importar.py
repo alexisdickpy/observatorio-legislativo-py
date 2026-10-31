@@ -181,6 +181,14 @@ class Importar(unittest.TestCase):
         self.assertEqual(proyectos[0]["ministerios"], ["MINISTERIO"])
         self.assertNotIn("emailParlamentario", proyectos[0]["autores"][0])
 
+    def test_listado_de_proyectos_de_ley_del_periodo(self):
+        self.correr()
+        proyectos = self.leer("fuente/2023-2028/proyectos.json")
+        self.assertIn(903, [p["idProyecto"] for p in proyectos])
+        for p in proyectos:
+            self.assertEqual(p["tipoProyecto"], "PROYECTO DE LEY")
+            self.assertGreaterEqual(p["_propio"]["fechaIngreso"], "2023-07-01")
+
     def test_decisiones_del_plenario(self):
         self.correr()
         documento = self.leer("fuente/2023-2028/decisiones-plenario.json")

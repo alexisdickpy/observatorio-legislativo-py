@@ -95,7 +95,7 @@ test("el sitemap tiene cada ley y cada legislador una vez, sin la búsqueda", ()
   const { anios, votaciones } = votacionesDelPeriodo("2023-2028");
   const temas = votosPorTema("2023-2028");
   const conLista = conProyectosDeLey();
-  assert.equal(urls.length, leyes().length + legisladores().length + conLista.length + 14 + anios.length + temas.length + votaciones.length);
+  assert.equal(urls.length, leyes().length + legisladores().length + conLista.length + 16 + anios.length + temas.length + votaciones.length);
   for (const p of conLista) assert.ok(urls.includes(rutas.absoluta(rutas.expedientesLegislador(p.slug))), p.slug);
   for (const v of votaciones) assert.ok(urls.includes(rutas.absoluta(rutas.votacion(v.id))), v.id);
   for (const t of temas) assert.ok(urls.includes(rutas.absoluta(t.url)), t.url);

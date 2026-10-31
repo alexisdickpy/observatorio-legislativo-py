@@ -32,7 +32,7 @@ const numero = (n: number) => n.toLocaleString("es-PY");
           <h3>{c.nombre}</h3>
           <Hemiciclo puntos={c.asientos} cifra={String(c.total)} detalle={c.nombre.toUpperCase()} etiqueta={`${c.nombre}: ${c.partidos.map((p: any) => `${p.sigla} ${p.cantidad}`).join(", ")}.`} />
           <BarrasCifras filas={c.partidos.map((p: any) => ({ texto: p.sigla, clase: p.clase, cantidad: p.cantidad }))} />
-          <p class="chico texto-suave nota">En ejercicio según el tipo oficial, contando a los vitalicios, {c.tipos.map((t: any) => `${t.texto} ${t.cantidad}`).join(" · ")}.</p>
+          <p class="chico texto-suave nota">Bancas según el tipo oficial, {c.tipos.map((t: any) => `${t.texto} ${t.cantidad}`).join(" · ")}.{c.vitalicios > 0 && ` Aparte, ${c.vitalicios} senadores vitalicios, sin banca.`}</p>
         </section>
       ))
     }
@@ -78,6 +78,11 @@ const numero = (n: number) => n.toLocaleString("es-PY");
       <BarrasCifras filas={e.resultados} />
     </section>
   </div>
+  <h2>Decisiones sin votación nominal</h2>
+  <p class="lectura">
+    Además, <a href={rutas.decisionesSinNominal()}>{numero(e.decisiones.length)} decisiones del plenario</a> sobre
+    proyectos de ley no tienen votación nominal publicada, así que no entran en las cifras de votos.
+  </p>
   <p class="chico texto-suave">
     <a href={rutas.metodologia()}>Metodología</a> · <a href={rutas.datosAbiertos()}>Datos abiertos</a>
   </p>

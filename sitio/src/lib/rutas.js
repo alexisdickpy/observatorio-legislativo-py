@@ -26,6 +26,7 @@ export const buscar = () => "/buscar/";
 export const datosAbiertos = () => "/datos/";
 export const privacidad = () => "/privacidad/";
 export const estadisticas = () => "/estadisticas/";
+export const proyectos = () => "/proyectos/";
 export const sitemap = () => "/sitemap.xml";
 /** Archivos internos del buscador (Pagefind), que los rastreadores no necesitan leer. */
 export const archivosBuscador = () => "/pagefind/";
@@ -36,6 +37,8 @@ export const metodologia = (seccion) => (seccion ? `/metodologia/#${seccion}` : 
 /** Secciones de la metodología a las que enlazan las fichas. */
 export const anclasMetodologia = {
   categorias: "categorias-de-voto",
+  decisiones: "decisiones-sin-votacion-nominal",
+  proyectos: "proyectos-de-ley",
   votosLegislador: "votos-de-cada-legislador",
   ausencias: "ausencias-en-votaciones-nominales",
   noVotaAbstencion: "no-vota-y-abstenciones",
@@ -96,6 +99,8 @@ export const votaciones = (anio) => (anio ? `/votaciones/${encodeURIComponent(an
 export const votacion = (idVotacion) => `${carpetaVotaciones()}${encodeURIComponent(idVotacion)}/`;
 /** Carpeta de las páginas propias de las votaciones, que marcan «Votaciones» en el menú. */
 export const carpetaVotaciones = () => "/votacion/";
+/** Decisiones del plenario sobre proyectos de ley sin votación nominal publicada. */
+export const decisionesSinNominal = () => "/votaciones/sin-votacion-nominal/";
 /**
  * Imágenes para compartir una votación (scripts/imagenes-votaciones.js), junto a su página. "horizontal"
  * para la vista previa del enlace; "vertical" para estados e historias.
