@@ -6,6 +6,9 @@ import { parametrosLegisladores } from "../lib/rutas.js";
 
 type Opcion = { valor: string; etiqueta: string };
 import { legible } from "../lib/texto.js";
+import { textos } from "../lib/contenido.js";
+const tx = textos.legisladores.filtro;
+const txc = textos.general.comunes;
 
 interface Props {
   entradas: any[];
@@ -14,16 +17,16 @@ interface Props {
 const { entradas, opciones } = Astro.props;
 const p = parametrosLegisladores;
 const selectores = [
-  { campo: "camara", etiqueta: "Cámara", todas: "Las dos", lista: opciones.camaras },
-  { campo: "partido", etiqueta: "Partido", todas: "Todos", lista: opciones.partidos },
-  { campo: "bancada", etiqueta: "Bancada", todas: "Todas", lista: opciones.bancadas },
-  { campo: "departamento", etiqueta: "Departamento", todas: "Todos", lista: opciones.departamentos },
+  { campo: "camara", etiqueta: txc.camara, todas: txc.lasDos, lista: opciones.camaras },
+  { campo: "partido", etiqueta: txc.partido, todas: txc.todos, lista: opciones.partidos },
+  { campo: "bancada", etiqueta: txc.bancada, todas: tx.todas, lista: opciones.bancadas },
+  { campo: "departamento", etiqueta: txc.departamento, todas: txc.todos, lista: opciones.departamentos },
 ];
 ---
 
 <form class="filtro" id="filtro-legisladores" role="search" hidden>
   <div class="campo texto">
-    <label for="filtro-texto">Nombre</label>
+    <label for="filtro-texto">{txc.nombre}</label>
     <input type="search" id="filtro-texto" name={p.texto} autocomplete="off" />
   </div>
   {
@@ -38,7 +41,7 @@ const selectores = [
     ))
   }
   <div class="campo acciones">
-    <button type="reset">Limpiar</button>
+    <button type="reset">{tx.limpiar}</button>
   </div>
   <p class="resultado" id="filtro-resultado" aria-live="polite"></p>
 </form>
@@ -48,6 +51,9 @@ const selectores = [
 <script>
   import { CAMPOS, escribirFiltros, filtrar, leerFiltros } from "../lib/filtroLegisladores.js";
   import { parametrosLegisladores as nombres } from "../lib/rutas.js";
+  import interaccion from "../contenido/interaccion.json";
+  import { fill } from "../lib/rellenar.js";
+  const ti = interaccion.filtroLegisladores;
 
   const form = document.getElementById("filtro-legisladores") as HTMLFormElement;
   const resultado = document.getElementById("filtro-resultado")!;
@@ -62,12 +68,12 @@ const selectores = [
     for (const s of secciones) s.hidden = !s.querySelector("tr[data-slug]:not([hidden])");
     resultado.textContent =
       visibles.size === total
-        ? `Se muestran los ${total} legisladores.`
+        ? fill(ti.todos, { total })
         : visibles.size === 0
-          ? "Ningún legislador cumple estos filtros."
+          ? ti.ninguno
           : visibles.size === 1
-            ? `Se muestra 1 de ${total} legisladores.`
-            : `Se muestran ${visibles.size} de ${total} legisladores.`;
+            ? fill(ti.uno, { total })
+            : fill(ti.varios, { visibles: visibles.size, total });
     if (actualizarDireccion) {
       const consulta = escribirFiltros(filtros, nombres).toString();
       history.replaceState(null, "", consulta ? `?${consulta}` : location.pathname);

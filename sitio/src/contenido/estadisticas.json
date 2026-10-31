@@ -1,0 +1,29 @@
+{
+  "pagina": {
+    "estadisticas": "Estadísticas",
+    "cifrasGeneralesDelCongresoNacional": "Cifras generales del Congreso Nacional del Paraguay en el período legislativo {periodo}: composición de cada cámara, leyes sancionadas y votaciones nominales.",
+    "cifrasGeneralesDelPeriodoLegislativo": "Cifras generales del período legislativo {periodo}, contadas por este sitio a partir de los datos abiertos del Congreso, con {leyes} leyes sancionadas y {votaciones} votaciones nominales sobre proyectos de ley. Se actualizan solas con cada sincronización de los datos.",
+    "composicionDeCadaCamara": "Composición de cada cámara",
+    "bancasSegunElTipoOficial": "Bancas según el tipo oficial,",
+    "aparteSenadoresVitaliciosSinBanca": " Aparte, {vitalicios} senadores vitalicios, sin banca.",
+    "porAnoDeSancion": "Por año de sanción",
+    "porIniciativa": "Por iniciativa",
+    "segunElDatoOficialDe": "Según el dato oficial de cada proyecto.",
+    "porPartidoDeSusAutores": "Por partido de sus autores",
+    "unaLeyCuentaUnaVez": "Una ley cuenta una vez por cada partido con algún autor, así que la suma pasa del total.",
+    "legisladoresConMasLeyesDe": "Legisladores con más leyes de su autoría",
+    "losPrimerosMuchasLeyesTienen": "Los {cantidad} primeros. Muchas leyes tienen varios autores. Más leyes no significa mejor ni peor trabajo.",
+    "votacionesNominalesSobreProyectosDe": "Votaciones nominales sobre proyectos de ley",
+    "porAnoYCamara": "Por año y cámara",
+    "votacionesNominalesPorAnoY": "Votaciones nominales por año y cámara",
+    "ano": "Año",
+    "senadores": "Senadores",
+    "diputados": "Diputados",
+    "porResultadoOficial": "Por resultado oficial",
+    "ademasDecisionesDelPlenarioSobre": "Además, [{decisiones} decisiones del plenario]({url1}) sobre proyectos de ley no tienen votación nominal publicada, así que no entran en las cifras de votos.",
+    "metodologiaDatosAbiertos": "[Metodología]({url1}) · [Datos abiertos]({url2})"
+  },
+  "textos": {
+    "otrosResultados": "Otros resultados"
+  }
+}

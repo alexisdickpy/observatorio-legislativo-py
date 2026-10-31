@@ -7,6 +7,7 @@ import { estado } from "../../src/lib/datos.js";
 import { detalleDeVotacion } from "../../src/lib/ficha.js";
 import * as rutas from "../../src/lib/rutas.js";
 import { votacionesDelPeriodo } from "../../src/lib/votaciones.js";
+import { textos } from "../textos.js";
 
 const PERIODO = "2023-2028";
 const { votaciones } = votacionesDelPeriodo(PERIODO);
@@ -44,7 +45,7 @@ test("dos imágenes por votación, con la cita de la fuente y la fecha de actual
   assert.deepEqual(Object.keys(c.imagenes), Object.keys(FORMATOS));
   assert.equal(c.vistaPrevia.url, rutas.absoluta(rutas.imagenVotacion(conLey.id, "horizontal")));
   assert.deepEqual([c.vistaPrevia.ancho, c.vistaPrevia.alto], [1200, 630]);
-  assert.ok(c.dibujo.pie.startsWith(estado().fuente.cita));
+  assert.ok(c.dibujo.pie.startsWith(textos.general.sitio.cita));
   assert.ok(c.dibujo.pie.includes("Actualizado el"));
   assert.equal(c.dibujo.resultado, conLey.resultado);
   assert.deepEqual(c.dibujo.totales.map((t) => t.cantidad), conLey.totales.map((t) => t.cantidad));

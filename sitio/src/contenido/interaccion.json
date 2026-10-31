@@ -1,0 +1,81 @@
+{
+  "ordenLeyes": {
+    "sancionMasRecientePrimero": "Sanción más reciente primero",
+    "sancionMasAntiguaPrimero": "Sanción más antigua primero",
+    "numeroDeMayorAMenor": "Número de mayor a menor",
+    "numeroDeMenorAMayor": "Número de menor a mayor"
+  },
+  "filtroVotos": {
+    "seMuestraLaUnicaVotacion": "Se muestra la única votación.",
+    "ningunaVotacionCumpleEsteFiltro": "Ninguna votación cumple este filtro.",
+    "todas": "Se muestran las {total} votaciones.",
+    "una": "Se muestra 1 de {total} votaciones.",
+    "varias": "Se muestran {visibles} de {total} votaciones."
+  },
+  "respuestasTest": {
+    "aFavor": "A favor",
+    "enContra": "En contra",
+    "sinPosicion": "Sin posición"
+  },
+  "ordenComparativa": {
+    "nombrePorApellido": "Nombre (por apellido)",
+    "ausenciasEnVotacionesNominalesDe": "Ausencias en votaciones nominales (de mayor a menor %)",
+    "noVotaDeMayorA": "NO VOTA (de mayor a menor %)",
+    "abstencionBlancoDeMayorA": "ABSTENCIÓN/BLANCO (de mayor a menor %)",
+    "votosDistintosALaMayoria": "Votos distintos a la mayoría de su bancada (de mayor a menor %)",
+    "votosDistintosALaMayoria2": "Votos distintos a la mayoría de su partido (de mayor a menor %)"
+  },
+  "compartir": {
+    "enlaceCopiado": "Enlace copiado",
+    "noSePudoCopiar": "No se pudo copiar el enlace"
+  },
+  "filtroExpedientes": {
+    "resultado": "Se muestran {visibles} de {total} proyectos de ley."
+  },
+  "filtroLegisladores": {
+    "todos": "Se muestran los {total} legisladores.",
+    "ninguno": "Ningún legislador cumple estos filtros.",
+    "uno": "Se muestra 1 de {total} legisladores.",
+    "varios": "Se muestran {visibles} de {total} legisladores."
+  },
+  "filtroLeyes": {
+    "todas": "Se muestran las {total} leyes.",
+    "ninguna": "Ninguna ley cumple estos filtros.",
+    "una": "Se muestra 1 de {total} leyes.",
+    "varias": "Se muestran {visibles} de {total} leyes."
+  },
+  "paginador": {
+    "paginas": "Páginas de la lista",
+    "anterior": "Página anterior",
+    "pagina": "Página {n}",
+    "siguiente": "Página siguiente"
+  },
+  "test": {
+    "posicionAFavor": "a favor",
+    "posicionEnContra": "en contra",
+    "sinMayoria": "sin mayoría a favor o en contra",
+    "distintaPorCamara": "distinta en cada cámara",
+    "nadaParaComparar": "No respondiste ninguna pregunta A favor o En contra, así que no hay nada para comparar.",
+    "resultadoBasado": "Resultado basado en las {respondidas} preguntas que respondiste A favor o En contra.",
+    "coincidenDe": "{coinciden} de {comparadas}",
+    "respondiste": "Respondiste {respuesta}.",
+    "sinResponder": "Sin responder.",
+    "leyNumero": "Ley N° {numero}",
+    "votacionEn": "Votación, {camara}, {fecha}",
+    "sinFecha": "sin fecha",
+    "mayoriaDeCada": "Mayoría de cada partido. {posiciones}."
+  },
+  "buscar": {
+    "buscando": "Buscando…",
+    "sinResultados": "No se encontraron leyes.",
+    "unResultado": "1 resultado.",
+    "variosResultados": "{cantidad} resultados.",
+    "noDisponible": "La búsqueda no está disponible en este momento."
+  },
+  "proyectos": {
+    "resultado": "Se muestran {visibles} de {total} proyectos."
+  },
+  "sinNominal": {
+    "resultado": "Se muestran {visibles} de {total} decisiones."
+  }
+}

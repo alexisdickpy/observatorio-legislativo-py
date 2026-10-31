@@ -5,11 +5,13 @@
 // posiciones de lib/ficha.js (posicionesDePartidos). Los colores de cada categoría están en BarraVotos (tokens.css).
 // Etiquetas en una sola línea y con elementos cortos (<i> el cuadro, <b> la sigla) por el peso de la
 // página de votaciones de un año: con compressHTML desactivado, la sangría se copia en cada una.
+import { textos, fill } from "../lib/contenido.js";
+const tx = textos.votaciones.posicionPartidos;
 interface Props {
   partidos: any[];
 }
 const { partidos } = Astro.props;
-const detalle = (p: any) => (p.posicion ? `${p.partido}, ${p.cantidad} de ${p.votantes}` : `${p.partido}, ${p.votantes} de ${p.miembros} con voto emitido`);
+const detalle = (p: any) => (p.posicion ? fill(tx.de, { partido: p.partido, cantidad: p.cantidad, votantes: p.votantes }) : fill(tx.deConVotoEmitido, { partido: p.partido, votantes: p.votantes, miembros: p.miembros }));
 ---
 
 <ul class="posicion-partidos chico">{partidos.map((p) => <li title={detalle(p)}><u class={p.clasePartido}></u><b>{p.sigla}</b> <i class={p.clase}></i> {p.texto}</li>)}</ul>

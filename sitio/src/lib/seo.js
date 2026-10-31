@@ -11,12 +11,14 @@ import { esPreliminar } from "./testAfinidad.js";
 import { recortar } from "./texto.js";
 import { votacionesDelPeriodo } from "./votaciones.js";
 import { votosPorTema } from "./votosPorTema.js";
+import { textos, fill } from "./contenido.js";
+const tx = textos.general.buscadores;
 
-export const nombreSitio = "Observatorio Legislativo";
+export const nombreSitio = textos.general.sitio.nombre;
 const LARGO_TEMA = 60;
 const LARGO_DESCRIPCION = 300;
 const congreso = { "@type": "Organization", name: "Congreso Nacional del Paraguay" };
-const paraguay = { "@type": "Country", name: "Paraguay" };
+const paraguay = { "@type": "Country", name: tx.paraguay };
 const licencia = "https://creativecommons.org/licenses/by/4.0/";
 const TIPOS_MIME = { CSV: "text/csv", JSON: "application/json", MD: "text/markdown" };
 
@@ -34,27 +36,30 @@ export function temaDeLey(titulo, largo = LARGO_TEMA) {
 
 export function tituloDeLey(ley) {
   const tema = temaDeLey(ley.titulos[0]);
-  return tema ? `Ley ${ley.numero} — ${tema}` : `Ley ${ley.numero}`;
+  return tema ? fill(tx.leyConTema, { numero: ley.numero, tema }) : fill(tx.ley, { numero: ley.numero });
 }
 
 export function descripcionDeLey(ley) {
-  const sancion = ley.fechasSancion[0] ? `, sancionada el ${ley.fechasSancion[0]}` : "";
-  return recortar(`Ley ${ley.numero} del Paraguay${sancion}. ${ley.titulos[0] ?? ""}`, LARGO_DESCRIPCION);
+  const sancion = ley.fechasSancion[0] ? fill(tx.sancionadaEl, { fecha: ley.fechasSancion[0] }) : "";
+  return recortar(fill(tx.descripcionLey, { numero: ley.numero, sancion, titulo: ley.titulos[0] ?? "" }), LARGO_DESCRIPCION);
 }
 
 /** Descripción de la ficha de un legislador, con los datos del período más reciente (ficha().bloques[0]). */
 export function descripcionDeLegislador(f, sinDato) {
   const b = f.bloques[0];
-  return (
-    `Ficha de ${f.nombre ?? sinDato} en la ${b.camara ?? sinDato}, período legislativo ${b.periodo} ` +
-    `(${b.partido ?? sinDato}). Sus votos en ${b.votos.total} votaciones nominales sobre proyectos de ley y ` +
-    `${b.autoria.length} leyes de su autoría.`
-  );
+  return fill(tx.descripcionLegislador, {
+    nombre: f.nombre ?? sinDato,
+    camara: b.camara ?? sinDato,
+    periodo: b.periodo,
+    partido: b.partido ?? sinDato,
+    votos: b.votos.total,
+    leyes: b.autoria.length,
+  });
 }
 
 /** Imagen de la vista previa al compartir. La foto oficial en las fichas de legisladores; si no, la general. */
 export function imagenDe(foto, nombre) {
-  if (foto) return { url: rutas.absoluta(foto), ancho: 320, alto: 320, alt: `Foto oficial de ${nombre}`, grande: false };
+  if (foto) return { url: rutas.absoluta(foto), ancho: 320, alto: 320, alt: fill(tx.fotoOficial, { nombre }), grande: false };
   return { url: rutas.absoluta(rutas.imagenCompartir()), ancho: 1200, alto: 630, alt: nombreSitio, grande: true };
 }
 
@@ -64,12 +69,12 @@ export function datosDeLey(ley) {
   return {
     "@context": "https://schema.org",
     "@type": "Legislation",
-    name: ley.titulos[0] ?? `Ley ${ley.numero}`,
-    legislationIdentifier: `Ley N° ${r.numeroOficial}`,
+    name: ley.titulos[0] ?? fill(tx.ley, { numero: ley.numero }),
+    legislationIdentifier: fill(tx.leyN, { numeroOficial: r.numeroOficial }),
     ...(ley.fechaOrden && { legislationDate: ley.fechaOrden }),
     legislationJurisdiction: paraguay,
     legislationPassedBy: congreso,
-    legislationType: "Ley",
+    legislationType: tx.ley2,
     inLanguage: "es",
     url: rutas.absoluta(ley.url),
     ...(oficiales.length && { sameAs: oficiales }),
@@ -112,18 +117,18 @@ export function datosAbiertos(descripcion) {
   return {
     "@context": "https://schema.org",
     "@type": "Dataset",
-    name: `Datos del ${congreso.name} (${nombreSitio})`,
+    name: fill(tx.datosDel, { name: congreso.name, nombreSitio: nombreSitio }),
     description: descripcion,
     url: rutas.absoluta(rutas.datosAbiertos()),
     license: licencia,
     isAccessibleForFree: true,
     inLanguage: "es",
-    creator: { "@type": "Person", name: "Alexis Dick" },
+    creator: { "@type": "Person", name: tx.alexisDick },
     isBasedOn: e.fuente.url,
-    citation: e.fuente.cita,
+    citation: textos.general.sitio.cita,
     dateModified: e.ultimaModificacion,
     // Google solo acepta Place (no Country) en la cobertura de un Dataset.
-    spatialCoverage: { "@type": "Place", name: "Paraguay" },
+    spatialCoverage: { "@type": "Place", name: tx.paraguay },
     ...(inicioPeriodos && { temporalCoverage: `${inicioPeriodos}/..` }),
     keywords: ["leyes", "Congreso Nacional", "Paraguay", "votaciones nominales", "legisladores"],
     distribution: archivos.map((a) => ({

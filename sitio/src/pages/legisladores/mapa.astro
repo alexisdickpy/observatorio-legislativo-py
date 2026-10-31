@@ -5,28 +5,23 @@ import MapaDepartamentos from "../../components/MapaDepartamentos.astro";
 import { periodos } from "../../lib/datos.js";
 import { mapaDeDiputados } from "../../lib/mapa.js";
 import * as rutas from "../../lib/rutas.js";
+import { textos, fill, md, crudo } from "../../lib/contenido.js";
+const tx = textos.legisladores.mapa;
 
 const periodo = periodos().find((p) => p.vigente).id;
 const mapa = mapaDeDiputados(periodo);
 ---
 
 <Base
-  titulo="Mapa de diputados por departamento"
-  descripcion={`Los ${mapa.total} diputados en ejercicio del Congreso Nacional del Paraguay en el período legislativo ${periodo}, por departamento, con su partido y el enlace a su ficha.`}
+  titulo={tx.mapaDeDiputadosPorDepartamento}
+  descripcion={fill(tx.losDiputadosEnEjercicioDel, { total: mapa.total, periodo: periodo })}
 >
-  <h1>Mapa de diputados por departamento</h1>
+  <h1>{tx.mapaDeDiputadosPorDepartamento}</h1>
   <div class="lectura">
     <p>
-      {mapa.total} diputados en ejercicio en el período legislativo {periodo}, según el departamento que
-      registra la API para cada uno. Cada nombre lleva a su ficha.
+      {fill(tx.diputadosEnEjercicioEnEl, { total: mapa.total, periodo: periodo })}
     </p>
-    <p class="chico texto-suave">
-      Los senadores no figuran porque se eligen en una circunscripción nacional. Tampoco los
-      {mapa.diputadosQueNoEjercen} diputados del período que ya no ejercen, que están en
-      <a href={rutas.legisladores()}>Legisladores</a>. Contorno de los departamentos de
-      <a href={mapa.urlFuente}>Natural Earth</a> ({mapa.licencia.toLowerCase()}), simplificado por este proyecto.
-      <a href={rutas.metodologia(rutas.anclasMetodologia.mapa)}>Cómo se arma el mapa</a>.
-    </p>
+    <p class="chico texto-suave" set:html={md(tx.losSenadoresNoFiguranPorque, { diputadosQueNoEjercen: mapa.diputadosQueNoEjercen, url1: crudo(rutas.legisladores()), url2: crudo(mapa.urlFuente), licencia: mapa.licencia.toLowerCase(), url3: crudo(rutas.metodologia(rutas.anclasMetodologia.mapa)) })} />
   </div>
   <MapaDepartamentos mapa={mapa} />
 </Base>

@@ -7,6 +7,9 @@ import { leyes, opcionesDeFiltro } from "../../lib/catalogo.js";
 import { filtrar, ORDEN_PREDETERMINADO } from "../../lib/filtro.js";
 import { periodos } from "../../lib/datos.js";
 import * as rutas from "../../lib/rutas.js";
+import { textos, fill, md, crudo } from "../../lib/contenido.js";
+const tx = textos.leyes.catalogo;
+const txc = textos.general.comunes;
 
 const lista = leyes();
 // Orden inicial: el mismo que aplica el filtro sin parámetros, para que sin JavaScript se vea igual.
@@ -20,16 +23,11 @@ const nombresPeriodos = periodos().map((p) => p.id).join(", ");
 ---
 
 <Base
-  titulo="Leyes"
-  descripcion={`Las ${lista.length} leyes sancionadas por el Congreso Nacional del Paraguay en el período legislativo ${nombresPeriodos}, con número, título, fechas y cámara de origen.`}
+  titulo={tx.leyes}
+  descripcion={fill(tx.lasLeyesSancionadasPorEl, { lista: lista.length, nombresPeriodos: nombresPeriodos })}
 >
-  <h1>Leyes sancionadas</h1>
-  <p class="lectura">
-    {lista.length} leyes del período legislativo {nombresPeriodos}. El título y las fechas se
-    muestran tal como los publica el Congreso. Cuando el Congreso publica más de un registro con
-    el mismo número de ley, se muestran todos sus títulos. El tema es una clasificación del
-    Observatorio, no del Congreso. <a href={rutas.metodologia(rutas.anclasMetodologia.temas)}>Cómo se clasifica</a>
-  </p>
+  <h1>{txc.leyesSancionadas}</h1>
+  <p class="lectura" set:html={md(tx.leyesDelPeriodoLegislativoEl, { lista: lista.length, nombresPeriodos: nombresPeriodos, url1: crudo(rutas.metodologia(rutas.anclasMetodologia.temas)) })} />
   <CuadroTemas periodo={periodos().find((p) => p.vigente).id} />
   <FiltroLeyes entradas={ordenadas.map((l) => l.filtro)} anios={anios} camaras={camaras} temas={temas} idTabla="tabla-leyes" />
   <div id="tabla-leyes">

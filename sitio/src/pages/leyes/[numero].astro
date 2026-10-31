@@ -7,6 +7,8 @@ import { leyes } from "../../lib/catalogo.js";
 import { detalleDeRegistro } from "../../lib/ficha.js";
 import * as rutas from "../../lib/rutas.js";
 import { datosDeLey, descripcionDeLey, tituloDeLey } from "../../lib/seo.js";
+import { textos, fill, md, crudo } from "../../lib/contenido.js";
+const tx = textos.leyes.ficha;
 
 export function getStaticPaths() {
   return leyes().map((ley) => ({ params: { numero: ley.numero }, props: { ley } }));
@@ -16,16 +18,15 @@ const { ley } = Astro.props;
 ---
 
 <Base titulo={tituloDeLey(ley)} descripcion={descripcionDeLey(ley)} datos={datosDeLey(ley)}>
-  <p class="chico"><a href={rutas.leyes()}>← Todas las leyes</a></p>
+  <p class="chico" set:html={md(tx.todasLasLeyes, { url1: crudo(rutas.leyes()) })} />
   <article data-pagefind-body>
-    <h1 data-pagefind-meta="title">Ley {ley.numero}</h1>
+    <h1 data-pagefind-meta="title">{fill(tx.ley, { numero: ley.numero })}</h1>
     <span data-pagefind-filter="año" hidden>{ley.anio}</span>
     <TemasLey clasificacion={ley.temas} />
     {
       ley.registros.length > 1 && (
         <p class="aviso lectura">
-          El Congreso publica {ley.registros.length} registros con este número de ley. Se muestran
-          todos, tal como figuran en la fuente.
+          {fill(tx.elCongresoPublicaRegistrosCon, { registros: ley.registros.length })}
         </p>
       )
     }
@@ -34,7 +35,7 @@ const { ley } = Astro.props;
         <FichaRegistro
           registro={registro}
           detalle={detalleDeRegistro(registro)}
-          encabezado={ley.registros.length > 1 ? `Registro ${i + 1} de ${ley.registros.length}` : null}
+          encabezado={ley.registros.length > 1 ? fill(tx.registroDe, { valor: i + 1, registros: ley.registros.length }) : null}
         />
       ))
     }

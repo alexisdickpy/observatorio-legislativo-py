@@ -9,6 +9,7 @@
 // - Las fechas ISO de _propio se usan solo para ordenar y para el año del filtro: se toma la
 //   fecha de sanción más antigua del grupo.
 
+import { textos } from "./contenido.js";
 import { registrosDeLey, estado } from "./datos.js";
 import * as rutas from "./rutas.js";
 import { PENDIENTE, TEXTO_PENDIENTE, temas as temasDelSitio, temasDeProyectos } from "./temas.js";
@@ -112,4 +113,4 @@ export function actualizacion() {
   return { iso, texto };
 }
 
-export const cita = () => estado().fuente;
+export const cita = () => ({ ...estado().fuente, cita: textos.general.sitio.cita });

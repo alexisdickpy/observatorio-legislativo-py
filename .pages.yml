@@ -1,0 +1,3005 @@
+# Configuración de Pages CMS (docs/edicion-de-textos.md). Los datos del Congreso (datos/fuente/) no están
+# aquí a propósito: el importador pisaría cualquier cambio. Cada campo de un archivo debe figurar aquí, y
+# pruebas/unidad/contenido.test.js lo comprueba.
+settings:
+  hide: true
+  content:
+    merge: true
+  commit:
+    templates:
+      update: "Editar {path} desde Pages CMS"
+
+content:
+  - name: general
+    label: "General, pie y menú"
+    type: file
+    path: sitio/src/contenido/general.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: sitio
+        label: "Nombre del sitio y cita de la fuente"
+        type: object
+        fields:
+          - name: nombre
+            label: "Observatorio Legislativo"
+            type: string
+          - name: cita
+            label: "Origen de los datos: Datos Abiertos Poder Legislativo"
+            type: string
+      - name: comunes
+        label: "Palabras que se repiten en todo el sitio"
+        type: object
+        fields:
+          - name: bancada
+            label: "Bancada"
+            type: string
+          - name: coincidenciaDeVotosEntrePartidos
+            label: "Coincidencia de votos entre partidos y bancadas"
+            type: string
+          - name: camara
+            label: "Cámara"
+            type: string
+          - name: camaraDeOrigen
+            label: "Cámara de origen"
+            type: string
+          - name: comoSeCalcula
+            label: "Cómo se calcula"
+            type: string
+          - name: datosAbiertos
+            label: "Datos abiertos"
+            type: string
+          - name: decisionesSinVotacionNominal
+            label: "Decisiones sin votación nominal"
+            type: string
+          - name: departamento
+            label: "Departamento"
+            type: string
+          - name: descargarLaTablaCsv
+            label: "Descargar la tabla (CSV)"
+            type: string
+          - name: estado
+            label: "Estado"
+            type: string
+          - name: estadoDelProyecto
+            label: "Estado del proyecto"
+            type: string
+          - name: estadoOficialDelProyecto
+            label: "Estado oficial del proyecto"
+            type: string
+          - name: expediente
+            label: "Expediente"
+            type: string
+          - name: fecha
+            label: "Fecha"
+            type: string
+          - name: lasDos
+            label: "Las dos"
+            type: string
+          - name: leyesSancionadas
+            label: "Leyes sancionadas"
+            type: string
+          - name: nombre
+            label: "Nombre"
+            type: string
+          - name: partido
+            label: "Partido"
+            type: string
+          - name: porPartido
+            label: "Por partido"
+            type: string
+          - name: sinDato
+            label: "Sin dato"
+            type: string
+          - name: sinEstadoOficial
+            label: "Sin estado oficial"
+            type: string
+          - name: sinPartidoRegistrado
+            label: "Sin partido registrado"
+            type: string
+          - name: testDeAfinidad
+            label: "Test de afinidad"
+            type: string
+          - name: todos
+            label: "Todos"
+            type: string
+          - name: votacionEnSilpy
+            label: "Votación en SILpy"
+            type: string
+          - name: votacionesNominales
+            label: "votaciones nominales"
+            type: string
+          - name: votacion
+            label: "votación"
+            type: string
+          - name: votacionNominal
+            label: "votación nominal"
+            type: string
+          - name: expedienteNumero
+            label: "Expediente {expediente}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {expediente}."
+          - name: sinDatoMinuscula
+            label: "sin dato"
+            type: string
+      - name: pie
+        label: "Pie de página"
+        type: object
+        fields:
+          - name: metodologia
+            label: "Metodología"
+            type: string
+          - name: privacidadYAvisoLegal
+            label: "Privacidad y aviso legal"
+            type: string
+          - name: avisosPorTelegram
+            label: "Avisos por Telegram"
+            type: string
+          - name: codigoFuente
+            label: "Código fuente"
+            type: string
+          - name: actualizadoEl
+            label: "{cita}. Actualizado el {fecha}."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {cita}, {fecha}."
+          - name: losDatosProvienenDeLa
+            label: "Los datos provienen de la API de Datos Abiertos del Congreso…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: pieDePagina
+            label: "Pie de página"
+            type: string
+          - name: datosConLicenciaCodigoCon
+            label: "Datos con licencia {licencia} · Código con licencia AGPL-3.0"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {licencia}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: desarrolladoPorAlexisDickCon
+            label: "Desarrollado por Alexis Dick con asistencia de IA."
+            type: string
+      - name: encabezado
+        label: "Encabezado"
+        type: object
+        fields:
+          - name: principal
+            label: "Principal"
+            type: string
+          - name: modoClaro
+            label: "Modo claro"
+            type: string
+      - name: estructura
+        label: "Estructura de cada página"
+        type: object
+        fields:
+          - name: saltarAlContenido
+            label: "Saltar al contenido"
+            type: string
+      - name: menu
+        label: "Menú principal y vistas de análisis"
+        type: object
+        fields:
+          - name: votaciones
+            label: "Votaciones"
+            type: string
+          - name: votacionesYPosicionDeCada
+            label: "Votaciones y posición de cada partido"
+            type: string
+          - name: lasVotacionesNominalesSobreProyectos
+            label: "Las votaciones nominales sobre proyectos de ley con su resultado…"
+            type: text
+          - name: partidos
+            label: "Partidos"
+            type: string
+          - name: queTanSeguidoVotaronIgual
+            label: "Qué tan seguido votaron igual los partidos y las bancadas de cada…"
+            type: text
+          - name: temas
+            label: "Temas"
+            type: string
+          - name: votosDePartidosPorTema
+            label: "Votos de partidos por tema"
+            type: string
+          - name: comoVotaronLosLegisladoresDe
+            label: "Cómo votaron los legisladores de cada partido en las votaciones…"
+            type: text
+          - name: rankings
+            label: "Rankings"
+            type: string
+          - name: masRebeldes
+            label: "Más «rebeldes»"
+            type: string
+          - name: legisladoresQueMasVecesVotaron
+            label: "Legisladores que más veces votaron distinto a la mayoría de su…"
+            type: text
+          - name: leyes
+            label: "Leyes"
+            type: string
+          - name: proyectos
+            label: "Proyectos"
+            type: string
+          - name: legisladores
+            label: "Legisladores"
+            type: string
+          - name: estadisticas
+            label: "Estadísticas"
+            type: string
+          - name: botDeTelegram
+            label: "Bot de Telegram"
+            type: string
+          - name: buscarLeyes
+            label: "Buscar leyes"
+            type: string
+      - name: buscadores
+        label: "Textos para buscadores y vistas previas"
+        type: object
+        fields:
+          - name: paraguay
+            label: "Paraguay"
+            type: string
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: leyN
+            label: "Ley N° {numeroOficial}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numeroOficial}."
+          - name: ley2
+            label: "Ley"
+            type: string
+          - name: datosDel
+            label: "Datos del {name} ({nombreSitio})"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {name}, {nombreSitio}."
+          - name: alexisDick
+            label: "Alexis Dick"
+            type: string
+          - name: sancionadaEl
+            label: ", sancionada el {fecha}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {fecha}."
+          - name: descripcionLey
+            label: "Ley {numero} del Paraguay{sancion}. {titulo}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}, {sancion}, {titulo}."
+          - name: descripcionLegislador
+            label: "Ficha de {nombre} en la {camara}, período legislativo {periodo}…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {nombre}, {camara}, {periodo}, {partido}, {votos}, {leyes}."
+          - name: fotoOficial
+            label: "Foto oficial de {nombre}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {nombre}."
+          - name: leyConTema
+            label: "Ley {numero} — {tema}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}, {tema}."
+  - name: portada
+    label: "Portada"
+    type: file
+    path: sitio/src/contenido/portada.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: presentacion
+        label: "Inicio de la portada"
+        type: object
+        fields:
+          - name: leyesSancionadasPorElCongreso
+            label: "Leyes sancionadas por el Congreso Nacional del Paraguay en el…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {id}."
+          - name: queVotaElCongresoDel
+            label: "Qué vota el Congreso del Paraguay"
+            type: string
+          - name: leyesSancionadasPorElCongreso2
+            label: "Leyes sancionadas por el Congreso Nacional del Paraguay en el…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {id}."
+          - name: seccionesDelSitio
+            label: "Secciones del sitio"
+            type: string
+          - name: verLasLeyesDelPeriodo
+            label: "Ver las {cantidad} leyes del período"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {cantidad}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: verLosLegisladoresSusVotos
+            label: "Ver los legisladores, sus votos y sus leyes"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: verElMapaDeDiputados
+            label: "Ver el mapa de diputados por departamento"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: buscarUnaLey
+            label: "Buscar una ley"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: descargarLosDatosAbiertos
+            label: "Descargar los datos abiertos"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: preguntasSobreLeyesVotadasEn
+            label: "{preguntas} preguntas sobre leyes votadas en el período. Al final…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {preguntas}."
+          - name: hacerElTest
+            label: "Hacer el test"
+            type: string
+          - name: avisosPorTelegram
+            label: "Avisos por Telegram"
+            type: string
+          - name: unBotTeAvisaDe
+            label: "Un bot te avisa de las novedades del Congreso. Eliges qué avisos…"
+            type: text
+          - name: abrirElBot
+            label: "Abrir el bot"
+            type: string
+          - name: diputadosPorDepartamento
+            label: "Diputados por departamento"
+            type: string
+          - name: diputadosEnEjercicioElegiUn
+            label: "{total} diputados en ejercicio. Elegí un departamento para ver…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+      - name: analisis
+        label: "Apartado de análisis"
+        type: object
+        fields:
+          - name: analisis
+            label: "Análisis"
+            type: string
+          - name: compararCon
+            label: "Comparar con"
+            type: string
+          - name: sobreProyectosDeLey
+            label: "sobre proyectos de ley."
+            type: string
+          - name: noTieneVotacionesEnComun
+            label: "{referencia} no tiene votaciones en común con otros partidos en…"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {referencia}."
+          - name: noTieneLegisladoresEnEsta
+            label: "{nombre} no tiene legisladores en esta cámara."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {nombre}."
+          - name: entreTodosLosParesMas
+            label: "Entre todos los pares, más coincidencia entre {valor} y {valor2}…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {valor}, {valor2}, {porcentajeTexto}, {valor3}, {valor4}, {porcentajeTexto2}."
+          - name: ver
+            label: "Ver {titulo}"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {titulo}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: verTodasLasVotacionesY
+            label: "Ver todas las votaciones y las más ajustadas"
+            type: string
+          - name: ver2
+            label: "Ver {titulo}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {titulo}."
+      - name: composicion
+        label: "Composición de cada cámara"
+        type: object
+        fields:
+          - name: composicionActual
+            label: "Composición actual"
+            type: string
+          - name: elegirCamara
+            label: "Elegir cámara"
+            type: string
+          - name: laListaOficialMarcaA
+            label: "La lista oficial marca a {total} como vigentes y la cámara tiene…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}, {bancas}."
+          - name: unPuntoPorBancaAgrupados
+            label: "Un punto por banca, agrupados por partido, sin los senadores…"
+            type: text
+      - name: ultimaVotacion
+        label: "Última votación"
+        type: object
+        fields:
+          - name: ultimaVotacionNominal
+            label: "Última votación nominal ·"
+            type: string
+          - name: expediente
+            label: "· Expediente"
+            type: string
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: unPuntoPorLegisladorAgrupados
+            label: "Un punto por legislador, agrupados por voto. No es la ubicación…"
+            type: text
+          - name: notaDelObservatorio
+            label: "Nota del Observatorio."
+            type: string
+          - name: losTotalesPublicadosNoCoinciden
+            label: "Los totales publicados no coinciden con el recuento de los votos…"
+            type: string
+          - name: votoDeCadaPartidoEn
+            label: "Voto de cada partido en esta votación"
+            type: string
+          - name: verComoVotoCadaLegislador
+            label: "Ver cómo votó cada legislador"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: hemicicloCon
+            label: "Hemiciclo con {registrados} legisladores: {leyenda}."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {registrados}, {leyenda}."
+      - name: cuadroTemas
+        label: "Cuadro de leyes por tema"
+        type: object
+        fields:
+          - name: enTramite
+            label: "{enTramite} en trámite"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {enTramite}."
+          - name: enOtroEstado
+            label: "en otro estado"
+            type: string
+          - name: leyesPorTema
+            label: "Leyes por tema"
+            type: string
+          - name: clasificacionDelObservatorioNoDel
+            label: "Clasificación del Observatorio, no del Congreso. Una ley puede…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: leySancionada
+            label: "ley sancionada"
+            type: string
+          - name: leyesSancionadas
+            label: "leyes sancionadas"
+            type: string
+          - name: proyectoVotado
+            label: "proyecto votado"
+            type: string
+          - name: proyectosVotados
+            label: "proyectos votados"
+            type: string
+          - name: sinLey
+            label: "sin ley ("
+            type: string
+      - name: barrasCoincidencia
+        label: "Gráfico de coincidencia"
+        type: object
+        fields:
+          - name: votacionesEnQueCadaPartido
+            label: "Votaciones en que cada partido tuvo la misma posición que {referencia}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {referencia}."
+          - name: sin
+            label: "{fraccion}, sin %"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {fraccion}."
+      - name: textos
+        label: "Otros textos"
+        type: object
+        fields:
+          - name: senadores
+            label: "Senadores"
+            type: string
+          - name: diputados
+            label: "Diputados"
+            type: string
+  - name: leyes
+    label: "Leyes"
+    type: file
+    path: sitio/src/contenido/leyes.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: catalogo
+        label: "Lista de leyes"
+        type: object
+        fields:
+          - name: leyes
+            label: "Leyes"
+            type: string
+          - name: lasLeyesSancionadasPorEl
+            label: "Las {lista} leyes sancionadas por el Congreso Nacional del…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {lista}, {nombresPeriodos}."
+          - name: leyesDelPeriodoLegislativoEl
+            label: "{lista} leyes del período legislativo {nombresPeriodos}. El título…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {lista}, {nombresPeriodos}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+      - name: ficha
+        label: "Ficha"
+        type: object
+        fields:
+          - name: todasLasLeyes
+            label: "← Todas las leyes"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: elCongresoPublicaRegistrosCon
+            label: "El Congreso publica {registros} registros con este número de ley.…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {registros}."
+          - name: registroDe
+            label: "Registro {valor} de {registros}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {valor}, {registros}."
+      - name: filtro
+        label: "Filtros"
+        type: object
+        fields:
+          - name: numeroOPalabrasDelTitulo
+            label: "Número o palabras del título"
+            type: string
+          - name: anoDeSancion
+            label: "Año de sanción"
+            type: string
+          - name: temaClasificacionDelObservatorio
+            label: "Tema (clasificación del Observatorio)"
+            type: string
+          - name: ordenarPor
+            label: "Ordenar por"
+            type: string
+          - name: limpiar
+            label: "Limpiar"
+            type: string
+      - name: tabla
+        label: "Tabla"
+        type: object
+        fields:
+          - name: numero
+            label: "Número"
+            type: string
+          - name: titulo
+            label: "Título"
+            type: string
+          - name: sancion
+            label: "Sanción"
+            type: string
+          - name: promulgacion
+            label: "Promulgación"
+            type: string
+          - name: publicacion
+            label: "Publicación"
+            type: string
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: camaraDeOrigen
+            label: "Cámara de origen"
+            type: string
+      - name: registro
+        label: "Datos de la ley"
+        type: object
+        fields:
+          - name: fechaDeSancion
+            label: "Fecha de sanción"
+            type: string
+          - name: fechaDePromulgacion
+            label: "Fecha de promulgación"
+            type: string
+          - name: fechaDePublicacion
+            label: "Fecha de publicación"
+            type: string
+          - name: tipoDePromulgacion
+            label: "Tipo de promulgación"
+            type: string
+          - name: observacionDelDecreto
+            label: "Observación del decreto"
+            type: string
+          - name: notaDelObservatorio
+            label: "Nota del Observatorio. {valor}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {valor}."
+          - name: entreParentesisElNombrePor
+            label: "Entre paréntesis, el nombre por el que se conoce a un partido (por…"
+            type: text
+          - name: enlacesOficiales
+            label: "Enlaces oficiales"
+            type: string
+          - name: fichaDeLaLeyEn
+            label: "Ficha de la ley en SILpy"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: expedienteEnSilpy
+            label: "Expediente en SILpy"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: textoDeLaLey
+            label: "Texto de la ley ({descripcion}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {descripcion}."
+      - name: autores
+        label: "Iniciativa y autores"
+        type: object
+        fields:
+          - name: iniciativaYAutores
+            label: "Iniciativa y autores"
+            type: string
+          - name: iniciativa
+            label: "Iniciativa"
+            type: string
+          - name: ministeriosAutores
+            label: "Ministerios autores"
+            type: string
+          - name: ministerioAutor
+            label: "Ministerio autor"
+            type: string
+          - name: sinDatoDeAutores
+            label: "Sin dato de autores"
+            type: string
+          - name: partido
+            label: "— Partido:"
+            type: string
+          - name: bancada
+            label: "· Bancada:"
+            type: string
+          - name: legislatura
+            label: "· Legislatura"
+            type: string
+          - name: algunosAutoresEranLegisladoresDe
+            label: "Algunos autores eran legisladores de otra legislatura. En ese caso…"
+            type: text
+      - name: temasLey
+        label: "Tema de la ley"
+        type: object
+        fields:
+          - name: temaSegunElObservatorio
+            label: "Tema según el Observatorio"
+            type: string
+          - name: comoSeClasifica
+            label: "Cómo se clasifica"
+            type: string
+      - name: votacionesDeLaLey
+        label: "Votaciones de la ley"
+        type: object
+        fields:
+          - name: votacionesNominales
+            label: "Votaciones nominales ({cantidad})"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {cantidad}."
+          - name: estaLeyNoTieneVotaciones
+            label: "Esta ley no tiene votaciones nominales registradas en el período…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: partidoYBancadaSonLos
+            label: "Partido y bancada son los que la API registra para cada legislador…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: indiceDeLasVotacionesDe
+            label: "Índice de las votaciones, de la más reciente a la más antigua."
+            type: string
+          - name: estaLeyTuvo
+            label: "Esta ley tuvo"
+            type: string
+          - name: ademas
+            label: "además"
+            type: string
+          - name: enOtraLegislaturaQueEste
+            label: "en otra legislatura, que este sitio todavía no incluye. Se pueden…"
+            type: string
+          - name: votacion
+            label: "Votación {id}"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {id}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: elProyectoTieneAdemas
+            label: "El proyecto tiene además"
+            type: string
+          - name: cuyoTramiteNoFiguraEntre
+            label: "cuyo trámite no figura entre las tramitaciones publicadas, por lo…"
+            type: text
+  - name: proyectos
+    label: "Proyectos de ley"
+    type: file
+    path: sitio/src/contenido/proyectos.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: pagina
+        label: "Página"
+        type: object
+        fields:
+          - name: proyectosDeLey
+            label: "Proyectos de ley"
+            type: string
+          - name: proyectosDeLeyDelCongreso
+            label: "{proyectos} proyectos de ley del Congreso Nacional del Paraguay en…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {proyectos}, {periodo}."
+          - name: proyectosDeLeyDelPeriodo
+            label: "{proyectos} proyectos de ley del período legislativo {periodo},…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {proyectos}, {periodo}, {sinNominal}."
+          - name: losProyectosSinVotacionNominal
+            label: "Los proyectos sin votación nominal no entran en los cálculos por…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: palabrasDelTituloOExpediente
+            label: "Palabras del título o expediente"
+            type: string
+          - name: votacionNominal
+            label: "Votación nominal"
+            type: string
+          - name: conOSin
+            label: "Con o sin"
+            type: string
+          - name: conVotacionNominal
+            label: "Con votación nominal"
+            type: string
+          - name: sinVotacionNominal
+            label: "Sin votación nominal"
+            type: string
+          - name: anoDeIngreso
+            label: "Año de ingreso"
+            type: string
+          - name: enSilpy
+            label: "en SILpy"
+            type: string
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: t1VotacionNominal
+            label: "1 votación nominal"
+            type: string
+          - name: votacionesNominalesVerLaUltima
+            label: "{votaciones} votaciones nominales, ver la última"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {votaciones}."
+          - name: sinVotacionNominal2
+            label: "· Sin votación nominal"
+            type: string
+          - name: enElPlenario
+            label: "· {resultado} en el plenario, {fecha}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {resultado}, {fecha}."
+  - name: legisladores
+    label: "Legisladores"
+    type: file
+    path: sitio/src/contenido/legisladores.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: mapaDepartamentos
+        label: "Detalle del mapa"
+        type: object
+        fields:
+          - name: t1Diputado
+            label: "1 diputado"
+            type: string
+          - name: mapaDelParaguayPorDepartamento
+            label: "Mapa del Paraguay por departamento"
+            type: string
+          - name: elColorDependeSoloDe
+            label: "El color depende solo de la cantidad de diputados. El círculo es"
+            type: string
+          - name: elegiUnDepartamentoEnEl
+            label: "Elegí un departamento en el mapa."
+            type: string
+          - name: diputadosPorDepartamento
+            label: "Diputados por departamento"
+            type: string
+          - name: figuraEnLaApiComo
+            label: "Figura en la API como"
+            type: string
+          - name: sinDiputadosEnEjercicioSegun
+            label: "Sin diputados en ejercicio según la API."
+            type: string
+          - name: sinZonaEnElMapa
+            label: "· {diputados}, sin zona en el mapa"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {diputados}."
+      - name: listado
+        label: "Lista de legisladores"
+        type: object
+        fields:
+          - name: legisladores
+            label: "Legisladores"
+            type: string
+          - name: senadoresYDiputadosDelCongreso
+            label: "Senadores y diputados del Congreso Nacional del Paraguay en el…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: legisladoresEnEjercicioEnEl
+            label: "{enEjercicio} legisladores en ejercicio en el período legislativo…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {enEjercicio}, {periodo}."
+          - name: losDatosSonLosQue
+            label: "Los datos son los que publica el Congreso. Partido y bancada son…"
+            type: text
+          - name: elNombreEntreParentesisEs
+            label: "El nombre entre paréntesis es el nombre por el que se conoce a un…"
+            type: text
+          - name: votacionesNominalesPorLegisladorUna
+            label: "Votaciones nominales por legislador, una tabla con las ausencias,…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: mapaDeDiputadosPorDepartamento
+            label: "Mapa de diputados por departamento, cuántos diputados tiene cada…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: coincidenciaDeVotosEntrePartidos
+            label: "Coincidencia de votos entre partidos y bancadas, qué tan seguido…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: enEjercicio
+            label: "En ejercicio"
+            type: string
+          - name: legisladoresEnEjercicio
+            label: "Legisladores en ejercicio"
+            type: string
+          - name: yaNoEjercenEnEl
+            label: "Ya no ejercen en el período"
+            type: string
+          - name: legisladoresDelPeriodoQueYa
+            label: "{noEjercen} legisladores del período {periodo} que ya no figuran…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {noEjercen}, {periodo}."
+          - name: legisladoresQueYaNoEjercen
+            label: "Legisladores que ya no ejercen"
+            type: string
+      - name: ficha
+        label: "Ficha"
+        type: object
+        fields:
+          - name: todosLosLegisladores
+            label: "← Todos los legisladores"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: periodoLegislativo
+            label: "Período legislativo {periodo}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: fotoDelCongresoNacionalSilpy
+            label: "Foto del Congreso Nacional (SILpy)"
+            type: string
+          - name: periodoLegislativo2
+            label: "Período legislativo"
+            type: string
+          - name: tipo
+            label: "Tipo"
+            type: string
+          - name: cargoEnLaBancada
+            label: "Cargo en la bancada"
+            type: string
+          - name: correo
+            label: "Correo"
+            type: string
+          - name: telefono
+            label: "Teléfono"
+            type: string
+          - name: situacion
+            label: "Situación"
+            type: string
+          - name: enEjercicio
+            label: "En ejercicio"
+            type: string
+          - name: yaNoEjerce
+            label: "Ya no ejerce"
+            type: string
+          - name: yaNoFiguraEntreLos
+            label: "Ya no figura entre los legisladores en ejercicio que publica la…"
+            type: text
+          - name: partidoYBancadaSonLos
+            label: "Partido y bancada son los que la API registra en el período…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: losSenadoresSeEligenEn
+            label: "Los senadores se eligen en una circunscripción nacional, por eso…"
+            type: text
+          - name: elNombreEntreParentesisEs
+            label: "El nombre entre paréntesis es el nombre por el que se conoce a su…"
+            type: text
+          - name: masInformacion
+            label: "Más información"
+            type: string
+          - name: fichaOficialEnSilpy
+            label: "Ficha oficial en SILpy"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: susVotosEnVotacionesNominales
+            label: "Sus votos en votaciones nominales sobre proyectos de ley"
+            type: string
+          - name: noFiguraEnNingunaVotacion
+            label: "No figura en ninguna votación nominal sobre proyectos de ley del…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: ausenciasEnVotacionesNominales
+            label: "Ausencias en votaciones nominales"
+            type: string
+          - name: noFiguraEnNingunaVotacion2
+            label: "No figura en ninguna votación nominal del período {periodo}."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: noVotaYAbstencionesEn
+            label: "NO VOTA y abstenciones en votaciones nominales"
+            type: string
+          - name: votosDistintosALaMayoria
+            label: "Votos distintos a la mayoría de su bancada y de su partido"
+            type: string
+          - name: leyesSancionadasDeSuAutoria
+            label: "Leyes sancionadas de su autoría ({autoria})"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {autoria}."
+          - name: noFiguraEntreLosAutores
+            label: "No figura entre los autores del proyecto de ninguna ley sancionada…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: leyesDelPeriodoEnCuyo
+            label: "Leyes del período en cuyo proyecto figura entre los autores, de la…"
+            type: text
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: sancionadaEl
+            label: "Sancionada el {fechaSancion}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {fechaSancion}."
+          - name: fechaDeSancionSinDato
+            label: "Fecha de sanción sin dato"
+            type: string
+          - name: expedientesPresentadosEnElPeriodo
+            label: "Expedientes presentados en el período ({total})"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: comisiones
+            label: "Comisiones"
+            type: string
+          - name: historialDeVotos
+            label: "Historial de votos ({total})"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: deLaMasRecienteA
+            label: "De la más reciente a la más antigua. Cada ley lleva a la votación…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+      - name: mapa
+        label: "Mapa de diputados"
+        type: object
+        fields:
+          - name: mapaDeDiputadosPorDepartamento
+            label: "Mapa de diputados por departamento"
+            type: string
+          - name: losDiputadosEnEjercicioDel
+            label: "Los {total} diputados en ejercicio del Congreso Nacional del…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}, {periodo}."
+          - name: diputadosEnEjercicioEnEl
+            label: "{total} diputados en ejercicio en el período legislativo…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}, {periodo}."
+          - name: losSenadoresNoFiguranPorque
+            label: "Los senadores no figuran porque se eligen en una circunscripción…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {diputadosQueNoEjercen}, {licencia}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+      - name: comparativa
+        label: "Tabla comparativa, página"
+        type: object
+        fields:
+          - name: votacionesNominalesPorLegislador
+            label: "Votaciones nominales por legislador"
+            type: string
+          - name: cuantasVecesFiguraCadaSenador
+            label: "Cuántas veces figura cada senador y diputado del período…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: todosLosLegisladores
+            label: "← Todos los legisladores"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: paraCadaLegisladorDelPeriodo
+            label: "Para cada legislador del período legislativo {periodo}, cinco…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: ausenciasNoVotaYAbstenciones
+            label: "Ausencias, NO VOTA y abstenciones"
+            type: string
+          - name: cifraDeCadaCategoriaVotaciones
+            label: "Cifra de cada categoría = votaciones en que figura con esa…"
+            type: text
+          - name: ausenciasEnVotacionesNominalesAusente
+            label: "Ausencias en votaciones nominales (AUSENTE). No registró su voto…"
+            type: text
+          - name: noVotaFiguraEnLa
+            label: "NO VOTA. Figura en la votación sin emitir voto. Solo aparece en el…"
+            type: string
+          - name: abstencionBlancoVotoOficialDe
+            label: "ABSTENCIÓN/BLANCO. Voto oficial de abstención o en blanco."
+            type: string
+          - name: votosDistintosALaMayoria
+            label: "Votos distintos a la mayoría de su bancada o de su partido"
+            type: string
+          - name: votosDistintosVotacionesEnQue
+            label: "Votos distintos = votaciones en que su voto difiere de la mayoría…"
+            type: text
+          - name: mayoriaDelGrupoLaCategoria
+            label: "Mayoría del grupo. La categoría con más votos entre los votos…"
+            type: text
+          - name: votacionesComparablesLasVotacionesEn
+            label: "Votaciones comparables. Las votaciones en que emitió voto (SI, NO,…"
+            type: text
+          - name: votarDistintoALaMayoria
+            label: "Votar distinto a la mayoría no es bueno ni malo. Es un dato para…"
+            type: text
+          - name: lasCamarasSeMuestranPor
+            label: "Las cámaras se muestran por separado porque el Senado publica…"
+            type: text
+          - name: comoSeCalculanLasAusencias
+            label: "Cómo se calculan las ausencias, NO VOTA y abstenciones"
+            type: string
+          - name: comoSeCalculanLosVotos
+            label: "Cómo se calculan los votos distintos a la mayoría"
+            type: string
+          - name: rankingsDeMasRebeldesY
+            label: "Rankings de más «rebeldes» y más «ausentes»"
+            type: string
+          - name: tituloPorCamara
+            label: "{camara}, votaciones nominales por legislador"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {camara}."
+      - name: filtro
+        label: "Filtros"
+        type: object
+        fields:
+          - name: todas
+            label: "Todas"
+            type: string
+          - name: limpiar
+            label: "Limpiar"
+            type: string
+      - name: tabla
+        label: "Tabla"
+        type: object
+        fields:
+          - name: tipo
+            label: "Tipo"
+            type: string
+      - name: ausencias
+        label: "Ausencias en la ficha"
+        type: object
+        fields:
+          - name: votacionesNominalesDelPeriodoEn
+            label: "Votaciones nominales del período {periodo} en que figura como…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: elSenadoPublicaMuchasMenos
+            label: "El Senado publica muchas menos votaciones nominales que Diputados."
+            type: string
+          - name: verLasVotacionesEnQue
+            label: "Ver las {lista} votaciones en que figura como AUSENTE"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {lista}."
+          - name: votacionesNominalesEnQueFigura
+            label: "Votaciones nominales en que figura como AUSENTE"
+            type: string
+          - name: sesion
+            label: "Sesión"
+            type: string
+      - name: comisiones
+        label: "Comisiones en la ficha"
+        type: object
+        fields:
+          - name: noFiguraComoMiembroDe
+            label: "No figura como miembro de ninguna comisión en las listas que…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: periodoParlamentario
+            label: "Período parlamentario"
+            type: string
+          - name: segunLasListasDeMiembros
+            label: "Según las listas de miembros que publica el Congreso para cada…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: periodoParlamentarioDe
+            label: "Período parlamentario {nombre}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {nombre}."
+      - name: expedientes
+        label: "Expedientes en la ficha"
+        type: object
+        fields:
+          - name: noFiguraEntreLosAutores
+            label: "No figura entre los autores de ningún expediente ingresado en el…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: expedientesPresentadosPorTipo
+            label: "Expedientes presentados por tipo"
+            type: string
+          - name: tipoDeExpediente
+            label: "Tipo de expediente"
+            type: string
+          - name: cantidad
+            label: "Cantidad"
+            type: string
+          - name: susProyectosDeLeyPor
+            label: "Sus {total} proyectos de ley, por estado oficial"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: proyectosDeLey
+            label: "Proyectos de ley"
+            type: string
+          - name: verLaListaDeSus
+            label: "Ver la lista de sus {total} proyectos de ley"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: expedientesIngresadosDesdeElInicio
+            label: "Expedientes ingresados desde el inicio del período en que figura…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+      - name: filtroExpedientes
+        label: "Filtro de expedientes"
+        type: object
+        fields:
+          - name: todosProyectosDeLey
+            label: "Todos ({total} proyectos de ley)"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+      - name: filtroVotos
+        label: "Filtro de votos"
+        type: object
+        fields:
+          - name: todosVotaciones
+            label: "Todos ({total} votaciones)"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: votaciones
+            label: "({total} votaciones)"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: publicadoEsElEstadoDe
+            label: "PUBLICADO es el estado de los proyectos que llegaron a ser ley. El…"
+            type: text
+      - name: historial
+        label: "Historial de votos"
+        type: object
+        fields:
+          - name: votoEnCadaVotacionNominal
+            label: "Voto en cada votación nominal sobre un proyecto de ley"
+            type: string
+          - name: proyecto
+            label: "Proyecto"
+            type: string
+          - name: tramite
+            label: "Trámite"
+            type: string
+          - name: resultado
+            label: "Resultado"
+            type: string
+          - name: suVoto
+            label: "Su voto"
+            type: string
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+      - name: noVotaAbstencion
+        label: "NO VOTA y abstenciones en la ficha"
+        type: object
+        fields:
+          - name: noVota
+            label: "NO VOTA"
+            type: string
+          - name: abstencionBlanco
+            label: "ABSTENCIÓN/BLANCO"
+            type: string
+          - name: votacionesNominalesDelPeriodoEn
+            label: "Votaciones nominales del período {periodo} en que figura con cada…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+      - name: resumenVotos
+        label: "Resumen de votos"
+        type: object
+        fields:
+          - name: susVotosEnLasVotaciones
+            label: "Sus votos en las {total} votaciones nominales sobre proyectos de…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}, {periodo}, {porEstado}."
+          - name: comoSeCalculaEsteResumen
+            label: "Cómo se calcula este resumen · Qué significa cada categoría de voto"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: votosConEstado
+            label: "Sus votos en las {total} votaciones nominales del período…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}, {periodo}, {estado}."
+          - name: votosSinEstado
+            label: "Sus votos en las {total} votaciones nominales del período…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}, {periodo}."
+      - name: votosDistintos
+        label: "Votos distintos en la ficha"
+        type: object
+        fields:
+          - name: deSuBancada
+            label: "De su bancada"
+            type: string
+          - name: deSuPartido
+            label: "De su partido"
+            type: string
+          - name: sinBancadaRegistrada
+            label: "Sin bancada registrada"
+            type: string
+          - name: sinVotacionesComparables
+            label: "Sin votaciones comparables"
+            type: string
+          - name: empate
+            label: "Empate"
+            type: string
+          - name: unicoVotante
+            label: "Único votante"
+            type: string
+          - name: sinContar
+            label: "Sin contar {grupo}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {grupo}."
+          - name: votacionesNominalesDelPeriodoEn
+            label: "Votaciones nominales del período {periodo} en que su voto fue…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: verLasVotacionesEnQue
+            label: "Ver las {lista} votaciones en que votó distinto a una de las dos…"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {lista}."
+          - name: votacionesNominalesEnQueVoto
+            label: "Votaciones nominales en que votó distinto a la mayoría de su…"
+            type: text
+          - name: etapa
+            label: "Etapa"
+            type: string
+          - name: suVoto
+            label: "Su voto"
+            type: string
+          - name: mayoriaDeSuBancada
+            label: "Mayoría de su bancada"
+            type: string
+          - name: mayoriaDeSuPartido
+            label: "Mayoría de su partido"
+            type: string
+          - name: enNegritaLaMayoriaDe
+            label: "En negrita, la mayoría de la que difiere su voto."
+            type: string
+          - name: conEmpateCantidad
+            label: "{cantidad} con empate"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {cantidad}."
+          - name: unicoVotanteCantidad
+            label: "{cantidad} en que fue el único votante del grupo"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {cantidad}."
+      - name: tablaComparativa
+        label: "Tabla comparativa, columnas"
+        type: object
+        fields:
+          - name: sinBancadaRegistrada
+            label: "Sin bancada registrada"
+            type: string
+          - name: sinVotacionesComparables
+            label: "Sin votaciones comparables"
+            type: string
+          - name: votacionesEnSuLista
+            label: "Votaciones en su lista"
+            type: string
+          - name: yaNoEjerce
+            label: "(ya no ejerce)"
+            type: string
+      - name: ordenComparativa
+        label: "Orden de la tabla comparativa"
+        type: object
+        fields:
+          - name: ordenarPor
+            label: "Ordenar por"
+            type: string
+      - name: listaExpedientes
+        label: "Lista de expedientes"
+        type: object
+        fields:
+          - name: proyectosDeLeyDe
+            label: "Proyectos de ley de {nombre}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {nombre}."
+          - name: proyectosDeLeyDeLos
+            label: "{total} proyectos de ley de los que {nombre} figura entre los…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}, {nombre}."
+          - name: fichaDe
+            label: "← Ficha de {nombre}"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {nombre}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: proyectosDeLeyIngresadosDesde
+            label: "Proyectos de ley ingresados desde el inicio del período en que…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: periodoLegislativo
+            label: "Período legislativo {periodo}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: proyectosDeLeyDelPeriodo
+            label: "Proyectos de ley del período {periodo}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: ingreso
+            label: "Ingreso"
+            type: string
+          - name: proyecto
+            label: "Proyecto"
+            type: string
+      - name: textosComisiones
+        label: "Textos de comisiones"
+        type: object
+        fields:
+          - name: elCongresoPublicaEstaEntrada
+            label: "El Congreso publica esta entrada sin indicar a qué comisión…"
+            type: text
+      - name: textosCifras
+        label: "Nombres de las cifras"
+        type: object
+        fields:
+          - name: ausenciasEnVotacionesNominales
+            label: "Ausencias en votaciones nominales"
+            type: string
+          - name: votosDistintosALaMayoria
+            label: "Votos distintos a la mayoría de su bancada"
+            type: string
+          - name: votosDistintosALaMayoria2
+            label: "Votos distintos a la mayoría de su partido"
+            type: string
+      - name: textosMapa
+        label: "Textos del mapa"
+        type: object
+        fields:
+          - name: oMas
+            label: "{desde} o más"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {desde}."
+  - name: votaciones
+    label: "Votaciones"
+    type: file
+    path: sitio/src/contenido/votaciones.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: compartir
+        label: "Botones para compartir"
+        type: object
+        fields:
+          - name: compartir
+            label: "Compartir"
+            type: string
+          - name: copiarEnlace
+            label: "Copiar enlace"
+            type: string
+          - name: whatsapp
+            label: "WhatsApp"
+            type: string
+          - name: x
+            label: "X"
+            type: string
+          - name: imagenParaEstados
+            label: "Imagen para estados"
+            type: string
+      - name: pagina
+        label: "Página"
+        type: object
+        fields:
+          - name: votacionesYPosicionDeCada
+            label: "Votaciones y posición de cada partido"
+            type: string
+          - name: lasVotacionesNominalesSobreProyectos
+            label: "Las {votaciones} votaciones nominales sobre proyectos de ley del…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {votaciones}, {periodo}."
+          - name: las
+            label: "Las"
+            type: string
+          - name: sobreProyectosDeLeyDel
+            label: "sobre proyectos de ley del período legislativo {periodo}…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}, {porCamara}."
+          - name: posicionDeUnPartidoLa
+            label: "Posición de un partido = la categoría con más votos entre los…"
+            type: text
+          - name: votosEmitidosSiNoAbstencion
+            label: "Votos emitidos. SI, NO, ABSTENCIÓN/BLANCO o una moción. AUSENTE y…"
+            type: text
+          - name: siglasSonPropiasDeEste
+            label: "Siglas. Son propias de este sitio, para que las etiquetas entren…"
+            type: text
+          - name: totalesLosQuePublicaEl
+            label: "Totales. Los que publica el Congreso, sobre los legisladores…"
+            type: text
+          - name: partidoEsElQueLa
+            label: "Partido es el que la API registra para cada legislador en el…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: decisionesSinVotacionNominalCon
+            label: "{decisiones} decisiones sin votación nominal, con su resultado…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {decisiones}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: votacionesPorAno
+            label: "Votaciones por año"
+            type: string
+          - name: elAnoEsElDe
+            label: "El año es el de la fecha del trámite en que se votó. En cada año…"
+            type: text
+          - name: votacionesMasAjustadas
+            label: "Votaciones más ajustadas"
+            type: string
+          - name: porCamaraLasVotacionesDel
+            label: "Por cámara, las {cantidad} votaciones del período con menor…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {cantidad}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+      - name: anio
+        label: "Votaciones de un año"
+        type: object
+        fields:
+          - name: votacionesDe
+            label: "Votaciones de {anio}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {anio}."
+          - name: lasVotacionesNominalesSobreProyectos
+            label: "Las {votaciones} votaciones nominales sobre proyectos de ley de…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {votaciones}, {anio}."
+          - name: votacionesYPosicionDeCada
+            label: "← Votaciones y posición de cada partido"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: otrosAnos
+            label: "Otros años"
+            type: string
+          - name: votacionesNominalesSobreProyectosDe
+            label: "{votaciones} votaciones nominales sobre proyectos de ley…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {votaciones}, {porCamaraTexto}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: partidoEsElQueLa
+            label: "Partido es el que la API registra para cada legislador en el…"
+            type: text
+      - name: sinNominal
+        label: "Decisiones sin votación nominal"
+        type: object
+        fields:
+          - name: resultadoOficialDeDecisionesDel
+            label: "Resultado oficial de {decisiones} decisiones del plenario sobre…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {decisiones}, {periodo}."
+          - name: votaciones
+            label: "← Votaciones"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: decisionesDelPlenarioSobreProyectos
+            label: "{decisiones} decisiones del plenario sobre proyectos de ley del…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {decisiones}, {periodo}."
+          - name: sinVotosIndividualesNoSe
+            label: "Sin votos individuales no se puede saber cómo votó cada legislador…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: ano
+            label: "Año"
+            type: string
+          - name: resultado
+            label: "Resultado"
+            type: string
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: enSilpy
+            label: "en SILpy"
+            type: string
+          - name: expediente
+            label: "Expediente {expediente}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {expediente}."
+          - name: sesionEnSilpy
+            label: "Sesión en SILpy"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+      - name: paginaPropia
+        label: "Página de cada votación"
+        type: object
+        fields:
+          - name: votacionesDe
+            label: "← Votaciones de {anio}"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {anio}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: presentadoPor
+            label: "Presentado por"
+            type: string
+          - name: iniciativaDel
+            label: "Iniciativa del {iniciativa}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {iniciativa}."
+          - name: hemicicloConLegisladores
+            label: "Hemiciclo con {registrados} legisladores: {etiqueta}."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {registrados}, {etiqueta}."
+          - name: unPuntoPorLegisladorAgrupados
+            label: "Un punto por legislador, agrupados por voto. No es la ubicación…"
+            type: text
+      - name: votacion
+        label: "Detalle de una votación"
+        type: object
+        fields:
+          - name: resultado
+            label: "Resultado:"
+            type: string
+          - name: sesionNO
+            label: "· Sesión {tipo} n.º {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {tipo}, {numero}."
+          - name: observacion
+            label: "Observación: {observacion}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {observacion}."
+          - name: totalesSobreLosLegisladoresRegistrados
+            label: "Totales sobre los {registrados} legisladores registrados en la…"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {registrados}."
+          - name: elCongresoNoPublicaUn
+            label: "* El Congreso no publica un total para esta categoría. Es un…"
+            type: text
+          - name: notaDelObservatorio
+            label: "Nota del Observatorio."
+            type: string
+          - name: losTotalesPublicadosNoCoinciden
+            label: "Los totales publicados no coinciden con el recuento de los votos…"
+            type: string
+          - name: notaDelObservatorio2
+            label: "Nota del Observatorio. {valor}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {valor}."
+          - name: posicionDeCadaPartido
+            label: "Posición de cada partido"
+            type: string
+          - name: enCadaPartidoYBancada
+            label: "En cada partido y bancada, el total (\"de …\") son sus legisladores…"
+            type: text
+          - name: porPartidoEnNumeros
+            label: "Por partido, en números"
+            type: string
+          - name: verPorBancada
+            label: "Ver por bancada"
+            type: string
+          - name: porBancada
+            label: "Por bancada"
+            type: string
+          - name: verElVotoDeCada
+            label: "Ver el voto de cada legislador ({votos})"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {votos}."
+          - name: votoDeCadaLegislador
+            label: "Voto de cada legislador"
+            type: string
+          - name: voto
+            label: "Voto"
+            type: string
+          - name: legislador
+            label: "Legislador"
+            type: string
+          - name: compartirEstaVotacion
+            label: "Compartir esta votación"
+            type: string
+          - name: sesionEnSilpy
+            label: "Sesión en SILpy"
+            type: string
+      - name: lista
+        label: "Lista"
+        type: object
+        fields:
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: presentadoPor
+            label: "Presentado por"
+            type: string
+          - name: iniciativaDel
+            label: "Iniciativa del"
+            type: string
+          - name: resultado
+            label: "· Resultado"
+            type: string
+          - name: diferenciaEntreSiYNo
+            label: "· Diferencia entre SI y NO"
+            type: string
+          - name: deLegisladoresRegistrados
+            label: "(de {registrados} legisladores registrados)"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {registrados}."
+          - name: verVotacion
+            label: "Ver votación"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+      - name: filtro
+        label: "Filtros"
+        type: object
+        fields:
+          - name: resultadoOficial
+            label: "Resultado oficial"
+            type: string
+          - name: sinResultadoOficial
+            label: "Sin resultado oficial"
+            type: string
+          - name: temaClasificacionDelObservatorio
+            label: "Tema (clasificación del Observatorio)"
+            type: string
+          - name: todos
+            label: "Todos ({total})"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: publicadoEsElEstadoDe
+            label: "PUBLICADO es el estado de los proyectos que llegaron a ser ley."
+            type: string
+      - name: posicionPorSentido
+        label: "Posición de cada partido en la ley"
+        type: object
+        fields:
+          - name: votosEmitidos
+            label: "{votantes} votos emitidos"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {votantes}."
+          - name: paraCadaPartidoLaCategoria
+            label: "Para cada partido, la categoría con más votos entre los votos…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: legisladorSinVoto
+            label: "{miembros} legislador sin voto emitido"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {miembros}."
+          - name: legisladoresSinVoto
+            label: "{miembros} legisladores sin voto emitido"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {miembros}."
+      - name: posicionPartidos
+        label: "Etiquetas de posición de cada partido"
+        type: object
+        fields:
+          - name: de
+            label: "{partido}, {cantidad} de {votantes}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {partido}, {cantidad}, {votantes}."
+          - name: deConVotoEmitido
+            label: "{partido}, {votantes} de {miembros} con voto emitido"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {partido}, {votantes}, {miembros}."
+      - name: textosCompartir
+        label: "Textos al compartir una votación"
+        type: object
+        fields:
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: votacionDel
+            label: "{referencia}, votación {id} del {fecha}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {referencia}, {id}, {fecha}."
+          - name: enLaResultado
+            label: "{titulo} en la {camara}. Resultado {resultado}. {totales}."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {titulo}, {camara}, {resultado}, {totales}."
+          - name: actualizadoEl
+            label: "{cita} · Actualizado el {texto}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {cita}, {texto}."
+          - name: paraguay
+            label: "Paraguay"
+            type: string
+          - name: textoParaCompartir
+            label: "{referencia}{tema}. Votación en la {camara} del {fecha}. Resultado…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {referencia}, {tema}, {camara}, {fecha}, {resultado}, {totales}."
+          - name: temaCitado
+            label: "«{tema}»"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {tema}."
+          - name: descripcionVotacion
+            label: "Votación nominal {id} en la {camara} del {fecha} ({etapa}) sobre…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {id}, {camara}, {fecha}, {etapa}, {referencia}, {resultado}, {totales}."
+          - name: proyectoCitado
+            label: "Proyecto «{tema}»."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {tema}."
+      - name: textosFicha
+        label: "Textos de posiciones"
+        type: object
+        fields:
+          - name: sinVotosEmitidos
+            label: "sin votos emitidos"
+            type: string
+          - name: empate
+            label: "Empate"
+            type: string
+          - name: sinVotosEmitidos2
+            label: "Sin votos emitidos"
+            type: string
+  - name: coincidencia
+    label: "Coincidencia de votos"
+    type: file
+    path: sitio/src/contenido/coincidencia.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: pagina
+        label: "Página"
+        type: object
+        fields:
+          - name: partidos
+            label: "Partidos"
+            type: string
+          - name: bancadas
+            label: "Bancadas ({camara})"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {camara}."
+          - name: queTanSeguidoVotaronIgual
+            label: "Qué tan seguido votaron igual los partidos y las bancadas del…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: todosLosLegisladores
+            label: "← Todos los legisladores"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: paraCadaPartidoYCada
+            label: "Para cada partido y cada bancada del período legislativo…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: coincidenciaVotacionesEnQueLos
+            label: "Coincidencia = votaciones en que los dos grupos tuvieron la misma…"
+            type: text
+          - name: posicionDeUnGrupoLa
+            label: "Posición de un grupo. La opción con más votos entre los votos…"
+            type: text
+          - name: empateSiDosOMas
+            label: "Empate. Si dos o más opciones empatan en el primer lugar, el grupo…"
+            type: text
+          - name: pocasVotacionesEnComunCon
+            label: "Pocas votaciones en común. Con menos de {umbral} votaciones en…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {umbral}."
+          - name: coincidirONoCoincidirNo
+            label: "Coincidir o no coincidir no es bueno ni malo. Es un dato para…"
+            type: text
+          - name: cadaVotacionEsDeUna
+            label: "Cada votación es de una sola cámara, así que todo se calcula…"
+            type: text
+          - name: partidoUnificado
+            label: "partido unificado"
+            type: string
+          - name: quePermitePonerLadoA
+            label: ", que permite poner lado a lado lo que hizo el mismo partido en…"
+            type: text
+          - name: comoSeCalculaLaCoincidencia
+            label: "Cómo se calcula la coincidencia"
+            type: string
+          - name: todosLosParesDePartidos
+            label: "Todos los pares de partidos"
+            type: string
+          - name: cadaCeldaEsLaCoincidencia
+            label: "Cada celda es la coincidencia entre el partido de la fila y el de…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {umbral}."
+          - name: coincidenciaEntreTodosLosPares
+            label: "Coincidencia entre todos los pares de partidos, {camara}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {camara}."
+          - name: unPartidoOUnaBancada
+            label: "Un partido o una bancada con cada uno de los demás"
+            type: string
+          - name: conElTextoOficial
+            label: "{valor}, con el texto oficial «{texto}», {votaciones}."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {valor}, {texto}, {votaciones}."
+          - name: sinLegisladoresDeEstePartido
+            label: "{valor}, sin legisladores de este partido."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {valor}."
+          - name: coincidenciaDeConLosDemas
+            label: "Coincidencia de {nombre} con los demás partidos, por cámara"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {nombre}."
+          - name: porBancada
+            label: "Por bancada, {camara}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {camara}."
+          - name: enLa
+            label: "En la {camara},"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {camara}."
+          - name: coincidenciaDeConLasDemas
+            label: "Coincidencia de {nombre} con las demás bancadas de la {camara}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {nombre}, {camara}."
+          - name: coincidencia
+            label: "Coincidencia"
+            type: string
+          - name: resumenGrupo
+            label: "{legisladores} en ejercicio, tuvo posición en {conPosicion} de…"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {legisladores}, {conPosicion}, {votaciones}."
+          - name: yEmpato
+            label: "y empató en {empates}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {empates}."
+          - name: unLegislador
+            label: "legislador"
+            type: string
+          - name: variosLegisladores
+            label: "legisladores"
+            type: string
+          - name: unaVotacion
+            label: "votación"
+            type: string
+          - name: variasVotaciones
+            label: "votaciones"
+            type: string
+      - name: cuadro
+        label: "Cuadro de todos los pares"
+        type: object
+        fields:
+          - name: enEjercicio
+            label: "en ejercicio"
+            type: string
+          - name: mismoPartido
+            label: "Mismo partido"
+            type: string
+          - name: sin
+            label: "sin %"
+            type: string
+      - name: selector
+        label: "Selector de partido o bancada"
+        type: object
+        fields:
+          - name: partidoOBancada
+            label: "Partido o bancada"
+            type: string
+      - name: textos
+        label: "Otros textos"
+        type: object
+        fields:
+          - name: sinLegisladoresEnEstaCamara
+            label: "Sin legisladores en esta cámara"
+            type: string
+          - name: sinVotacionesEnComun
+            label: "Sin votaciones en común"
+            type: string
+          - name: menosDeVotacionesEnComun
+            label: "{fraccion} (menos de {umbral} votaciones en común, sin porcentaje)"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {fraccion}, {umbral}."
+  - name: temas
+    label: "Votos por tema"
+    type: file
+    path: sitio/src/contenido/temas.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: indice
+        label: "Índice de temas"
+        type: object
+        fields:
+          - name: votosDePartidosPorTema
+            label: "Votos de partidos por tema"
+            type: string
+          - name: comoVotaronLosLegisladoresDe
+            label: "Cómo votaron los legisladores de cada partido del Congreso…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: paraCadaTemaLosVotos
+            label: "Para cada tema, los votos de los legisladores de cada partido en…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+      - name: tema
+        label: "Página de cada tema"
+        type: object
+        fields:
+          - name: votosDePartidosEn
+            label: "Votos de partidos en {nombre}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {nombre}."
+          - name: comoVotaronLosLegisladoresDe
+            label: "Cómo votaron los legisladores de cada partido en las {total}…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}, {nombre}, {periodo}."
+          - name: votosDePartidosPorTema
+            label: "← Votos de partidos por tema"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: votosDeCadaPartidoEn
+            label: "Votos de cada partido en las"
+            type: string
+          - name: deEsteTemaSobreTodos
+            label: "de este tema, sobre todos sus votos registrados (con AUSENTE y NO…"
+            type: string
+          - name: unNoPuedeSerA
+            label: "Un NO puede ser a una modificación o a una objeción del Poder…"
+            type: text
+          - name: votoRegistrado
+            label: "voto registrado"
+            type: string
+          - name: votosRegistrados
+            label: "votos registrados"
+            type: string
+          - name: verLas
+            label: "Ver las"
+            type: string
+          - name: deLa
+            label: "de la {camara}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {camara}."
+          - name: otrosTemas
+            label: "Otros temas"
+            type: string
+      - name: votaciones
+        label: "Votaciones del tema"
+        type: object
+        fields:
+          - name: resultado
+            label: "· Resultado"
+            type: string
+          - name: ley
+            label: "Ley {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: verVotacion
+            label: "Ver votación"
+            type: string
+      - name: textos
+        label: "Otros textos"
+        type: object
+        fields:
+          - name: pendienteDeClasificacion
+            label: "Pendiente de clasificación"
+            type: string
+  - name: rankings
+    label: "Rankings"
+    type: file
+    path: sitio/src/contenido/rankings.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: lista
+        label: "Lista"
+        type: object
+        fields:
+          - name: yaNoEjerce
+            label: "(ya no ejerce)"
+            type: string
+          - name: votaciones
+            label: "{fraccion} votaciones"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {fraccion}."
+      - name: pagina
+        label: "Página"
+        type: object
+        fields:
+          - name: rankings
+            label: "Rankings"
+            type: string
+          - name: losSenadoresYLosDiputados
+            label: "Los {cantidad} senadores y los {cantidad} diputados del período…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {cantidad}, {periodo}."
+          - name: dosListasPorCamaraCon
+            label: "Dos listas por cámara con los {cantidad} legisladores del período…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {cantidad}, {periodo}."
+          - name: masRebeldesVotosDistintosA
+            label: "Más «rebeldes», votos distintos a la mayoría de su partido"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: masAusentesAusenciasEnVotaciones
+            label: "Más «ausentes», ausencias en votaciones nominales"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: lasCamarasSeMuestranPor
+            label: "Las cámaras se muestran por separado porque el Senado publica…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: masRebeldes
+            label: "Más «rebeldes»"
+            type: string
+          - name: legisladoresQueMasVecesVotaron
+            label: "Legisladores que más veces votaron distinto a la mayoría de su…"
+            type: string
+          - name: votosDistintosVotacionesEnQue
+            label: "Votos distintos = votaciones en que su voto difiere de la mayoría…"
+            type: text
+          - name: mayoriaDelPartidoLaCategoria
+            label: "Mayoría del partido. La categoría con más votos entre los votos…"
+            type: text
+          - name: votacionesComparablesLasVotacionesEn
+            label: "Votaciones comparables. Las votaciones en que emitió voto y su…"
+            type: text
+          - name: minimoEntranALaLista
+            label: "Mínimo. Entran a la lista quienes tienen al menos {minimo}…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {minimo}."
+          - name: laFichaDeCadaLegislador
+            label: "La ficha de cada legislador lista las votaciones en que votó…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: enEstaCamara
+            label: "en esta cámara."
+            type: string
+          - name: noEstanEnLaLista
+            label: "No están en la lista, porque no tienen ninguna votación…"
+            type: text
+          - name: yaNoEjerce
+            label: ", ya no ejerce"
+            type: string
+          - name: legisladorTiene
+            label: "legislador tiene"
+            type: string
+          - name: legisladoresTienen
+            label: "legisladores tienen"
+            type: string
+          - name: menosDeVotacionesComparablesY
+            label: "menos de {minimo} votaciones comparables y no"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {minimo}."
+          - name: aLaListaSusCifras
+            label: "a la lista. Sus cifras están en la"
+            type: string
+          - name: tablaDeVotacionesNominales
+            label: "tabla de votaciones nominales"
+            type: string
+          - name: legisladorNoTiene
+            label: "legislador no tiene"
+            type: string
+          - name: legisladoresNoTienen
+            label: "legisladores no tienen"
+            type: string
+          - name: partidoRegistradoEnLaApi
+            label: "partido registrado en la API."
+            type: string
+          - name: masAusentes
+            label: "Más «ausentes»"
+            type: string
+          - name: legisladoresConMasAusenciasEn
+            label: "Legisladores con más ausencias en votaciones nominales."
+            type: string
+          - name: ausenciasVotacionesNominalesEnQue
+            label: "Ausencias = votaciones nominales en que figura como AUSENTE ÷…"
+            type: text
+          - name: votacionesNominalesTodasLasDel
+            label: "Votaciones nominales. Todas las del período en cuya lista oficial…"
+            type: text
+          - name: minimoEntranALaLista2
+            label: "Mínimo. Entran a la lista quienes figuran en al menos {minimo}…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {minimo}."
+          - name: sinMotivoLaFuenteNo
+            label: "Sin motivo. La fuente no dice por qué un legislador figura como…"
+            type: text
+          - name: votacionYSesionFigurarComo
+            label: "Votación y sesión. Figurar como AUSENTE en una votación no es lo…"
+            type: text
+          - name: laFichaDeCadaLegislador2
+            label: "La ficha de cada legislador lista las votaciones en que figura…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: legisladorFigura
+            label: "legislador figura"
+            type: string
+          - name: legisladoresFiguran
+            label: "legisladores figuran"
+            type: string
+          - name: enMenosDeVotacionesNominales
+            label: "en menos de {minimo} votaciones nominales y no"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {minimo}."
+  - name: estadisticas
+    label: "Estadísticas"
+    type: file
+    path: sitio/src/contenido/estadisticas.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: pagina
+        label: "Página"
+        type: object
+        fields:
+          - name: estadisticas
+            label: "Estadísticas"
+            type: string
+          - name: cifrasGeneralesDelCongresoNacional
+            label: "Cifras generales del Congreso Nacional del Paraguay en el período…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: cifrasGeneralesDelPeriodoLegislativo
+            label: "Cifras generales del período legislativo {periodo}, contadas por…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}, {leyes}, {votaciones}."
+          - name: composicionDeCadaCamara
+            label: "Composición de cada cámara"
+            type: string
+          - name: bancasSegunElTipoOficial
+            label: "Bancas según el tipo oficial,"
+            type: string
+          - name: aparteSenadoresVitaliciosSinBanca
+            label: "Aparte, {vitalicios} senadores vitalicios, sin banca."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {vitalicios}."
+          - name: porAnoDeSancion
+            label: "Por año de sanción"
+            type: string
+          - name: porIniciativa
+            label: "Por iniciativa"
+            type: string
+          - name: segunElDatoOficialDe
+            label: "Según el dato oficial de cada proyecto."
+            type: string
+          - name: porPartidoDeSusAutores
+            label: "Por partido de sus autores"
+            type: string
+          - name: unaLeyCuentaUnaVez
+            label: "Una ley cuenta una vez por cada partido con algún autor, así que…"
+            type: text
+          - name: legisladoresConMasLeyesDe
+            label: "Legisladores con más leyes de su autoría"
+            type: string
+          - name: losPrimerosMuchasLeyesTienen
+            label: "Los {cantidad} primeros. Muchas leyes tienen varios autores. Más…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {cantidad}."
+          - name: votacionesNominalesSobreProyectosDe
+            label: "Votaciones nominales sobre proyectos de ley"
+            type: string
+          - name: porAnoYCamara
+            label: "Por año y cámara"
+            type: string
+          - name: votacionesNominalesPorAnoY
+            label: "Votaciones nominales por año y cámara"
+            type: string
+          - name: ano
+            label: "Año"
+            type: string
+          - name: senadores
+            label: "Senadores"
+            type: string
+          - name: diputados
+            label: "Diputados"
+            type: string
+          - name: porResultadoOficial
+            label: "Por resultado oficial"
+            type: string
+          - name: ademasDecisionesDelPlenarioSobre
+            label: "Además, {decisiones} decisiones del plenario sobre proyectos de…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {decisiones}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: metodologiaDatosAbiertos
+            label: "Metodología · Datos abiertos"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+      - name: textos
+        label: "Otros textos"
+        type: object
+        fields:
+          - name: otrosResultados
+            label: "Otros resultados"
+            type: string
+  - name: test
+    label: "Test de afinidad"
+    type: file
+    path: sitio/src/contenido/test.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: pagina
+        label: "Página"
+        type: object
+        fields:
+          - name: preguntasSobreLeyesVotadasPor
+            label: "Preguntas sobre leyes votadas por el Congreso Nacional del…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {periodo}."
+          - name: versionPreliminarLasPreguntasTodavia
+            label: "Versión preliminar. Las preguntas todavía están en revisión y…"
+            type: string
+          - name: preguntasSobreLeyesVotadasPor2
+            label: "{preguntas} preguntas sobre leyes votadas por el Congreso en el…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {preguntas}, {periodo}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: elTestNecesitaJavascriptPara
+            label: "El test necesita JavaScript para calcular el resultado en tu…"
+            type: string
+      - name: test
+        label: "Preguntas y resultado"
+        type: object
+        fields:
+          - name: de
+            label: "de {total}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: leyN
+            label: "Ley N° {numeroLey}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numeroLey}."
+          - name: verElProyectoDeLey
+            label: "Ver el proyecto de ley"
+            type: string
+          - name: queHabriasVotado
+            label: "¿Qué habrías votado?"
+            type: string
+          - name: preguntaAnterior
+            label: "← Pregunta anterior"
+            type: string
+          - name: tuAfinidadConLosPartidos
+            label: "Tu afinidad con los partidos"
+            type: string
+          - name: coincidenciaConLaPosicionDe
+            label: "Coincidencia con la posición de la mayoría de cada partido en esas…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {minimo}. Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: tusRespuestasYLasVotaciones
+            label: "Tus respuestas y las votaciones"
+            type: string
+          - name: volverAEmpezar
+            label: "Volver a empezar"
+            type: string
+  - name: buscar
+    label: "Buscador"
+    type: file
+    path: sitio/src/contenido/buscar.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: pagina
+        label: "Página"
+        type: object
+        fields:
+          - name: buscarLeyes
+            label: "Buscar leyes"
+            type: string
+          - name: buscarLeyesDelCongresoNacional
+            label: "Buscar leyes del Congreso Nacional del Paraguay por número o por…"
+            type: text
+          - name: numeroDeLeyOPalabras
+            label: "Número de ley o palabras del título"
+            type: string
+          - name: buscar
+            label: "Buscar"
+            type: string
+          - name: verMasResultados
+            label: "Ver más resultados"
+            type: string
+          - name: laBusquedaNecesitaJavascriptTambien
+            label: "La búsqueda necesita JavaScript. También podés recorrer la lista…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+  - name: datos
+    label: "Datos abiertos"
+    type: file
+    path: sitio/src/contenido/datos.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: pagina
+        label: "Página"
+        type: object
+        fields:
+          - name: descargaDeLosDatosDel
+            label: "Descarga de los datos del Congreso Nacional del Paraguay que usa…"
+            type: text
+          - name: todosLosDatosQueUsa
+            label: "Todos los datos que usa este sitio se pueden descargar y…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {licencia}, {cita}, {fecha}."
+          - name: losArchivosDeValoresOficiales
+            label: "Los archivos de *valores oficiales* contienen los datos…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: lasFotosDeLosLegisladores
+            label: "Las fotos de los legisladores son una copia de las que publica el…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {rutaFotos}."
+          - name: archivo
+            label: "Archivo"
+            type: string
+          - name: contenido
+            label: "Contenido"
+            type: string
+          - name: descargas
+            label: "Descargas"
+            type: string
+      - name: descargas
+        label: "Descripción de cada archivo"
+        type: object
+        fields:
+          - name: diccionarioDeDatosConCada
+            label: "Diccionario de datos, con cada campo de cada tabla, su tipo, su…"
+            type: text
+          - name: elMismoDiccionarioEnFormato
+            label: "El mismo diccionario, en formato JSON."
+            type: string
+          - name: fechaDeLaUltimaComprobacion
+            label: "Fecha de la última comprobación con la fuente, última modificación…"
+            type: text
+          - name: periodosLegislativosIncluidosConSus
+            label: "Períodos legislativos incluidos, con sus fechas."
+            type: string
+          - name: registroDeLasUltimasSincronizaciones
+            label: "Registro de las últimas sincronizaciones con la API del Congreso."
+            type: string
+          - name: explicacionDeLosArchivosY
+            label: "Explicación de los archivos y sus convenciones."
+            type: string
+          - name: unaFilaPorLeySancionada
+            label: "Una fila por ley sancionada en el período, con datos de su proyecto."
+            type: string
+          - name: cadaPasoDeLaTramitacion
+            label: "Cada paso de la tramitación del proyecto de cada ley."
+            type: string
+          - name: unaFilaPorVotacionNominal
+            label: "Una fila por votación nominal, con sus totales. El voto de cada…"
+            type: text
+          - name: elVotoDeCadaLegislador
+            label: "El voto de cada legislador en cada votación nominal."
+            type: string
+          - name: legisladoresDelPeriodoVigentesO
+            label: "Legisladores del período, vigentes o no."
+            type: string
+          - name: autoresDelProyectoDeCada
+            label: "Autores del proyecto de cada ley y de los proyectos de ley votados…"
+            type: text
+          - name: identificadorPropioDeCadaLegislador
+            label: "Identificador propio de cada legislador, que se mantiene igual…"
+            type: text
+          - name: partidoUnificadoDeCadaTexto
+            label: "Partido unificado de cada texto oficial de partido, que dice qué…"
+            type: text
+          - name: temasDeLaClasificacionPropia
+            label: "Temas de la clasificación propia de las leyes, con la definición…"
+            type: text
+          - name: temasDeCadaProyectoDe
+            label: "Temas de cada proyecto de ley con ley o con votación en el…"
+            type: text
+          - name: problemasQueEsteProyectoDetecto
+            label: "Problemas que este proyecto detectó en los datos oficiales (fechas…"
+            type: text
+          - name: porLegisladorLasVotacionesNominales
+            label: "Por legislador, las votaciones nominales en que figura como…"
+            type: text
+          - name: porCamaraCadaParDe
+            label: "Por cámara, cada par de partidos y cada par de bancadas, con las…"
+            type: text
+          - name: porTemaCamaraPartidoO
+            label: "Por tema, cámara, partido o bancada y categoría oficial de voto,…"
+            type: text
+          - name: documentacionYEstado
+            label: "Documentación y estado"
+            type: string
+          - name: valoresOficialesDelPeriodoLegislativo
+            label: "Valores oficiales del período legislativo {id}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {id}."
+          - name: datosAgregadosPorEsteProyecto
+            label: "Datos agregados por este proyecto (no oficiales)"
+            type: string
+          - name: cifrasCalculadasPorEsteProyecto
+            label: "Cifras calculadas por este proyecto (no oficiales)"
+            type: string
+          - name: otrosArchivos
+            label: "Otros archivos"
+            type: string
+  - name: metodologia
+    label: "Metodología"
+    type: file
+    path: sitio/src/contenido/metodologia.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: observaciones
+        label: "Observaciones sobre los datos"
+        type: object
+        fields:
+          - name: votacionesConMenosVotosIndividuales
+            label: "Votaciones con menos votos individuales que miembros de la cámara"
+            type: string
+          - name: laListaDeVotosTiene
+            label: "La lista de votos tiene menos nombres que miembros con voto de la…"
+            type: text
+          - name: votacionesCuyosTotalesPublicadosNo
+            label: "Votaciones cuyos totales publicados no coinciden con los votos…"
+            type: string
+          - name: alContarLosVotosIndividuales
+            label: "Al contar los votos individuales por categoría, el resultado no…"
+            type: text
+          - name: legisladoresQueFiguranMasDe
+            label: "Legisladores que figuran más de una vez en la misma votación"
+            type: string
+          - name: laListaOficialDeVotos
+            label: "La lista oficial de votos incluye al mismo legislador más de una vez."
+            type: string
+          - name: votosSinLegislador
+            label: "Votos sin legislador"
+            type: string
+          - name: unVotoIndividualNoIdentifica
+            label: "Un voto individual no identifica al legislador que lo emitió."
+            type: string
+          - name: legisladoresQueSoloAparecenEn
+            label: "Legisladores que solo aparecen en votaciones"
+            type: string
+          - name: votanEnElPeriodoPero
+            label: "Votan en el período pero no figuran en los listados de…"
+            type: text
+          - name: votacionesQueNoSePudieron
+            label: "Votaciones que no se pudieron enlazar con su ley"
+            type: string
+          - name: laVotacionEsDelMismo
+            label: "La votación es del mismo proyecto que la ley, pero su trámite no…"
+            type: text
+          - name: fechasNoValidas
+            label: "Fechas no válidas"
+            type: string
+          - name: laFechaPublicadaNoEs
+            label: "La fecha publicada no es una fecha válida. Se muestra tal como viene."
+            type: string
+          - name: proyectosSinTramitaciones
+            label: "Proyectos sin tramitaciones"
+            type: string
+          - name: laApiNoDevuelveLas
+            label: "La API no devuelve las tramitaciones del proyecto de la ley."
+            type: string
+          - name: proyectosDeLeySinAutores
+            label: "Proyectos de ley sin autores publicados"
+            type: string
+          - name: elProyectoEsDeIniciativa
+            label: "El proyecto es de iniciativa parlamentaria y tiene votaciones en…"
+            type: text
+          - name: proyectosSinDocumentosAdjuntos
+            label: "Proyectos sin documentos adjuntos"
+            type: string
+          - name: laApiNoDevuelveLos
+            label: "La API no devuelve los documentos adjuntos del proyecto de la ley,…"
+            type: text
+          - name: numerosDeLeyRepetidosEn
+            label: "Números de ley repetidos en otra legislatura"
+            type: string
+          - name: elNumeroDeUnaLey
+            label: "El número de una ley del período también figura en otra legislatura."
+            type: string
+          - name: numerosDeLeyQueNo
+            label: "Números de ley que no figuran en el listado histórico"
+            type: string
+          - name: unNumeroDeLeyDel
+            label: "Un número de ley del período no figura en el listado histórico de…"
+            type: text
+          - name: leyesDelPeriodoQueNo
+            label: "Leyes del período que no figuran en su listado"
+            type: string
+          - name: segunElListadoHistoricoLa
+            label: "Según el listado histórico, la ley se sancionó dentro del período,…"
+            type: text
+          - name: registro
+            label: "Registro {id}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {id}."
+          - name: votacion
+            label: "Votación {id}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {id}."
+          - name: enLaFichaDeLa
+            label: "En la ficha de la Ley {numeroLey}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numeroLey}."
+          - name: ley
+            label: "Ley {numeroLey}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numeroLey}."
+          - name: fichaDeLaLey
+            label: "Ficha de la ley"
+            type: string
+          - name: leyEnSilpy
+            label: "Ley en SILpy"
+            type: string
+          - name: proyecto
+            label: "Proyecto {id}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {id}."
+          - name: expedienteEnSilpy
+            label: "Expediente en SILpy"
+            type: string
+          - name: legislador
+            label: "Legislador {id}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {id}."
+          - name: fichaDelLegislador
+            label: "Ficha del legislador"
+            type: string
+          - name: fichaEnSilpy
+            label: "Ficha en SILpy"
+            type: string
+          - name: votacionDelFecha
+            label: "Votación del {fecha} · {camara}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {fecha}, {camara}."
+          - name: sinFecha
+            label: "(sin fecha)"
+            type: string
+          - name: sinCamara
+            label: "(sin cámara)"
+            type: string
+      - name: pagina
+        label: "Página"
+        type: object
+        fields:
+          - name: titulo
+            label: "Metodología"
+            type: string
+          - name: descripcion
+            label: "De dónde vienen los datos del sitio, qué significa cada categoría…"
+            type: text
+          - name: hoySeReunen
+            label: "Hoy se reúnen {lista}."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {lista}."
+          - name: reunidoComo
+            label: "{textos} como {nombre}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {textos}, {nombre}."
+          - name: hoyNoHayObservaciones
+            label: "Hoy no hay observaciones."
+            type: string
+          - name: hoyHayObservaciones
+            label: "Hoy hay {total}."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: verPartidos
+            label: "Ver los {total} partidos unificados y el fundamento de cada texto…"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: tablaPartidos
+            label: "La tabla se descarga en partidos.json, con su descripción en el…"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: verElCaso
+            label: "Ver el caso"
+            type: string
+          - name: verLosCasos
+            label: "Ver los {total} casos"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: notaManual
+            label: "(nota agregada a mano)"
+            type: string
+          - name: casosSinEnlace
+            label: "Los casos que no tienen enlace propio no figuran en este sitio,…"
+            type: text
+      - name: secciones
+        label: Secciones
+        type: object
+        list:
+          min: 29
+          max: 29
+          collapsible:
+            collapsed: true
+            summary: "{titulo}"
+        fields:
+          - { name: ancla, label: "Dirección de la sección (no se edita)", type: string, readonly: true }
+          - { name: nivel, type: number, hidden: true }
+          - { name: titulo, label: Título, type: string }
+          - name: texto
+            label: Texto
+            type: rich-text
+            description: "Las palabras entre llaves, como {periodo}, son partes automáticas. No las borres ni les cambies el nombre."
+            options: { media: false, format: markdown }
+          - name: definiciones
+            label: Definiciones
+            type: object
+            list: true
+            fields:
+              - { name: termino, label: Término, type: string }
+              - { name: definicion, label: Definición, type: text }
+          - { name: bloque, type: string, hidden: true }
+          - name: textoDespues
+            label: Texto después de la lista automática
+            type: rich-text
+            options: { media: false, format: markdown }
+  - name: privacidad
+    label: "Privacidad y aviso legal"
+    type: file
+    path: sitio/src/contenido/privacidad.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: pagina
+        label: "Página"
+        type: object
+        fields:
+          - name: titulo
+            label: "Privacidad y aviso legal"
+            type: string
+          - name: descripcion
+            label: "Qué datos recoge este sitio sobre sus visitantes, de dónde vienen…"
+            type: text
+      - name: secciones
+        label: Secciones
+        type: object
+        list:
+          min: 4
+          max: 4
+          collapsible:
+            collapsed: true
+            summary: "{titulo}"
+        fields:
+          - { name: ancla, label: "Dirección de la sección (no se edita)", type: string, readonly: true }
+          - { name: nivel, type: number, hidden: true }
+          - { name: titulo, label: Título, type: string }
+          - name: texto
+            label: Texto
+            type: rich-text
+            description: "Las palabras entre llaves, como {periodo}, son partes automáticas. No las borres ni les cambies el nombre."
+            options: { media: false, format: markdown }
+          - name: definiciones
+            label: Definiciones
+            type: object
+            list: true
+            fields:
+              - { name: termino, label: Término, type: string }
+              - { name: definicion, label: Definición, type: text }
+          - { name: bloque, type: string, hidden: true }
+          - name: textoDespues
+            label: Texto después de la lista automática
+            type: rich-text
+            options: { media: false, format: markdown }
+  - name: error404
+    label: "Página no encontrada"
+    type: file
+    path: sitio/src/contenido/error404.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: pagina
+        label: "Página"
+        type: object
+        fields:
+          - name: paginaNoEncontrada
+            label: "Página no encontrada"
+            type: string
+          - name: laDireccionNoCorrespondeA
+            label: "La dirección no corresponde a ninguna página de este sitio."
+            type: string
+          - name: estaDireccionNoCorrespondeA
+            label: "Esta dirección no corresponde a ninguna página del sitio. Puede…"
+            type: text
+          - name: irAlInicio
+            label: "Ir al inicio"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: verTodasLasLeyes
+            label: "Ver todas las leyes"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: verTodosLosLegisladores
+            label: "Ver todos los legisladores"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+          - name: buscarEnElSitio
+            label: "Buscar en el sitio"
+            type: text
+            description: "Los enlaces van como [texto](dirección). Podés cambiar el texto; no cambies lo que va entre paréntesis."
+  - name: interaccion
+    label: "Mensajes de filtros y botones"
+    type: file
+    path: sitio/src/contenido/interaccion.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: ordenLeyes
+        label: "Orden de la lista de leyes"
+        type: object
+        fields:
+          - name: sancionMasRecientePrimero
+            label: "Sanción más reciente primero"
+            type: string
+          - name: sancionMasAntiguaPrimero
+            label: "Sanción más antigua primero"
+            type: string
+          - name: numeroDeMayorAMenor
+            label: "Número de mayor a menor"
+            type: string
+          - name: numeroDeMenorAMayor
+            label: "Número de menor a mayor"
+            type: string
+      - name: filtroVotos
+        label: "Filtro de votos"
+        type: object
+        fields:
+          - name: seMuestraLaUnicaVotacion
+            label: "Se muestra la única votación."
+            type: string
+          - name: ningunaVotacionCumpleEsteFiltro
+            label: "Ninguna votación cumple este filtro."
+            type: string
+          - name: todas
+            label: "Se muestran las {total} votaciones."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: una
+            label: "Se muestra 1 de {total} votaciones."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: varias
+            label: "Se muestran {visibles} de {total} votaciones."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {visibles}, {total}."
+      - name: respuestasTest
+        label: "Respuestas del test"
+        type: object
+        fields:
+          - name: aFavor
+            label: "A favor"
+            type: string
+          - name: enContra
+            label: "En contra"
+            type: string
+          - name: sinPosicion
+            label: "Sin posición"
+            type: string
+      - name: ordenComparativa
+        label: "Orden de la tabla comparativa"
+        type: object
+        fields:
+          - name: nombrePorApellido
+            label: "Nombre (por apellido)"
+            type: string
+          - name: ausenciasEnVotacionesNominalesDe
+            label: "Ausencias en votaciones nominales (de mayor a menor %)"
+            type: string
+          - name: noVotaDeMayorA
+            label: "NO VOTA (de mayor a menor %)"
+            type: string
+          - name: abstencionBlancoDeMayorA
+            label: "ABSTENCIÓN/BLANCO (de mayor a menor %)"
+            type: string
+          - name: votosDistintosALaMayoria
+            label: "Votos distintos a la mayoría de su bancada (de mayor a menor %)"
+            type: string
+          - name: votosDistintosALaMayoria2
+            label: "Votos distintos a la mayoría de su partido (de mayor a menor %)"
+            type: string
+      - name: compartir
+        label: "Botones para compartir"
+        type: object
+        fields:
+          - name: enlaceCopiado
+            label: "Enlace copiado"
+            type: string
+          - name: noSePudoCopiar
+            label: "No se pudo copiar el enlace"
+            type: string
+      - name: filtroExpedientes
+        label: "Filtro de expedientes"
+        type: object
+        fields:
+          - name: resultado
+            label: "Se muestran {visibles} de {total} proyectos de ley."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {visibles}, {total}."
+      - name: filtroLegisladores
+        label: "Filtro de legisladores"
+        type: object
+        fields:
+          - name: todos
+            label: "Se muestran los {total} legisladores."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: ninguno
+            label: "Ningún legislador cumple estos filtros."
+            type: string
+          - name: uno
+            label: "Se muestra 1 de {total} legisladores."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: varios
+            label: "Se muestran {visibles} de {total} legisladores."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {visibles}, {total}."
+      - name: filtroLeyes
+        label: "Filtro de leyes"
+        type: object
+        fields:
+          - name: todas
+            label: "Se muestran las {total} leyes."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: ninguna
+            label: "Ninguna ley cumple estos filtros."
+            type: string
+          - name: una
+            label: "Se muestra 1 de {total} leyes."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {total}."
+          - name: varias
+            label: "Se muestran {visibles} de {total} leyes."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {visibles}, {total}."
+      - name: paginador
+        label: "Paginador"
+        type: object
+        fields:
+          - name: paginas
+            label: "Páginas de la lista"
+            type: string
+          - name: anterior
+            label: "Página anterior"
+            type: string
+          - name: pagina
+            label: "Página {n}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {n}."
+          - name: siguiente
+            label: "Página siguiente"
+            type: string
+      - name: test
+        label: "Preguntas y resultado"
+        type: object
+        fields:
+          - name: posicionAFavor
+            label: "a favor"
+            type: string
+          - name: posicionEnContra
+            label: "en contra"
+            type: string
+          - name: sinMayoria
+            label: "sin mayoría a favor o en contra"
+            type: string
+          - name: distintaPorCamara
+            label: "distinta en cada cámara"
+            type: string
+          - name: nadaParaComparar
+            label: "No respondiste ninguna pregunta A favor o En contra, así que no…"
+            type: text
+          - name: resultadoBasado
+            label: "Resultado basado en las {respondidas} preguntas que respondiste A…"
+            type: text
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {respondidas}."
+          - name: coincidenDe
+            label: "{coinciden} de {comparadas}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {coinciden}, {comparadas}."
+          - name: respondiste
+            label: "Respondiste {respuesta}."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {respuesta}."
+          - name: sinResponder
+            label: "Sin responder."
+            type: string
+          - name: leyNumero
+            label: "Ley N° {numero}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {numero}."
+          - name: votacionEn
+            label: "Votación, {camara}, {fecha}"
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {camara}, {fecha}."
+          - name: sinFecha
+            label: "sin fecha"
+            type: string
+          - name: mayoriaDeCada
+            label: "Mayoría de cada partido. {posiciones}."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {posiciones}."
+      - name: buscar
+        label: "Buscador"
+        type: object
+        fields:
+          - name: buscando
+            label: "Buscando…"
+            type: string
+          - name: sinResultados
+            label: "No se encontraron leyes."
+            type: string
+          - name: unResultado
+            label: "1 resultado."
+            type: string
+          - name: variosResultados
+            label: "{cantidad} resultados."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {cantidad}."
+          - name: noDisponible
+            label: "La búsqueda no está disponible en este momento."
+            type: string
+      - name: proyectos
+        label: "Lista de proyectos"
+        type: object
+        fields:
+          - name: resultado
+            label: "Se muestran {visibles} de {total} proyectos."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {visibles}, {total}."
+      - name: sinNominal
+        label: "Decisiones sin votación nominal"
+        type: object
+        fields:
+          - name: resultado
+            label: "Se muestran {visibles} de {total} decisiones."
+            type: string
+            description: "Partes automáticas, no las borres ni les cambies el nombre: {visibles}, {total}."
+  - name: temas
+    label: "Temas de las leyes"
+    type: file
+    path: datos/propios/temas.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: temas
+        label: "Temas de las leyes"
+        type: object
+        list:
+          min: 16
+          max: 16
+          collapsible:
+            collapsed: true
+            summary: "{nombre}"
+        fields:
+          - { name: id, label: "Identificador (no se edita)", type: string, readonly: true }
+          - { name: nombre, label: "Nombre", type: string }
+          - { name: nombreCorto, label: "Nombre corto", type: string }
+          - { name: definicion, label: "Definición", type: text }
+          - { name: palabrasClave, type: string, list: true, hidden: true }
+          - { name: exclusivo, type: boolean, hidden: true }
+          - { name: excepto, type: string, list: true, hidden: true }
+  - name: partidos
+    label: "Partidos unificados"
+    type: file
+    path: datos/propios/partidos.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - name: partidos
+        label: "Partidos unificados"
+        type: object
+        list:
+          min: 12
+          max: 12
+          collapsible:
+            collapsed: true
+            summary: "{nombreUnificado}"
+        fields:
+          - { name: partidoPolitico, label: "Texto oficial (no se edita)", type: string, readonly: true }
+          - { name: partidoUnificado, label: "Identificador (no se edita)", type: string, readonly: true }
+          - { name: nombreUnificado, label: "Nombre unificado", type: string }
+          - { name: sigla, label: "Sigla (no se edita)", type: string, readonly: true }
+          - { name: fundamentoUnificado, label: "Fundamento", type: text }
+          - { name: nombreConocido, label: "Nombre conocido", type: string }
+          - { name: fundamentoNombreConocido, type: string, hidden: true }
+  - name: test_afinidad
+    label: "Preguntas del test de afinidad"
+    type: file
+    path: datos/propios/test-afinidad.json
+    format: json
+    operations: { create: false, delete: false }
+    fields:
+      - { name: estado, type: string, hidden: true }
+      - { name: descripcion, type: string, hidden: true }
+      - { name: periodoLegislativo, type: string, hidden: true }
+      - name: preguntas
+        label: "Preguntas del test de afinidad"
+        type: object
+        list:
+          min: 12
+          max: 12
+          collapsible:
+            collapsed: true
+            summary: "{pregunta}"
+        fields:
+          - { name: id, label: "Identificador (no se edita)", type: string, readonly: true }
+          - { name: numeroLey, label: "Número de ley (no se edita)", type: string, readonly: true }
+          - { name: tema, label: "Tema (no se edita)", type: string, readonly: true }
+          - { name: pregunta, label: "Pregunta", type: text }
+          - { name: explicacion, label: "Explicación", type: text }
+          - { name: fuentes, type: string, list: true, hidden: true }
+          - { name: votaciones, type: number, list: true, hidden: true }
+          - { name: votoAFavor, type: string, hidden: true }
+          - { name: justificacion, label: "Justificación", type: text }

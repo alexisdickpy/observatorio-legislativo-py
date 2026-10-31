@@ -5,6 +5,8 @@
 // FiltroVotos al elegir un estado.
 import BarraVotos from "./BarraVotos.astro";
 import * as rutas from "../lib/rutas.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.legisladores.resumenVotos;
 
 interface Props {
   votos: any;
@@ -16,12 +18,12 @@ const porEstado = lista.format(v.porEstado.map((e: any) => `${e.total} ${e.estad
 const resumenes = [
   {
     filtro: "",
-    texto: `Sus votos en las ${v.total} votaciones nominales sobre proyectos de ley del período ${periodo} en cuya lista oficial figura, hayan llegado a ser ley o no. Según el estado oficial del proyecto, ${porEstado}.`,
+    texto: fill(tx.susVotosEnLasVotaciones, { total: v.total, periodo: periodo, porEstado: porEstado }),
     ...v,
   },
   ...v.porEstado.map((e: any) => ({
     ...e,
-    texto: `Sus votos en las ${e.total} votaciones nominales del período ${periodo} sobre proyectos de ley ${e.estado ? `con estado oficial ${e.estado}` : "sin estado oficial"}.`,
+    texto: e.estado ? fill(tx.votosConEstado, { total: e.total, periodo, estado: e.estado }) : fill(tx.votosSinEstado, { total: e.total, periodo }),
   })),
 ];
 ---
@@ -38,10 +40,7 @@ const resumenes = [
       </div>
     ))
   }
-  <p class="chico lectura">
-    <a href={rutas.metodologia(rutas.anclasMetodologia.votosLegislador)}>Cómo se calcula este resumen</a> ·
-    <a href={rutas.metodologia(rutas.anclasMetodologia.categorias)}>Qué significa cada categoría de voto</a>
-  </p>
+  <p class="chico lectura" set:html={md(tx.comoSeCalculaEsteResumen, { url1: crudo(rutas.metodologia(rutas.anclasMetodologia.votosLegislador)), url2: crudo(rutas.metodologia(rutas.anclasMetodologia.categorias)) })} />
 </div>
 
 <style is:global>

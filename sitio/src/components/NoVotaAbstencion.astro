@@ -2,6 +2,8 @@
 // NO VOTA y ABSTENCIÓN/BLANCO de un legislador en votaciones nominales, dos cifras separadas con el
 // mismo denominador que las ausencias. Recibe el bloque de lib/legisladores.js (ficha).
 import * as rutas from "../lib/rutas.js";
+import { textos, md, crudo } from "../lib/contenido.js";
+const tx = textos.legisladores.noVotaAbstencion;
 
 interface Props {
   noVota: any;
@@ -12,17 +14,10 @@ const { noVota, abstencion, periodo } = Astro.props;
 ---
 
 <dl class="no-vota-abstencion">
-  <div><dt>NO VOTA</dt><dd><strong>{noVota.texto}</strong></dd></div>
-  <div><dt>ABSTENCIÓN/BLANCO</dt><dd><strong>{abstencion.texto}</strong></dd></div>
+  <div><dt>{tx.noVota}</dt><dd><strong>{noVota.texto}</strong></dd></div>
+  <div><dt>{tx.abstencionBlanco}</dt><dd><strong>{abstencion.texto}</strong></dd></div>
 </dl>
-<p class="chico texto-suave lectura">
-  Votaciones nominales del período {periodo} en que figura con cada categoría, sobre las mismas
-  votaciones que las ausencias. NO VOTA indica que figura en la votación sin emitir voto y solo aparece en
-  el Senado. ABSTENCIÓN/BLANCO es un voto oficial. Son cifras distintas y no se suman.{" "}
-  <a href={rutas.metodologia(rutas.anclasMetodologia.noVotaAbstencion)}>Cómo se calcula</a>
-  {" · "}
-  <a href={rutas.votacionesNominales()}>Comparar con los demás legisladores</a>
-</p>
+<p class="chico texto-suave lectura" set:html={md(tx.votacionesNominalesDelPeriodoEn, { periodo: periodo, url1: crudo(rutas.metodologia(rutas.anclasMetodologia.noVotaAbstencion)), url2: crudo(rutas.votacionesNominales()) })} />
 
 <style>
   .no-vota-abstencion {

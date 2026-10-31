@@ -7,6 +7,9 @@ import Hemiciclo from "../components/Hemiciclo.astro";
 import { periodos } from "../lib/datos.js";
 import { CANTIDAD_AUTORES, estadisticas } from "../lib/estadisticas.js";
 import * as rutas from "../lib/rutas.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.estadisticas.pagina;
+const txc = textos.general.comunes;
 
 const periodo = periodos().find((p) => p.vigente).id;
 const e = estadisticas(periodo);
@@ -14,17 +17,15 @@ const numero = (n: number) => n.toLocaleString("es-PY");
 ---
 
 <Base
-  titulo="Estadísticas"
-  descripcion={`Cifras generales del Congreso Nacional del Paraguay en el período legislativo ${periodo}: composición de cada cámara, leyes sancionadas y votaciones nominales.`}
+  titulo={tx.estadisticas}
+  descripcion={fill(tx.cifrasGeneralesDelCongresoNacional, { periodo: periodo })}
 >
-  <h1>Estadísticas</h1>
+  <h1>{tx.estadisticas}</h1>
   <p class="lectura">
-    Cifras generales del período legislativo {periodo}, contadas por este sitio a partir de los datos abiertos
-    del Congreso, con {numero(e.leyes)} leyes sancionadas y {numero(e.votaciones)} votaciones nominales sobre
-    proyectos de ley. Se actualizan solas con cada sincronización de los datos.
+    {fill(tx.cifrasGeneralesDelPeriodoLegislativo, { periodo: periodo, leyes: numero(e.leyes), votaciones: numero(e.votaciones) })}
   </p>
 
-  <h2>Composición de cada cámara</h2>
+  <h2>{tx.composicionDeCadaCamara}</h2>
   <div class="columnas">
     {
       e.camaras.map((c: any) => (
@@ -32,60 +33,55 @@ const numero = (n: number) => n.toLocaleString("es-PY");
           <h3>{c.nombre}</h3>
           <Hemiciclo puntos={c.asientos} cifra={String(c.total)} detalle={c.nombre.toUpperCase()} etiqueta={`${c.nombre}: ${c.partidos.map((p: any) => `${p.sigla} ${p.cantidad}`).join(", ")}.`} />
           <BarrasCifras filas={c.partidos.map((p: any) => ({ texto: p.sigla, clase: p.clase, cantidad: p.cantidad }))} />
-          <p class="chico texto-suave nota">Bancas según el tipo oficial, {c.tipos.map((t: any) => `${t.texto} ${t.cantidad}`).join(" · ")}.{c.vitalicios > 0 && ` Aparte, ${c.vitalicios} senadores vitalicios, sin banca.`}</p>
+          <p class="chico texto-suave nota">{tx.bancasSegunElTipoOficial} {c.tipos.map((t: any) => `${t.texto} ${t.cantidad}`).join(" · ")}.{c.vitalicios > 0 && fill(tx.aparteSenadoresVitaliciosSinBanca, { vitalicios: c.vitalicios })}</p>
         </section>
       ))
     }
   </div>
 
-  <h2>Leyes sancionadas</h2>
+  <h2>{txc.leyesSancionadas}</h2>
   <div class="columnas">
     <section>
-      <h3>Por año de sanción</h3>
+      <h3>{tx.porAnoDeSancion}</h3>
       <BarrasCifras filas={e.leyesPorAnio} />
     </section>
     <section>
-      <h3>Por iniciativa</h3>
-      <p class="chico texto-suave">Según el dato oficial de cada proyecto.</p>
+      <h3>{tx.porIniciativa}</h3>
+      <p class="chico texto-suave">{tx.segunElDatoOficialDe}</p>
       <BarrasCifras filas={e.iniciativas} />
     </section>
     <section>
-      <h3>Por partido de sus autores</h3>
-      <p class="chico texto-suave">Una ley cuenta una vez por cada partido con algún autor, así que la suma pasa del total.</p>
+      <h3>{tx.porPartidoDeSusAutores}</h3>
+      <p class="chico texto-suave">{tx.unaLeyCuentaUnaVez}</p>
       <BarrasCifras filas={e.leyesPorPartido} />
     </section>
     <section>
-      <h3>Legisladores con más leyes de su autoría</h3>
-      <p class="chico texto-suave">Los {CANTIDAD_AUTORES} primeros. Muchas leyes tienen varios autores. Más leyes no significa mejor ni peor trabajo.</p>
+      <h3>{tx.legisladoresConMasLeyesDe}</h3>
+      <p class="chico texto-suave">{fill(tx.losPrimerosMuchasLeyesTienen, { cantidad: CANTIDAD_AUTORES })}</p>
       <BarrasCifras filas={e.autores} />
     </section>
   </div>
 
-  <h2>Votaciones nominales sobre proyectos de ley</h2>
+  <h2>{tx.votacionesNominalesSobreProyectosDe}</h2>
   <div class="columnas">
     <section>
-      <h3>Por año y cámara</h3>
+      <h3>{tx.porAnoYCamara}</h3>
       <table class="por-anio">
-        <caption class="solo-lectores">Votaciones nominales por año y cámara</caption>
-        <thead><tr><th scope="col">Año</th><th scope="col">Senadores</th><th scope="col">Diputados</th></tr></thead>
+        <caption class="solo-lectores">{tx.votacionesNominalesPorAnoY}</caption>
+        <thead><tr><th scope="col">{tx.ano}</th><th scope="col">{tx.senadores}</th><th scope="col">{tx.diputados}</th></tr></thead>
         <tbody>
           {e.votacionesPorAnio.map((a: any) => <tr><th scope="row"><a href={a.url}>{a.anio}</a></th><td>{numero(a.porCamara.find((x: any) => x.camara === "CAMARA DE SENADORES")?.total ?? 0)}</td><td>{numero(a.porCamara.find((x: any) => x.camara === "CAMARA DE DIPUTADOS")?.total ?? 0)}</td></tr>)}
         </tbody>
       </table>
     </section>
     <section>
-      <h3>Por resultado oficial</h3>
+      <h3>{tx.porResultadoOficial}</h3>
       <BarrasCifras filas={e.resultados} />
     </section>
   </div>
-  <h2>Decisiones sin votación nominal</h2>
-  <p class="lectura">
-    Además, <a href={rutas.decisionesSinNominal()}>{numero(e.decisiones.length)} decisiones del plenario</a> sobre
-    proyectos de ley no tienen votación nominal publicada, así que no entran en las cifras de votos.
-  </p>
-  <p class="chico texto-suave">
-    <a href={rutas.metodologia()}>Metodología</a> · <a href={rutas.datosAbiertos()}>Datos abiertos</a>
-  </p>
+  <h2>{txc.decisionesSinVotacionNominal}</h2>
+  <p class="lectura" set:html={md(tx.ademasDecisionesDelPlenarioSobre, { url1: crudo(rutas.decisionesSinNominal()), decisiones: numero(e.decisiones.length) })} />
+  <p class="chico texto-suave" set:html={md(tx.metodologiaDatosAbiertos, { url1: crudo(rutas.metodologia()), url2: crudo(rutas.datosAbiertos()) })} />
 </Base>
 
 <style>

@@ -8,6 +8,9 @@ import { listado } from "./legisladores.js";
 import { clasePartido, partidoUnificado, siglaDe } from "./partidos.js";
 import { composicion } from "./portada.js";
 import { votacionesDelPeriodo } from "./votaciones.js";
+import { textos } from "./contenido.js";
+const tx = textos.estadisticas.textos;
+const txc = textos.general.comunes;
 
 /** Legisladores en la lista de más leyes de su autoría. */
 export const CANTIDAD_AUTORES = 10;
@@ -54,14 +57,14 @@ export function estadisticas(periodo) {
   }
   const fichas = new Map([...enEjercicio, ...listado(periodo).noEjercen].map((f) => [f.slug, f]));
 
-  const resultados = contar(votaciones.map((v) => v.resultado ?? "Sin dato"));
+  const resultados = contar(votaciones.map((v) => v.resultado ?? txc.sinDato));
 
   return {
     leyes: leyes.length,
     votaciones: votaciones.length,
     decisiones: decisionesSinNominal(periodo),
-    leyesPorAnio: contar(leyes.map((l) => (l._propio?.fechaSancion ?? "").slice(0, 4) || "Sin dato")).sort((a, b) => a.texto.localeCompare(b.texto)),
-    iniciativas: contar(leyes.map((l) => valor(l.proyecto?.iniciativa) ?? "Sin dato")),
+    leyesPorAnio: contar(leyes.map((l) => (l._propio?.fechaSancion ?? "").slice(0, 4) || txc.sinDato)).sort((a, b) => a.texto.localeCompare(b.texto)),
+    iniciativas: contar(leyes.map((l) => valor(l.proyecto?.iniciativa) ?? txc.sinDato)),
     leyesPorPartido: [...porPartido.values()].map((p) => ({ texto: p.sigla, clase: p.clase, cantidad: p.leyes.size })).sort(deMayorAMenor),
     autores: [...porAutor.entries()]
       .map(([slug, proyectos]) => ({ texto: fichas.get(slug)?.nombre ?? slug, url: fichas.get(slug)?.url, partido: fichas.get(slug)?.partido, clase: clasePartido(fichas.get(slug)?.partido), cantidad: proyectos.size }))
@@ -70,11 +73,11 @@ export function estadisticas(periodo) {
     votacionesPorAnio: [...anios].reverse(),
     resultados: [
       ...resultados.slice(0, CANTIDAD_RESULTADOS),
-      ...(resultados.length > CANTIDAD_RESULTADOS ? [{ texto: "Otros resultados", cantidad: resultados.slice(CANTIDAD_RESULTADOS).reduce((a, r) => a + r.cantidad, 0) }] : []),
+      ...(resultados.length > CANTIDAD_RESULTADOS ? [{ texto: tx.otrosResultados, cantidad: resultados.slice(CANTIDAD_RESULTADOS).reduce((a, r) => a + r.cantidad, 0) }] : []),
     ],
     camaras: composicion(periodo).map((c) => ({
       ...c,
-      tipos: contar(enEjercicio.filter((f) => f.camara === c.camara && f.tipo !== "VITALICIO").map((f) => f.tipo ?? "Sin dato")),
+      tipos: contar(enEjercicio.filter((f) => f.camara === c.camara && f.tipo !== "VITALICIO").map((f) => f.tipo ?? txc.sinDato)),
       vitalicios: enEjercicio.filter((f) => f.camara === c.camara && f.tipo === "VITALICIO").length,
     })),
   };

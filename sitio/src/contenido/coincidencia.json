@@ -1,0 +1,48 @@
+{
+  "pagina": {
+    "partidos": "Partidos",
+    "bancadas": "Bancadas ({camara})",
+    "queTanSeguidoVotaronIgual": "Qué tan seguido votaron igual los partidos y las bancadas del Congreso Nacional del Paraguay en las votaciones nominales sobre proyectos de ley del período legislativo {periodo}, cada cámara por separado y con numerador y denominador.",
+    "todosLosLegisladores": "[← Todos los legisladores]({url1})",
+    "paraCadaPartidoYCada": "Para cada partido y cada bancada del período legislativo {periodo}, en cuántas votaciones nominales sobre proyectos de ley tuvo la misma posición que cada uno de los demás grupos de su cámara.",
+    "coincidenciaVotacionesEnQueLos": "Coincidencia = votaciones en que los dos grupos tuvieron la misma posición ÷ votaciones en que los dos tuvieron posición × 100",
+    "posicionDeUnGrupoLa": "**Posición de un grupo.** La opción con más votos entre los votos emitidos de sus miembros en esa votación (SI, NO, ABSTENCIÓN/BLANCO o una moción). AUSENTE y NO VOTA no son votos emitidos. En un grupo en que votó una sola persona, la posición es su voto.",
+    "empateSiDosOMas": "**Empate.** Si dos o más opciones empatan en el primer lugar, el grupo no tiene posición en esa votación y esa votación no cuenta para sus pares.",
+    "pocasVotacionesEnComunCon": "**Pocas votaciones en común.** Con menos de {umbral} votaciones en común se muestran las cantidades sin porcentaje, porque una sola votación lo cambiaría mucho.",
+    "coincidirONoCoincidirNo": "Coincidir o no coincidir no es bueno ni malo. Es un dato para comparar cómo votan los grupos entre sí.",
+    "cadaVotacionEsDeUna": "Cada votación es de una sola cámara, así que todo se calcula dentro de cada cámara y nunca se suman senadores y diputados. Los partidos se identifican con el",
+    "partidoUnificado": "partido unificado",
+    "quePermitePonerLadoA": ", que permite poner lado a lado lo que hizo el mismo partido en cada cámara, cada una con su propia cifra. Las bancadas se muestran con su nombre oficial, dentro de su cámara. Partido y bancada son los que la API registra para el período, no necesariamente los de la fecha de cada votación.",
+    "comoSeCalculaLaCoincidencia": "Cómo se calcula la coincidencia",
+    "todosLosParesDePartidos": "Todos los pares de partidos",
+    "cadaCeldaEsLaCoincidencia": "Cada celda es la coincidencia entre el partido de la fila y el de la columna, en esa cámara. El tono más intenso indica más coincidencia y no califica. Con menos de {umbral} votaciones en común, la celda muestra solo las cantidades. Los partidos van de más a menos legisladores en ejercicio en esa cámara. En el menú de abajo, los partidos van de más a menos legisladores en ejercicio en el Congreso y las bancadas, en su cámara. Es solo un orden y ninguna cifra suma las dos cámaras. El nombre entre paréntesis es el nombre por el que se conoce a un partido, un agregado de este sitio.",
+    "coincidenciaEntreTodosLosPares": "Coincidencia entre todos los pares de partidos, {camara}",
+    "unPartidoOUnaBancada": "Un partido o una bancada con cada uno de los demás",
+    "conElTextoOficial": "{valor}, con el texto oficial «{texto}», {votaciones}.",
+    "sinLegisladoresDeEstePartido": "{valor}, sin legisladores de este partido.",
+    "coincidenciaDeConLosDemas": "Coincidencia de {nombre} con los demás partidos, por cámara",
+    "porBancada": "Por bancada, {camara}",
+    "enLa": "En la {camara},",
+    "coincidenciaDeConLasDemas": "Coincidencia de {nombre} con las demás bancadas de la {camara}",
+    "coincidencia": "Coincidencia",
+    "resumenGrupo": "{legisladores} en ejercicio, tuvo posición en {conPosicion} de {votaciones}",
+    "yEmpato": "y empató en {empates}",
+    "unLegislador": "legislador",
+    "variosLegisladores": "legisladores",
+    "unaVotacion": "votación",
+    "variasVotaciones": "votaciones"
+  },
+  "cuadro": {
+    "enEjercicio": "en ejercicio",
+    "mismoPartido": "Mismo partido",
+    "sin": "sin %"
+  },
+  "selector": {
+    "partidoOBancada": "Partido o bancada"
+  },
+  "textos": {
+    "sinLegisladoresEnEstaCamara": "Sin legisladores en esta cámara",
+    "sinVotacionesEnComun": "Sin votaciones en común",
+    "menosDeVotacionesEnComun": "{fraccion} (menos de {umbral} votaciones en común, sin porcentaje)"
+  }
+}

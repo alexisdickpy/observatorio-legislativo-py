@@ -5,6 +5,9 @@ import Base from "../../layouts/Base.astro";
 import { periodos } from "../../lib/datos.js";
 import { decisionesSinNominal } from "../../lib/decisiones.js";
 import * as rutas from "../../lib/rutas.js";
+import { textos, fill, md, crudo } from "../../lib/contenido.js";
+const tx = textos.votaciones.sinNominal;
+const txc = textos.general.comunes;
 
 const periodo = periodos().find((p) => p.vigente).id;
 const decisiones = decisionesSinNominal(periodo);
@@ -17,36 +20,34 @@ const numero = (n: number) => n.toLocaleString("es-PY");
 ---
 
 <Base
-  titulo="Decisiones sin votación nominal"
-  descripcion={`Resultado oficial de ${numero(decisiones.length)} decisiones del plenario sobre proyectos de ley sin votación nominal publicada, período legislativo ${periodo}.`}
+  titulo={txc.decisionesSinVotacionNominal}
+  descripcion={fill(tx.resultadoOficialDeDecisionesDel, { decisiones: numero(decisiones.length), periodo: periodo })}
 >
-  <p class="chico"><a href={rutas.votaciones()}>← Votaciones</a></p>
-  <h1>Decisiones sin votación nominal</h1>
+  <p class="chico" set:html={md(tx.votaciones, { url1: crudo(rutas.votaciones()) })} />
+  <h1>{txc.decisionesSinVotacionNominal}</h1>
   <div class="lectura">
     <p>
-      {numero(decisiones.length)} decisiones del plenario sobre proyectos de ley del período legislativo {periodo} sin
-      votación nominal publicada. Se muestra el resultado oficial.
+      {fill(tx.decisionesDelPlenarioSobreProyectos, { decisiones: numero(decisiones.length), periodo: periodo })}
     </p>
-    <p class="chico texto-suave">
-      Sin votos individuales no se puede saber cómo votó cada legislador o partido, así que estas decisiones no
-      entran en los gráficos ni en los cálculos del sitio. La lista incluye los proyectos cuyo detalle guarda
-      este sitio y puede no ser completa. <a href={rutas.metodologia(rutas.anclasMetodologia.decisiones)}>Cómo se arma esta lista</a>
-    </p>
+    <p class="chico texto-suave" set:html={md(tx.sinVotosIndividualesNoSe, { url1: crudo(rutas.metodologia(rutas.anclasMetodologia.decisiones)) })} />
   </div>
 
   <form class="filtro" id="filtro-decisiones" hidden>
-    <div><label for="decision-anio">Año</label><select id="decision-anio" data-campo="anio"><option value="">Todos</option>{anios.map(([v, t]) => <option value={v as string}>{t}</option>)}</select></div>
-    <div><label for="decision-camara">Cámara</label><select id="decision-camara" data-campo="camara"><option value="">Las dos</option>{camaras.map(([v, t]) => <option value={v as string}>{t}</option>)}</select></div>
-    <div><label for="decision-resultado">Resultado</label><select id="decision-resultado" data-campo="resultado"><option value="">Todos</option>{resultados.map(([v, t]) => <option value={v as string}>{t}</option>)}</select></div>
+    <div><label for="decision-anio">{tx.ano}</label><select id="decision-anio" data-campo="anio"><option value="">{txc.todos}</option>{anios.map(([v, t]) => <option value={v as string}>{t}</option>)}</select></div>
+    <div><label for="decision-camara">{txc.camara}</label><select id="decision-camara" data-campo="camara"><option value="">{txc.lasDos}</option>{camaras.map(([v, t]) => <option value={v as string}>{t}</option>)}</select></div>
+    <div><label for="decision-resultado">{tx.resultado}</label><select id="decision-resultado" data-campo="resultado"><option value="">{txc.todos}</option>{resultados.map(([v, t]) => <option value={v as string}>{t}</option>)}</select></div>
     <p class="chico texto-suave" id="decision-estado" aria-live="polite"></p>
   </form>
 
   <ol class="decisiones" data-paginar>
-    {decisiones.map((d: any) => <li data-decision={d.id} data-anio={d.anio} data-camara={d.camaraFiltro} data-resultado={d.resultadoFiltro}><p class="resultado">{d.resultado}</p><p class="chico texto-suave">{d.fecha} · {d.camara ?? "Sin dato"} · {d.etapa ?? "Sin dato"}</p><p class="titulo">{d.ley && <Fragment><a href={d.ley.url}>Ley {d.ley.numero}</a> </Fragment>}{d.url ? <a href={d.url}>Expediente {d.expediente ?? "en SILpy"}</a> : d.expediente && `Expediente ${d.expediente}`} <span class="texto-suave">{d.titulo}</span></p>{d.sesion && <p class="chico"><a href={d.sesion}>Sesión en SILpy</a></p>}</li>)}
+    {decisiones.map((d: any) => <li data-decision={d.id} data-anio={d.anio} data-camara={d.camaraFiltro} data-resultado={d.resultadoFiltro}><p class="resultado">{d.resultado}</p><p class="chico texto-suave">{d.fecha} · {d.camara ?? txc.sinDato} · {d.etapa ?? txc.sinDato}</p><p class="titulo">{d.ley && <Fragment><a href={d.ley.url}>{fill(tx.ley, { numero: d.ley.numero })}</a> </Fragment>}{d.url ? <a href={d.url}>{txc.expediente} {d.expediente ?? tx.enSilpy}</a> : d.expediente && fill(tx.expediente, { expediente: d.expediente })} <span class="texto-suave">{d.titulo}</span></p>{d.sesion && <p class="chico" set:html={md(tx.sesionEnSilpy, { url1: crudo(d.sesion) })} />}</li>)}
   </ol>
 </Base>
 
 <script>
+  import interaccion from "../../contenido/interaccion.json";
+  import { fill } from "../../lib/rellenar.js";
+  const ti = interaccion.sinNominal;
   const form = document.getElementById("filtro-decisiones") as HTMLFormElement;
   const estado = document.getElementById("decision-estado")!;
   const items = [...document.querySelectorAll<HTMLElement>("[data-decision]")];
@@ -58,7 +59,7 @@ const numero = (n: number) => n.toLocaleString("es-PY");
       item.hidden = !visible;
       if (visible) cantidad++;
     }
-    estado.textContent = `Se muestran ${cantidad.toLocaleString("es-PY")} de ${items.length.toLocaleString("es-PY")} decisiones.`;
+    estado.textContent = fill(ti.resultado, { visibles: cantidad.toLocaleString("es-PY"), total: items.length.toLocaleString("es-PY") });
   };
   form.hidden = false;
   form.addEventListener("change", aplicar);

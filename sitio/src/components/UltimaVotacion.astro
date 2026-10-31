@@ -4,20 +4,23 @@
 import Hemiciclo from "./Hemiciclo.astro";
 import { votacionDestacada } from "../lib/portada.js";
 import * as rutas from "../lib/rutas.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.portada.ultimaVotacion;
+const txc = textos.general.comunes;
 
 interface Props {
   periodo: string;
 }
 const { periodo } = Astro.props;
 const v = votacionDestacada(periodo);
-const sinDato = "Sin dato";
+const sinDato = txc.sinDato;
 ---
 
 {
   v && (
     <section class="ultima" aria-labelledby="titulo-ultima">
       <p class="antetitulo">
-        Última votación nominal · {v.camara ?? sinDato} · <time datetime={v.fechaIso}>{v.fecha ?? sinDato}</time>
+        {tx.ultimaVotacionNominal} {v.camara ?? sinDato} · <time datetime={v.fechaIso}>{v.fecha ?? sinDato}</time>
       </p>
       <div class="columnas">
         <div class="relato">
@@ -26,28 +29,28 @@ const sinDato = "Sin dato";
             <a href={v.pagina}>{v.titulo}</a>
           </p>
           <p class="chico texto-suave">
-            {v.etapa ?? sinDato} · Expediente {v.expediente ?? sinDato}{v.ley && <Fragment> · <a href={rutas.ley(v.ley.numero)}>Ley {v.ley.numero}</a></Fragment>}
+            {v.etapa ?? sinDato} {tx.expediente} {v.expediente ?? sinDato}{v.ley && <Fragment> · <a href={rutas.ley(v.ley.numero)}>{fill(tx.ley, { numero: v.ley.numero })}</a></Fragment>}
           </p>
         </div>
         <figure class="plenario">
-          <Hemiciclo puntos={v.asientos} cifra={`${v.si} – ${v.no}`} detalle="SI – NO" etiqueta={`Hemiciclo con ${v.registrados} legisladores: ${v.leyenda.map((l) => `${l.categoria} ${l.cantidad}`).join(", ")}.`} />
+          <Hemiciclo puntos={v.asientos} cifra={`${v.si} – ${v.no}`} detalle="SI – NO" etiqueta={fill(tx.hemicicloCon, { registrados: v.registrados, leyenda: v.leyenda.map((l) => `${l.categoria} ${l.cantidad}`).join(", ") })} />
           <figcaption>
             <ul class="leyenda">
               {v.leyenda.map((l) => <li><span class={`punto ${l.clase}`}></span>{l.categoria} <strong>{l.cantidad}</strong></li>)}
             </ul>
-            <p class="chico texto-suave">Un punto por legislador, agrupados por voto. No es la ubicación real de las bancas.</p>
+            <p class="chico texto-suave">{tx.unPuntoPorLegisladorAgrupados}</p>
           </figcaption>
         </figure>
       </div>
       {
         !v.totalesCoinciden && (
           <p class="chico lectura">
-            <strong>Nota del Observatorio.</strong> Los totales publicados no coinciden con el recuento de los votos individuales ({v.recalculados.map((r) => `${r.categoria} ${r.cantidad}`).join(" · ")}).
+            <strong>{tx.notaDelObservatorio}</strong> {tx.losTotalesPublicadosNoCoinciden}{v.recalculados.map((r) => `${r.categoria} ${r.cantidad}`).join(" · ")}).
           </p>
         )
       }
       <table class="por-partido">
-        <caption class="solo-lectores">Voto de cada partido en esta votación</caption>
+        <caption class="solo-lectores">{tx.votoDeCadaPartidoEn}</caption>
         <tbody>
           {
             v.partidos.map((p) => (
@@ -60,7 +63,7 @@ const sinDato = "Sin dato";
           }
         </tbody>
       </table>
-      <p><a href={v.pagina}>Ver cómo votó cada legislador</a></p>
+      <p set:html={md(tx.verComoVotoCadaLegislador, { url1: crudo(v.pagina) })} />
     </section>
   )
 }

@@ -1,0 +1,36 @@
+---
+// Secciones de una página de lectura larga (metodología, privacidad), con sus textos en Markdown
+// (contenido/metodologia.json, contenido/privacidad.json). Una sección con `bloque` muestra en ese punto
+// lo que la página pasa en la ranura del mismo nombre, por ejemplo una lista que sale de los datos.
+import { md, mdBloque } from "../lib/contenido.js";
+
+interface Props {
+  secciones: any[];
+  valores: Record<string, unknown>;
+}
+const { secciones, valores } = Astro.props;
+---
+
+{
+  secciones.map((s) => {
+    const Titulo = `h${s.nivel}`;
+    return (
+      <Fragment>
+        {s.titulo && <Titulo id={s.ancla}>{s.titulo}</Titulo>}
+        {s.texto && <Fragment set:html={mdBloque(s.texto, valores)} />}
+        {s.definiciones?.length > 0 && (
+          <dl>
+            {s.definiciones.map((d: any) => (
+              <Fragment>
+                <dt set:html={md(d.termino, valores)} />
+                <dd set:html={md(d.definicion, valores)} />
+              </Fragment>
+            ))}
+          </dl>
+        )}
+        {s.bloque && <slot name={s.bloque} />}
+        {s.textoDespues && <Fragment set:html={mdBloque(s.textoDespues, valores)} />}
+      </Fragment>
+    );
+  })
+}

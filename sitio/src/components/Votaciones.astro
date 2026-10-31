@@ -2,6 +2,9 @@
 // Votaciones nominales de un registro de ley: índice por fecha y una sección por cámara.
 import Votacion from "./Votacion.astro";
 import * as rutas from "../lib/rutas.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.leyes.votacionesDeLaLey;
+const txc = textos.general.comunes;
 
 interface Props {
   votaciones: any;
@@ -15,22 +18,16 @@ const plural = (n: number, uno: string, varios: string) => `${n} ${n === 1 ? uno
 ---
 
 <section class="votaciones" data-pagefind-ignore="all">
-  <Titulo>Votaciones nominales ({vs.cantidad})</Titulo>
+  <Titulo>{fill(tx.votacionesNominales, { cantidad: vs.cantidad })}</Titulo>
   {
     vs.cantidad === 0 ? (
       <p class="aviso lectura">
-        Esta ley no tiene votaciones nominales registradas en el período {periodo}. La API solo
-        publica las votaciones nominales, es decir, las que registran el voto de cada legislador.
+        {fill(tx.estaLeyNoTieneVotaciones, { periodo: periodo })}
       </p>
     ) : (
       <Fragment>
-        <p class="aviso chico lectura">
-          Partido y bancada son los que la API registra para cada legislador en el período {periodo};
-          no necesariamente eran los vigentes en la fecha de cada votación.
-          <a href={rutas.metodologia(rutas.anclasMetodologia.afiliacion)}>Más información</a> ·
-          <a href={rutas.metodologia(rutas.anclasMetodologia.categorias)}>Qué significa cada categoría de voto</a>
-        </p>
-        <p class="chico texto-suave">Índice de las votaciones, de la más reciente a la más antigua.</p>
+        <p class="aviso chico lectura" set:html={md(tx.partidoYBancadaSonLos, { periodo: periodo, url1: crudo(rutas.metodologia(rutas.anclasMetodologia.afiliacion)), url2: crudo(rutas.metodologia(rutas.anclasMetodologia.categorias)) })} />
+        <p class="chico texto-suave">{tx.indiceDeLasVotacionesDe}</p>
         <ol class="indice chico">
           {vs.indice.map((v: any) => (
             <li>
@@ -44,7 +41,7 @@ const plural = (n: number, uno: string, varios: string) => `${n} ${n === 1 ? uno
         {vs.camaras.map((c: any) => (
           <section>
             <Camara class="camara">
-              {c.camara ?? "Sin dato"} ({plural(c.votaciones.length, "votación", "votaciones")})
+              {c.camara ?? txc.sinDato} ({plural(c.votaciones.length, txc.votacion, "votaciones")})
             </Camara>
             {c.votaciones.map((v: any) => (
               <Votacion votacion={v} nivel={nivel + 2} />
@@ -58,14 +55,12 @@ const plural = (n: number, uno: string, varios: string) => `${n} ${n === 1 ? uno
     vs.otrosPeriodos.length > 0 && (
       <div class="aviso lectura">
         <p>
-          Esta ley tuvo{vs.cantidad > 0 && " además"} {plural(vs.otrosPeriodos.length, "votación nominal", "votaciones nominales")}{" "}
-          en otra legislatura, que este sitio todavía no incluye. Se pueden ver en SILpy.
+          {tx.estaLeyTuvo}{vs.cantidad > 0 && tx.ademas} {plural(vs.otrosPeriodos.length, txc.votacionNominal, txc.votacionesNominales)} 
+          {tx.enOtraLegislaturaQueEste}
         </p>
         <ul>
           {vs.otrosPeriodos.map((o: any) => (
-            <li>
-              <a href={o.url}>Votación {o.id}</a>
-            </li>
+            <li set:html={md(tx.votacion, { url1: crudo(o.url), id: o.id })} />
           ))}
         </ul>
       </div>
@@ -75,15 +70,11 @@ const plural = (n: number, uno: string, varios: string) => `${n} ${n === 1 ? uno
     vs.noResueltas.length > 0 && (
       <div class="aviso lectura">
         <p>
-          El proyecto tiene además {plural(vs.noResueltas.length, "votación", "votaciones")} cuyo trámite
-          no figura entre las tramitaciones publicadas, por lo que no se pudo confirmar que correspondan
-          a esta ley. Se pueden ver en SILpy.
+          {tx.elProyectoTieneAdemas} {plural(vs.noResueltas.length, txc.votacion, "votaciones")} {tx.cuyoTramiteNoFiguraEntre}
         </p>
         <ul>
           {vs.noResueltas.map((o: any) => (
-            <li>
-              <a href={o.url}>Votación {o.id}</a>
-            </li>
+            <li set:html={md(tx.votacion, { url1: crudo(o.url), id: o.id })} />
           ))}
         </ul>
       </div>

@@ -4,6 +4,9 @@
 // #45, #54, #57) se agrega a VISTAS_DE_ANALISIS y queda en el menú y en la portada.
 
 import * as rutas from "./rutas.js";
+import { textos } from "./contenido.js";
+const tx = textos.general.menu;
+const txc = textos.general.comunes;
 
 /**
  * Vistas de análisis, en el orden del menú. `menu` es el nombre corto de su entrada; `titulo` y
@@ -16,24 +19,24 @@ export const vistasDeAnalisis = () => [
     clave: "votaciones",
     url: rutas.votaciones(),
     incluye: [rutas.carpetaVotaciones()],
-    menu: "Votaciones",
-    titulo: "Votaciones y posición de cada partido",
-    descripcion: "Las votaciones nominales sobre proyectos de ley con su resultado oficial y lo que votó la mayoría de cada partido. Aquí, las más recientes.",
+    menu: tx.votaciones,
+    titulo: tx.votacionesYPosicionDeCada,
+    descripcion: tx.lasVotacionesNominalesSobreProyectos,
     portadaAlFinal: true,
   },
   {
     clave: "coincidencia",
     url: rutas.coincidencia(),
-    menu: "Partidos",
-    titulo: "Coincidencia de votos entre partidos y bancadas",
-    descripcion: "Qué tan seguido votaron igual los partidos y las bancadas de cada cámara en las votaciones nominales sobre proyectos de ley.",
+    menu: tx.partidos,
+    titulo: txc.coincidenciaDeVotosEntrePartidos,
+    descripcion: tx.queTanSeguidoVotaronIgual,
   },
   {
     clave: "temas",
     url: rutas.votosPorTema(),
-    menu: "Temas",
-    titulo: "Votos de partidos por tema",
-    descripcion: "Cómo votaron los legisladores de cada partido en las votaciones nominales de cada tema, por cámara.",
+    menu: tx.temas,
+    titulo: tx.votosDePartidosPorTema,
+    descripcion: tx.comoVotaronLosLegisladoresDe,
     portadaAlFinal: true,
   },
   {
@@ -41,23 +44,23 @@ export const vistasDeAnalisis = () => [
     clave: "rankings",
     url: rutas.rankings(),
     incluye: [rutas.votacionesNominales()],
-    menu: "Rankings",
-    titulo: "Más «rebeldes»",
-    descripcion: "Legisladores que más veces votaron distinto a la mayoría de su partido en las votaciones nominales de su cámara.",
+    menu: tx.rankings,
+    titulo: tx.masRebeldes,
+    descripcion: tx.legisladoresQueMasVecesVotaron,
   },
 ];
 
 /** Entradas del menú principal, en orden. */
 export const menuPrincipal = () => [
-  { url: rutas.leyes(), texto: "Leyes" },
-  { url: rutas.proyectos(), texto: "Proyectos" },
-  { url: rutas.legisladores(), texto: "Legisladores" },
+  { url: rutas.leyes(), texto: tx.leyes },
+  { url: rutas.proyectos(), texto: tx.proyectos },
+  { url: rutas.legisladores(), texto: tx.legisladores },
   ...vistasDeAnalisis().map((v) => ({ url: v.url, texto: v.menu, incluye: v.incluye ?? [] })),
-  { url: rutas.estadisticas(), texto: "Estadísticas" },
-  { url: rutas.testAfinidad(), texto: "Test de afinidad" },
-  { url: rutas.botTelegram(), texto: "Bot de Telegram" },
-  { url: rutas.buscar(), texto: "Buscar leyes" },
-  { url: rutas.datosAbiertos(), texto: "Datos abiertos" },
+  { url: rutas.estadisticas(), texto: tx.estadisticas },
+  { url: rutas.testAfinidad(), texto: txc.testDeAfinidad },
+  { url: rutas.botTelegram(), texto: tx.botDeTelegram },
+  { url: rutas.buscar(), texto: tx.buscarLeyes },
+  { url: rutas.datosAbiertos(), texto: txc.datosAbiertos },
 ];
 
 /**

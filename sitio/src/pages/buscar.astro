@@ -3,27 +3,32 @@
 // (npm run build) y el navegador descarga solo los fragmentos que necesita.
 import Base from "../layouts/Base.astro";
 import * as rutas from "../lib/rutas.js";
+import { textos, md, crudo } from "../lib/contenido.js";
+const tx = textos.buscar.pagina;
 ---
 
-<Base titulo="Buscar leyes" descripcion="Buscar leyes del Congreso Nacional del Paraguay por número o por palabras del título.">
-  <h1>Buscar leyes</h1>
+<Base titulo={tx.buscarLeyes} descripcion={tx.buscarLeyesDelCongresoNacional}>
+  <h1>{tx.buscarLeyes}</h1>
   <form class="buscador" id="buscador" role="search" method="get">
-    <label for="busqueda">Número de ley o palabras del título</label>
+    <label for="busqueda">{tx.numeroDeLeyOPalabras}</label>
     <div class="fila">
       <input type="search" id="busqueda" name={rutas.parametroBusqueda} autocomplete="off" />
-      <button type="submit">Buscar</button>
+      <button type="submit">{tx.buscar}</button>
     </div>
   </form>
   <p id="busqueda-estado" class="chico texto-suave" aria-live="polite"></p>
   <ol id="busqueda-resultados" class="resultados"></ol>
-  <button type="button" id="busqueda-mas" hidden>Ver más resultados</button>
+  <button type="button" id="busqueda-mas" hidden>{tx.verMasResultados}</button>
   <noscript>
-    <p>La búsqueda necesita JavaScript. También podés recorrer la <a href={rutas.leyes()}>lista completa de leyes</a>.</p>
+    <p set:html={md(tx.laBusquedaNecesitaJavascriptTambien, { url1: crudo(rutas.leyes()) })} />
   </noscript>
 </Base>
 
 <script>
   import { parametroBusqueda } from "../lib/rutas.js";
+  import interaccion from "../contenido/interaccion.json";
+  import { fill } from "../lib/rellenar.js";
+  const ti = interaccion.buscar;
 
   const POR_PAGINA = 20;
   const form = document.getElementById("buscador") as HTMLFormElement;
@@ -75,7 +80,7 @@ import * as rutas from "../lib/rutas.js";
       estado.textContent = "";
       return;
     }
-    estado.textContent = "Buscando…";
+    estado.textContent = ti.buscando;
     try {
       const pf = await cargar();
       const respuesta = await pf.search(texto);
@@ -83,13 +88,13 @@ import * as rutas from "../lib/rutas.js";
       resultados = respuesta.results;
       estado.textContent =
         resultados.length === 0
-          ? "No se encontraron leyes."
+          ? ti.sinResultados
           : resultados.length === 1
-            ? "1 resultado."
-            : `${resultados.length} resultados.`;
+            ? ti.unResultado
+            : fill(ti.variosResultados, { cantidad: resultados.length });
       await mostrarMas();
     } catch {
-      estado.textContent = "La búsqueda no está disponible en este momento.";
+      estado.textContent = ti.noDisponible;
     }
   }
 

@@ -3,6 +3,9 @@
 // Con JavaScript filtra y ordena las filas de la tabla y refleja los filtros en la dirección.
 import { ORDENES, ORDEN_PREDETERMINADO } from "../lib/filtro.js";
 import { parametrosCatalogo } from "../lib/rutas.js";
+import { textos } from "../lib/contenido.js";
+const tx = textos.leyes.filtro;
+const txc = textos.general.comunes;
 
 interface Props {
   entradas: any[];
@@ -17,32 +20,32 @@ const p = parametrosCatalogo;
 
 <form class="filtro" id="filtro-leyes" role="search" hidden data-tabla={idTabla}>
   <div class="campo texto">
-    <label for="filtro-texto">Número o palabras del título</label>
+    <label for="filtro-texto">{tx.numeroOPalabrasDelTitulo}</label>
     <input type="search" id="filtro-texto" name={p.texto} autocomplete="off" />
   </div>
   <div class="campo">
-    <label for="filtro-anio">Año de sanción</label>
+    <label for="filtro-anio">{tx.anoDeSancion}</label>
     <select id="filtro-anio" name={p.anio}>
-      <option value="">Todos</option>
+      <option value="">{txc.todos}</option>
       {anios.map((a) => <option value={a}>{a}</option>)}
     </select>
   </div>
   <div class="campo">
-    <label for="filtro-camara">Cámara de origen</label>
+    <label for="filtro-camara">{txc.camaraDeOrigen}</label>
     <select id="filtro-camara" name={p.camara}>
-      <option value="">Las dos</option>
+      <option value="">{txc.lasDos}</option>
       {camaras.map((c) => <option value={c.valor}>{c.etiqueta}</option>)}
     </select>
   </div>
   <div class="campo">
-    <label for="filtro-tema">Tema (clasificación del Observatorio)</label>
+    <label for="filtro-tema">{tx.temaClasificacionDelObservatorio}</label>
     <select id="filtro-tema" name={p.tema}>
-      <option value="">Todos</option>
+      <option value="">{txc.todos}</option>
       {temas.map((t) => <option value={t.valor}>{t.etiqueta} ({t.total})</option>)}
     </select>
   </div>
   <div class="campo">
-    <label for="filtro-orden">Ordenar por</label>
+    <label for="filtro-orden">{tx.ordenarPor}</label>
     <select id="filtro-orden" name={p.orden}>
       {
         Object.entries(ORDENES).map(([valor, texto]) => (
@@ -54,7 +57,7 @@ const p = parametrosCatalogo;
     </select>
   </div>
   <div class="campo acciones">
-    <button type="reset">Limpiar</button>
+    <button type="reset">{tx.limpiar}</button>
   </div>
   <p class="resultado" id="filtro-resultado" aria-live="polite"></p>
 </form>
@@ -64,6 +67,9 @@ const p = parametrosCatalogo;
 <script>
   import { escribirFiltros, filtrar, leerFiltros } from "../lib/filtro.js";
   import { parametrosCatalogo as nombres } from "../lib/rutas.js";
+  import interaccion from "../contenido/interaccion.json";
+  import { fill } from "../lib/rellenar.js";
+  const ti = interaccion.filtroLeyes;
 
   const form = document.getElementById("filtro-leyes") as HTMLFormElement;
   const tabla = document.getElementById(form.dataset.tabla!)!;
@@ -90,12 +96,12 @@ const p = parametrosCatalogo;
     cuerpo.append(...elegidas.map((e: any) => filas.get(e.numero)!));
     resultado.textContent =
       elegidas.length === total
-        ? `Se muestran las ${formato.format(total)} leyes.`
+        ? fill(ti.todas, { total: formato.format(total) })
         : elegidas.length === 0
-          ? "Ninguna ley cumple estos filtros."
+          ? ti.ninguna
           : elegidas.length === 1
-            ? `Se muestra 1 de ${formato.format(total)} leyes.`
-          : `Se muestran ${formato.format(elegidas.length)} de ${formato.format(total)} leyes.`;
+            ? fill(ti.una, { total: formato.format(total) })
+          : fill(ti.varias, { visibles: formato.format(elegidas.length), total: formato.format(total) });
     if (actualizarDireccion) {
       const consulta = escribirFiltros(filtros, nombres).toString();
       history.replaceState(null, "", consulta ? `?${consulta}` : location.pathname);

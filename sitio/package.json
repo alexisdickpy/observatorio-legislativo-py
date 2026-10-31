@@ -8,7 +8,7 @@
     "node": "24.21.0"
   },
   "scripts": {
-    "datos": "node scripts/copiar-datos.js && node scripts/reducir-fotos.js && node scripts/imagenes-votaciones.js",
+    "datos": "node scripts/validar-contenido.js && node scripts/copiar-datos.js && node scripts/reducir-fotos.js && node scripts/imagenes-votaciones.js",
     "dev": "npm run datos && astro dev",
     "build": "npm run datos && astro build && pagefind --site dist",
     "preview": "astro preview",
@@ -20,6 +20,7 @@
     "@fontsource-variable/newsreader": "5.2.5",
     "@fontsource-variable/public-sans": "5.2.5",
     "astro": "7.3.8",
+    "marked": "18.0.3",
     "pagefind": "1.5.2",
     "sharp": "0.35.5"
   }

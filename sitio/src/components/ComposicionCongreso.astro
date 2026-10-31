@@ -4,6 +4,8 @@
 // otra. Datos de lib/portada.js.
 import Hemiciclo from "./Hemiciclo.astro";
 import { composicion } from "../lib/portada.js";
+import { textos, fill } from "../lib/contenido.js";
+const tx = textos.portada.composicion;
 
 interface Props {
   periodo: string;
@@ -14,8 +16,8 @@ const camaras = composicion(periodo);
 
 <section class="composicion" aria-labelledby="titulo-composicion">
   <div class="cabecera">
-    <h2 id="titulo-composicion">Composición actual</h2>
-    <div class="selector" id="selector-camara" role="group" aria-label="Elegir cámara" hidden>
+    <h2 id="titulo-composicion">{tx.composicionActual}</h2>
+    <div class="selector" id="selector-camara" role="group" aria-label={tx.elegirCamara} hidden>
       {camaras.map((c, i) => <button type="button" data-camara={c.nombre} aria-pressed={i === 0 ? "true" : "false"}>{c.nombre} ({c.total})</button>)}
     </div>
   </div>
@@ -29,11 +31,11 @@ const camaras = composicion(periodo);
             {c.partidos.map((p) => <li><span class={`pip ${p.clase}`}></span><span class="nombre"><b>{p.sigla}</b> <span class="chico texto-suave">{p.nombre}</span></span><span class="cantidad">{p.cantidad}</span></li>)}
           </ul>
         </div>
-        {c.total !== c.bancas && <p class="chico texto-suave aviso">La lista oficial marca a {c.total} como vigentes y la cámara tiene {c.bancas} bancas. Se muestra tal como se publica.</p>}
+        {c.total !== c.bancas && <p class="chico texto-suave aviso">{fill(tx.laListaOficialMarcaA, { total: c.total, bancas: c.bancas })}</p>}
       </div>
     ))
   }
-  <p class="chico texto-suave">Un punto por banca, agrupados por partido, sin los senadores vitalicios. No es la ubicación real de las bancas.</p>
+  <p class="chico texto-suave">{tx.unPuntoPorBancaAgrupados}</p>
 </section>
 
 <script>

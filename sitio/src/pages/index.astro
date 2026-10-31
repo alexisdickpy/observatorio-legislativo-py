@@ -11,6 +11,9 @@ import { mapaDeDiputados } from "../lib/mapa.js";
 import * as rutas from "../lib/rutas.js";
 import { datosDelSitio } from "../lib/seo.js";
 import { datosDelTest } from "../lib/testAfinidad.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.portada.presentacion;
+const txc = textos.general.comunes;
 
 const vigente = periodos().find((p) => p.vigente);
 const cantidad = leyes().length;
@@ -19,55 +22,49 @@ const mapa = mapaDeDiputados(vigente.id);
 ---
 
 <Base
-  titulo="Observatorio Legislativo"
-  descripcion={`Leyes sancionadas por el Congreso Nacional del Paraguay en el período legislativo ${vigente.id}, con datos abiertos.`}
+  titulo={textos.general.sitio.nombre}
+  descripcion={fill(tx.leyesSancionadasPorElCongreso, { id: vigente.id })}
   datos={datosDelSitio()}
 >
   <div class="presentacion">
-    <h1>Qué vota el Congreso del Paraguay</h1>
+    <h1>{tx.queVotaElCongresoDel}</h1>
     <p class="lectura">
-      Leyes sancionadas por el Congreso Nacional del Paraguay en el período legislativo
-      {vigente.id}, a partir de los datos abiertos que publica el propio Congreso.
+      {fill(tx.leyesSancionadasPorElCongreso2, { id: vigente.id })}
     </p>
   </div>
   <ComposicionCongreso periodo={vigente.id} />
   <UltimaVotacion periodo={vigente.id} />
-  <nav class="accesos" aria-label="Secciones del sitio">
+  <nav class="accesos" aria-label={tx.seccionesDelSitio}>
     <ul>
-      <li><a href={rutas.leyes()}>Ver las {cantidad} leyes del período</a></li>
-      <li><a href={rutas.legisladores()}>Ver los legisladores, sus votos y sus leyes</a></li>
-      <li><a href={rutas.mapaDiputados()}>Ver el mapa de diputados por departamento</a></li>
-      <li><a href={rutas.buscar()}>Buscar una ley</a></li>
-      <li><a href={rutas.datosAbiertos()}>Descargar los datos abiertos</a></li>
+      <li set:html={md(tx.verLasLeyesDelPeriodo, { url1: crudo(rutas.leyes()), cantidad: cantidad })} />
+      <li set:html={md(tx.verLosLegisladoresSusVotos, { url1: crudo(rutas.legisladores()) })} />
+      <li set:html={md(tx.verElMapaDeDiputados, { url1: crudo(rutas.mapaDiputados()) })} />
+      <li set:html={md(tx.buscarUnaLey, { url1: crudo(rutas.buscar()) })} />
+      <li set:html={md(tx.descargarLosDatosAbiertos, { url1: crudo(rutas.datosAbiertos()) })} />
     </ul>
   </nav>
   <AnalisisPortada periodo={vigente.id} parte="tarjetas" />
   <div class="dos-acciones">
     <section aria-labelledby="test-portada">
-      <h2 id="test-portada">Test de afinidad</h2>
+      <h2 id="test-portada">{txc.testDeAfinidad}</h2>
       <p>
-        {test.preguntas.length} preguntas sobre leyes votadas en el período. Al final ves cuánto coinciden tus
-        respuestas con lo que votó cada partido.
+        {fill(tx.preguntasSobreLeyesVotadasEn, { preguntas: test.preguntas.length })}
       </p>
-      <p><a class="boton" href={rutas.testAfinidad()}>Hacer el test</a></p>
+      <p><a class="boton" href={rutas.testAfinidad()}>{tx.hacerElTest}</a></p>
     </section>
     <section aria-labelledby="telegram-portada">
-      <h2 id="telegram-portada">Avisos por Telegram</h2>
+      <h2 id="telegram-portada">{tx.avisosPorTelegram}</h2>
       <p>
-        Un bot te avisa de las novedades del Congreso. Eliges qué avisos recibir y te das de baja cuando
-        quieras con el comando /baja.
+        {tx.unBotTeAvisaDe}
       </p>
-      <p><a class="boton" href={rutas.botTelegram()}>Abrir el bot</a></p>
+      <p><a class="boton" href={rutas.botTelegram()}>{tx.abrirElBot}</a></p>
     </section>
   </div>
   <CuadroTemas periodo={vigente.id} />
   <AnalisisPortada periodo={vigente.id} parte="temas" />
   <section aria-labelledby="mapa-portada">
-    <h2 id="mapa-portada">Diputados por departamento</h2>
-    <p class="lectura">
-      {mapa.total} diputados en ejercicio. Elegí un departamento para ver quiénes son, o mirá el
-      <a href={rutas.mapaDiputados()}>mapa con la lista completa</a>.
-    </p>
+    <h2 id="mapa-portada">{tx.diputadosPorDepartamento}</h2>
+    <p class="lectura" set:html={md(tx.diputadosEnEjercicioElegiUn, { total: mapa.total, url1: crudo(rutas.mapaDiputados()) })} />
     <MapaDepartamentos mapa={mapa} sinLista />
   </section>
   <AnalisisPortada periodo={vigente.id} parte="votaciones" />

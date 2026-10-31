@@ -6,25 +6,28 @@
 // Filas en una sola línea y estilos globales con prefijo de clase (ver TablaLegisladores).
 import { GRUPOS_MAYORIA } from "../lib/legisladores.js";
 import * as rutas from "../lib/rutas.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.legisladores.votosDistintos;
+const txc = textos.general.comunes;
 
 interface Props {
   mayoria: any;
   periodo: string;
 }
 const { mayoria: m, periodo } = Astro.props;
-const sinDato = "Sin dato";
-const titulos: Record<string, string> = { bancada: "De su bancada", partido: "De su partido" };
-const sinGrupo: Record<string, string> = { bancada: "Sin bancada registrada", partido: "Sin partido registrado" };
+const sinDato = txc.sinDato;
+const titulos: Record<string, string> = { bancada: tx.deSuBancada, partido: tx.deSuPartido };
+const sinGrupo: Record<string, string> = { bancada: tx.sinBancadaRegistrada, partido: txc.sinPartidoRegistrado };
 /** Cifra de un grupo, o el motivo por el que no hay votaciones comparables. */
-const cifra = (c: any, grupo: string) => (!c.grupo ? sinGrupo[grupo] : c.total ? c.texto : "Sin votaciones comparables");
+const cifra = (c: any, grupo: string) => (!c.grupo ? sinGrupo[grupo] : c.total ? c.texto : tx.sinVotacionesComparables);
 /** Votaciones de un grupo que quedan fuera del cálculo, si las hay. */
 const excluidas = (c: any) =>
-  [c.empates && `${c.empates.toLocaleString("es-PY")} con empate`, c.unico && `${c.unico.toLocaleString("es-PY")} en que fue el único votante del grupo`]
+  [c.empates && fill(tx.conEmpateCantidad, { cantidad: c.empates.toLocaleString("es-PY") }), c.unico && fill(tx.unicoVotanteCantidad, { cantidad: c.unico.toLocaleString("es-PY") })]
     .filter(Boolean)
     .join(" y ");
 /** Celda de la mayoría de un grupo en una votación de la lista. */
 const celda = (x: any) =>
-  ({ empate: "Empate", unico: "Único votante", "sin-grupo": sinDato })[x.estado as string] ?? x.mayoria;
+  ({ empate: tx.empate, unico: tx.unicoVotante, "sin-grupo": sinDato })[x.estado as string] ?? x.mayoria;
 ---
 
 <div class="votos-distintos">
@@ -34,43 +37,35 @@ const celda = (x: any) =>
         <div>
           <dt>{titulos[grupo]}</dt>
           <dd><strong>{cifra(m[grupo], grupo)}</strong></dd>
-          {m[grupo].grupo && excluidas(m[grupo]) && <dd class="chico texto-suave">Sin contar {excluidas(m[grupo])}</dd>}
+          {m[grupo].grupo && excluidas(m[grupo]) && <dd class="chico texto-suave">{fill(tx.sinContar, { grupo: excluidas(m[grupo]) })}</dd>}
         </div>
       ))
     }
   </dl>
-  <p class="chico texto-suave lectura">
-    Votaciones nominales del período {periodo} en que su voto fue distinto a la categoría más votada por
-    los miembros de su bancada, o de su partido, que emitieron voto, sobre las votaciones en que emitió voto
-    y su grupo tuvo una mayoría. No cuentan los empates, las votaciones en que fue el único de su grupo que
-    votó, ni AUSENTE y NO VOTA. Votar distinto no es bueno ni malo.{" "}
-    <a href={rutas.metodologia(rutas.anclasMetodologia.mayoria)}>Cómo se calcula</a>
-    {" · "}
-    <a href={rutas.votacionesNominales()}>Comparar con los demás legisladores</a>
-  </p>
+  <p class="chico texto-suave lectura" set:html={md(tx.votacionesNominalesDelPeriodoEn, { periodo: periodo, url1: crudo(rutas.metodologia(rutas.anclasMetodologia.mayoria)), url2: crudo(rutas.votacionesNominales()) })} />
   {
     m.lista.length > 0 && (
       <details>
-        <summary>Ver las {m.lista.length} votaciones en que votó distinto a una de las dos mayorías</summary>
+        <summary>{fill(tx.verLasVotacionesEnQue, { lista: m.lista.length })}</summary>
         <div class="historial-desplazable">
           <table>
-            <caption class="solo-lectores">Votaciones nominales en que votó distinto a la mayoría de su bancada o de su partido</caption>
+            <caption class="solo-lectores">{tx.votacionesNominalesEnQueVoto}</caption>
             <thead>
               <tr>
-                <th scope="col">Fecha</th>
-                <th scope="col">Votación en SILpy</th>
-                <th scope="col">Etapa</th>
-                <th scope="col">Su voto</th>
-                <th scope="col">Mayoría de su bancada</th>
-                <th scope="col">Mayoría de su partido</th>
+                <th scope="col">{txc.fecha}</th>
+                <th scope="col">{txc.votacionEnSilpy}</th>
+                <th scope="col">{tx.etapa}</th>
+                <th scope="col">{tx.suVoto}</th>
+                <th scope="col">{tx.mayoriaDeSuBancada}</th>
+                <th scope="col">{tx.mayoriaDeSuPartido}</th>
               </tr>
             </thead>
             <tbody data-paginar>
-              {m.lista.map((x: any) => <tr data-distinto><td>{x.fecha ?? sinDato}</td><td>{x.url ? <a href={x.url}>Expediente {x.expediente ?? sinDato}</a> : `Expediente ${x.expediente ?? sinDato}`}</td><td>{x.etapa ?? sinDato}</td><td>{x.sentido}</td><td class={x.bancada.estado === "distinto" ? "distinto" : undefined}>{celda(x.bancada)}</td><td class={x.partido.estado === "distinto" ? "distinto" : undefined}>{celda(x.partido)}</td></tr>)}
+              {m.lista.map((x: any) => <tr data-distinto><td>{x.fecha ?? sinDato}</td><td>{x.url ? <a href={x.url}>{txc.expediente} {x.expediente ?? sinDato}</a> : fill(textos.general.comunes.expedienteNumero, { expediente: x.expediente ?? sinDato })}</td><td>{x.etapa ?? sinDato}</td><td>{x.sentido}</td><td class={x.bancada.estado === "distinto" ? "distinto" : undefined}>{celda(x.bancada)}</td><td class={x.partido.estado === "distinto" ? "distinto" : undefined}>{celda(x.partido)}</td></tr>)}
             </tbody>
           </table>
         </div>
-        <p class="chico texto-suave">En negrita, la mayoría de la que difiere su voto.</p>
+        <p class="chico texto-suave">{tx.enNegritaLaMayoriaDe}</p>
       </details>
     )
   }

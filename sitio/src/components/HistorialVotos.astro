@@ -4,28 +4,31 @@
 // expediente oficial en SILpy. Recibe el historial de lib/legisladores.js; cada fila lleva el valor
 // de filtro del estado del proyecto (componente FiltroVotos).
 // Filas en una sola línea y estilos globales con prefijo de clase (ver TablaLegisladores).
+import { textos, fill } from "../lib/contenido.js";
+const tx = textos.legisladores.historial;
+const txc = textos.general.comunes;
 interface Props {
   historial: any[];
 }
 const { historial } = Astro.props;
-const sinDato = "Sin dato";
+const sinDato = txc.sinDato;
 ---
 
 <div class="historial-desplazable">
   <table class="historial-votos">
-    <caption class="solo-lectores">Voto en cada votación nominal sobre un proyecto de ley</caption>
+    <caption class="solo-lectores">{tx.votoEnCadaVotacionNominal}</caption>
     <thead>
       <tr>
-        <th scope="col">Fecha</th>
-        <th scope="col">Proyecto</th>
-        <th scope="col">Estado del proyecto</th>
-        <th scope="col">Trámite</th>
-        <th scope="col">Resultado</th>
-        <th scope="col">Su voto</th>
+        <th scope="col">{txc.fecha}</th>
+        <th scope="col">{tx.proyecto}</th>
+        <th scope="col">{txc.estadoDelProyecto}</th>
+        <th scope="col">{tx.tramite}</th>
+        <th scope="col">{tx.resultado}</th>
+        <th scope="col">{tx.suVoto}</th>
       </tr>
     </thead>
     <tbody data-paginar>
-      {historial.map((h) => <tr data-estado={h.proyecto.estadoFiltro}><td>{h.fecha ?? sinDato}</td><td>{h.leyes.length ? h.leyes.map((l: any) => <p><a href={l.url}>Ley {l.numero}</a>{l.tituloCorto && <span class="texto-suave"> {l.tituloCorto}</span>}</p>) : <p>{h.proyecto.url ? <a href={h.proyecto.url}>Expediente {h.proyecto.expediente ?? sinDato}</a> : `Expediente ${h.proyecto.expediente ?? sinDato}`}{h.proyecto.tituloCorto && <span class="texto-suave"> {h.proyecto.tituloCorto}</span>}</p>}</td><td>{h.proyecto.estado ?? sinDato}</td><td>{h.etapa ?? sinDato}</td><td>{h.resultado ?? sinDato}</td><td class="voto"><span class={`cuadro ${h.clase}`}></span>{h.sentido}{h.observacion && <span class="texto-suave"> ({h.observacion})</span>}</td></tr>)}
+      {historial.map((h) => <tr data-estado={h.proyecto.estadoFiltro}><td>{h.fecha ?? sinDato}</td><td>{h.leyes.length ? h.leyes.map((l: any) => <p><a href={l.url}>{fill(tx.ley, { numero: l.numero })}</a>{l.tituloCorto && <span class="texto-suave"> {l.tituloCorto}</span>}</p>) : <p>{h.proyecto.url ? <a href={h.proyecto.url}>{txc.expediente} {h.proyecto.expediente ?? sinDato}</a> : fill(textos.general.comunes.expedienteNumero, { expediente: h.proyecto.expediente ?? sinDato })}{h.proyecto.tituloCorto && <span class="texto-suave"> {h.proyecto.tituloCorto}</span>}</p>}</td><td>{h.proyecto.estado ?? sinDato}</td><td>{h.etapa ?? sinDato}</td><td>{h.resultado ?? sinDato}</td><td class="voto"><span class={`cuadro ${h.clase}`}></span>{h.sentido}{h.observacion && <span class="texto-suave"> ({h.observacion})</span>}</td></tr>)}
     </tbody>
   </table>
 </div>

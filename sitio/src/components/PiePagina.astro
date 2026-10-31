@@ -3,40 +3,32 @@
 // las páginas de metodología y privacidad, licencias y firma (textos acordados en #9).
 import { actualizacion, cita } from "../lib/catalogo.js";
 import * as rutas from "../lib/rutas.js";
+import { textos, md, crudo } from "../lib/contenido.js";
+const tx = textos.general.pie;
+const txc = textos.general.comunes;
 
 const fuente = cita();
 const fecha = actualizacion();
 const enlaces = [
-  { url: rutas.metodologia(), texto: "Metodología" },
-  { url: rutas.privacidad(), texto: "Privacidad y aviso legal" },
-  { url: rutas.datosAbiertos(), texto: "Datos abiertos" },
-  { url: rutas.botTelegram(), texto: "Avisos por Telegram" },
-  { url: rutas.codigoFuente(), texto: "Código fuente" },
+  { url: rutas.metodologia(), texto: tx.metodologia },
+  { url: rutas.privacidad(), texto: tx.privacidadYAvisoLegal },
+  { url: rutas.datosAbiertos(), texto: txc.datosAbiertos },
+  { url: rutas.botTelegram(), texto: tx.avisosPorTelegram },
+  { url: rutas.codigoFuente(), texto: tx.codigoFuente },
 ];
 ---
 
 <footer class="pie">
   <div class="contenedor chico">
-    <p>
-      <strong>{fuente.cita}.</strong>
-      Actualizado el <time datetime={fecha.iso}>{fecha.texto}</time>.
-    </p>
-    <p class="lectura">
-      Los datos provienen de la API de Datos Abiertos del Congreso Nacional y se muestran tal como allí
-      se publican, con sus posibles errores. Este sitio no corrige los valores oficiales. Si un dato
-      parece incorrecto, compáralo con la <a href={fuente.url}>fuente oficial</a>. Este es un proyecto
-      independiente, sin vínculo con el Congreso.
-    </p>
-    <nav aria-label="Pie de página">
+    <p set:html={md(tx.actualizadoEl, { cita: fuente.cita, fecha: crudo(`<time datetime="${fecha.iso}">${fecha.texto}</time>`) })} />
+    <p class="lectura" set:html={md(tx.losDatosProvienenDeLa, { url1: crudo(fuente.url) })} />
+    <nav aria-label={tx.pieDePagina}>
       <ul class="enlaces">
         {enlaces.map((e) => <li><a href={e.url}>{e.texto}</a></li>)}
       </ul>
     </nav>
-    <p>
-      Datos con licencia <a href={rutas.licenciaDatos()}>{fuente.licencia}</a> · Código con licencia
-      <a href={rutas.licenciaCodigo()}>AGPL-3.0</a>
-    </p>
-    <p class="firma">Desarrollado por Alexis Dick con asistencia de IA.</p>
+    <p set:html={md(tx.datosConLicenciaCodigoCon, { url1: crudo(rutas.licenciaDatos()), licencia: fuente.licencia, url2: crudo(rutas.licenciaCodigo()) })} />
+    <p class="firma">{tx.desarrolladoPorAlexisDickCon}</p>
   </div>
 </footer>
 

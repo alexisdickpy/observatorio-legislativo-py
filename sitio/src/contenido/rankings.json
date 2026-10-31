@@ -1,0 +1,43 @@
+{
+  "lista": {
+    "yaNoEjerce": "(ya no ejerce)",
+    "votaciones": "{fraccion} votaciones"
+  },
+  "pagina": {
+    "rankings": "Rankings",
+    "losSenadoresYLosDiputados": "Los {cantidad} senadores y los {cantidad} diputados del período legislativo {periodo} que más votaron distinto a la mayoría de su partido y los que más ausencias tienen en votaciones nominales, cada uno con su cifra y su denominador.",
+    "dosListasPorCamaraCon": "Dos listas por cámara con los {cantidad} legisladores del período legislativo {periodo} de porcentaje más alto en una cifra de sus votaciones nominales, de mayor a menor. Cada cifra lleva su numerador y su denominador.",
+    "masRebeldesVotosDistintosA": "[Más «rebeldes»]({url1}), votos distintos a la mayoría de su partido",
+    "masAusentesAusenciasEnVotaciones": "[Más «ausentes»]({url1}), ausencias en votaciones nominales",
+    "lasCamarasSeMuestranPor": "Las cámaras se muestran por separado porque el Senado publica muchas menos votaciones nominales que Diputados. Partido es el que la API registra para el período, no necesariamente el de la fecha de cada votación. Estar en una lista no es bueno ni malo, y los apodos van entre comillas porque no son una calificación del sitio. La [tabla de votaciones nominales por legislador]({url1}) tiene estas cifras y otras para todos los legisladores.",
+    "masRebeldes": "Más «rebeldes»",
+    "legisladoresQueMasVecesVotaron": "Legisladores que más veces votaron distinto a la mayoría de su partido.",
+    "votosDistintosVotacionesEnQue": "Votos distintos = votaciones en que su voto difiere de la mayoría de su partido ÷ votaciones comparables × 100",
+    "mayoriaDelPartidoLaCategoria": "**Mayoría del partido.** La categoría con más votos entre los votos emitidos de los miembros de su partido en su cámara, en esa votación, contando también el suyo.",
+    "votacionesComparablesLasVotacionesEn": "**Votaciones comparables.** Las votaciones en que emitió voto y su partido tuvo una mayoría. No cuentan los empates en el primer lugar ni las votaciones en que fue el único de su partido que emitió voto.",
+    "minimoEntranALaLista": "**Mínimo.** Entran a la lista quienes tienen al menos {minimo} votaciones comparables, para que nadie la encabece con muy pocas votaciones. A igual porcentaje, primero quien tiene más votaciones comparables.",
+    "laFichaDeCadaLegislador": "La ficha de cada legislador lista las votaciones en que votó distinto. [Cómo se arma esta lista]({url1}) · [Todos los legisladores, por votos distintos a su partido]({url2}) · [Por votos distintos a su bancada]({url3})",
+    "enEstaCamara": "en esta cámara.",
+    "noEstanEnLaLista": "No están en la lista, porque no tienen ninguna votación comparable. En todas las votaciones en que votaron fueron los únicos de su partido en emitir voto en esta cámara, así que no hay una mayoría de su partido con la cual comparar.",
+    "yaNoEjerce": ", ya no ejerce",
+    "legisladorTiene": "legislador tiene",
+    "legisladoresTienen": "legisladores tienen",
+    "menosDeVotacionesComparablesY": "menos de {minimo} votaciones comparables y no",
+    "aLaListaSusCifras": "a la lista. Sus cifras están en la",
+    "tablaDeVotacionesNominales": "tabla de votaciones nominales",
+    "legisladorNoTiene": "legislador no tiene",
+    "legisladoresNoTienen": "legisladores no tienen",
+    "partidoRegistradoEnLaApi": "partido registrado en la API.",
+    "masAusentes": "Más «ausentes»",
+    "legisladoresConMasAusenciasEn": "Legisladores con más ausencias en votaciones nominales.",
+    "ausenciasVotacionesNominalesEnQue": "Ausencias = votaciones nominales en que figura como AUSENTE ÷ votaciones nominales en cuya lista figura × 100",
+    "votacionesNominalesTodasLasDel": "**Votaciones nominales.** Todas las del período en cuya lista oficial figura, de cualquier tipo de expediente. La lista de cada votación incluye solo a quienes ocupaban el cargo ese día.",
+    "minimoEntranALaLista2": "**Mínimo.** Entran a la lista quienes figuran en al menos {minimo} votaciones nominales, para que no la encabecen suplentes o reemplazos con pocas votaciones. A igual porcentaje, primero quien figura en más votaciones.",
+    "sinMotivoLaFuenteNo": "**Sin motivo.** La fuente no dice por qué un legislador figura como AUSENTE. Una licencia, una representación oficial o haber salido del recinto en el momento de votar cuentan igual.",
+    "votacionYSesionFigurarComo": "**Votación y sesión.** Figurar como AUSENTE en una votación no es lo mismo que no ir a la sesión. Indica que no registró su voto en ese momento, aunque pudiera estar en la sala.",
+    "laFichaDeCadaLegislador2": "La ficha de cada legislador lista las votaciones en que figura como AUSENTE. [Cómo se arma esta lista]({url1}) · [Todos los legisladores, por ausencias en votaciones nominales]({url2})",
+    "legisladorFigura": "legislador figura",
+    "legisladoresFiguran": "legisladores figuran",
+    "enMenosDeVotacionesNominales": "en menos de {minimo} votaciones nominales y no"
+  }
+}

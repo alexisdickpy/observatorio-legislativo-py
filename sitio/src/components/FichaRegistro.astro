@@ -4,6 +4,9 @@
 import { decisionesDeProyecto } from "../lib/decisiones.js";
 import Autores from "./Autores.astro";
 import Votaciones from "./Votaciones.astro";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.leyes.registro;
+const txc = textos.general.comunes;
 
 interface Props {
   registro: any;
@@ -11,19 +14,19 @@ interface Props {
   encabezado: string | null;
 }
 const { registro: r, detalle, encabezado } = Astro.props;
-const sinDato = "Sin dato";
+const sinDato = txc.sinDato;
 const decisiones = decisionesDeProyecto(r.periodo, r.idProyecto);
 const nivel = encabezado ? 3 : 2;
 const Subtitulo = `h${nivel}`;
 const datos = [
-  ["Fecha de sanción", r.fechaSancion],
-  ["Fecha de promulgación", r.fechaPromulgacion],
-  ["Fecha de publicación", r.fechaPublicacion],
-  ["Tipo de promulgación", r.tipoPromulgacion],
-  ["Observación del decreto", r.observacionDecreto],
-  ["Cámara de origen", r.camaraOrigen],
-  ["Expediente", r.expediente],
-  ["Estado del proyecto", r.estadoProyecto],
+  [tx.fechaDeSancion, r.fechaSancion],
+  [tx.fechaDePromulgacion, r.fechaPromulgacion],
+  [tx.fechaDePublicacion, r.fechaPublicacion],
+  [tx.tipoDePromulgacion, r.tipoPromulgacion],
+  [tx.observacionDelDecreto, r.observacionDecreto],
+  [txc.camaraDeOrigen, r.camaraOrigen],
+  [txc.expediente, r.expediente],
+  [txc.estadoDelProyecto, r.estadoProyecto],
 ];
 ---
 
@@ -40,24 +43,23 @@ const datos = [
       ))
     }
   </dl>
-  {detalle.notas.map((n: string) => <p class="nota chico lectura"><strong>Nota del Observatorio.</strong> {n}</p>)}
+  {detalle.notas.map((n: string) => <p class="nota chico lectura" set:html={md(tx.notaDelObservatorio, { valor: n })} />)}
   {
     detalle.conNombreConocido && (
       <p class="chico texto-suave lectura">
-        Entre paréntesis, el nombre por el que se conoce a un partido (por ejemplo, «Yo Creo»). Es un
-        agregado de este sitio, y el nombre que va antes es el oficial.
+        {tx.entreParentesisElNombrePor}
       </p>
     )
   }
   <Autores detalle={detalle} nivel={nivel} />
-  <Subtitulo>Enlaces oficiales</Subtitulo>
+  <Subtitulo>{tx.enlacesOficiales}</Subtitulo>
   <ul>
-    {r.urlLey && <li><a href={r.urlLey}>Ficha de la ley en SILpy</a></li>}
-    {r.urlExpediente && <li><a href={r.urlExpediente}>Expediente en SILpy</a></li>}
+    {r.urlLey && <li set:html={md(tx.fichaDeLaLeyEn, { url1: crudo(r.urlLey) })} />}
+    {r.urlExpediente && <li set:html={md(tx.expedienteEnSilpy, { url1: crudo(r.urlExpediente) })} />}
     {
       r.textosDeLey.map((t: any) => (
         <li>
-          <a href={t.url}>Texto de la ley ({t.descripcion}{t.formato === "application/pdf" ? ", PDF" : ""})</a>
+          <a href={t.url}>{fill(tx.textoDeLaLey, { descripcion: t.descripcion })}{t.formato === "application/pdf" ? ", PDF" : ""})</a>
         </li>
       ))
     }
@@ -66,7 +68,7 @@ const datos = [
   {
     decisiones.length > 0 && (
       <Fragment>
-        <Subtitulo>Decisiones sin votación nominal</Subtitulo>
+        <Subtitulo>{txc.decisionesSinVotacionNominal}</Subtitulo>
         <ul class="chico" data-decisiones-ficha>
           {decisiones.map((d: any) => <li>{d.fecha} · {d.camara ?? sinDato} · {d.etapa ?? sinDato} · <strong>{d.resultado}</strong></li>)}
         </ul>

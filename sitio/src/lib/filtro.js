@@ -2,12 +2,14 @@
 // las pruebas. Trabaja con las "entradas" que prepara catalogo.js, sin tocar los valores oficiales.
 
 import { normalizar } from "./texto.js";
+import interaccion from "../contenido/interaccion.json" with { type: "json" };
+const tx = interaccion.ordenLeyes;
 
 export const ORDENES = {
-  "sancion-desc": "Sanción más reciente primero",
-  "sancion-asc": "Sanción más antigua primero",
-  "numero-desc": "Número de mayor a menor",
-  "numero-asc": "Número de menor a mayor",
+  "sancion-desc": tx.sancionMasRecientePrimero,
+  "sancion-asc": tx.sancionMasAntiguaPrimero,
+  "numero-desc": tx.numeroDeMayorAMenor,
+  "numero-asc": tx.numeroDeMenorAMayor,
 };
 export const ORDEN_PREDETERMINADO = "sancion-desc";
 

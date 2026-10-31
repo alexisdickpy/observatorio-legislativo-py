@@ -4,25 +4,28 @@
 // la sangría y los atributos de los estilos con alcance se copian en cada celda.
 import { clasePartido } from "../lib/partidos.js";
 import { legible } from "../lib/texto.js";
+import { textos } from "../lib/contenido.js";
+const tx = textos.legisladores.tabla;
+const txc = textos.general.comunes;
 
 interface Props {
   titulo: string;
   filas: any[];
 }
 const { titulo, filas } = Astro.props;
-const sinDato = "Sin dato";
+const sinDato = txc.sinDato;
 ---
 
 <table class="tabla-legisladores">
   <caption class="solo-lectores">{titulo}</caption>
   <thead>
     <tr>
-      <th scope="col">Nombre</th>
-      <th scope="col">Cámara</th>
-      <th scope="col">Tipo</th>
-      <th scope="col">Departamento</th>
-      <th scope="col">Partido</th>
-      <th scope="col">Bancada</th>
+      <th scope="col">{txc.nombre}</th>
+      <th scope="col">{txc.camara}</th>
+      <th scope="col">{tx.tipo}</th>
+      <th scope="col">{txc.departamento}</th>
+      <th scope="col">{txc.partido}</th>
+      <th scope="col">{txc.bancada}</th>
     </tr>
   </thead>
   <tbody data-paginar>

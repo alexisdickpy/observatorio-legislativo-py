@@ -23,6 +23,8 @@ import { mayoriaDe } from "./mayoria.js";
 import { clasePartido, nombreConocido, siglaDe } from "./partidos.js";
 import * as rutas from "./rutas.js";
 import { legible, recortar, slug } from "./texto.js";
+import { textos } from "./contenido.js";
+const tx = textos.votaciones.textosFicha;
 
 /** Categorías con total publicado por el Congreso, en el orden en que se muestran. */
 const TOTALES_OFICIALES = [
@@ -179,7 +181,7 @@ export function posicionesDePartidos(votos) {
         votantes,
         posicion,
         cantidad: conPosicion ? sentidos.filter((s) => s === posicion).length : null,
-        texto: conPosicion ? posicion : posicion === null ? "empate" : "sin votos emitidos",
+        texto: conPosicion ? posicion : posicion === null ? "empate" : tx.sinVotosEmitidos,
         clase: conPosicion ? claseDeCategoria(posicion) : CLASE_SIN_POSICION,
       };
     })
@@ -194,8 +196,8 @@ export function porSentido(posiciones) {
   const categorias = ordenarCategorias(posiciones.filter((p) => p.posicion).map((p) => p.posicion));
   return [
     ...categorias.map((c) => ({ titulo: c, clase: claseDeCategoria(c), partidos: posiciones.filter((p) => p.posicion === c) })),
-    { titulo: "Empate", clase: CLASE_SIN_POSICION, partidos: posiciones.filter((p) => p.posicion === null) },
-    { titulo: "Sin votos emitidos", clase: CLASE_SIN_POSICION, partidos: posiciones.filter((p) => p.posicion === undefined) },
+    { titulo: tx.empate, clase: CLASE_SIN_POSICION, partidos: posiciones.filter((p) => p.posicion === null) },
+    { titulo: tx.sinVotosEmitidos2, clase: CLASE_SIN_POSICION, partidos: posiciones.filter((p) => p.posicion === undefined) },
   ].filter((g) => g.partidos.length);
 }
 

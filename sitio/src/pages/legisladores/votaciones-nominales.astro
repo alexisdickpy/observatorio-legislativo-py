@@ -10,79 +10,63 @@ import { NOMBRE_VOTACIONES_NOMINALES } from "../../lib/calculados.js";
 import { periodos } from "../../lib/datos.js";
 import { comparativa } from "../../lib/legisladores.js";
 import * as rutas from "../../lib/rutas.js";
+import { textos, fill, md, crudo } from "../../lib/contenido.js";
+const tx = textos.legisladores.comparativa;
+const txc = textos.general.comunes;
 
 const periodo = periodos().find((p) => p.vigente).id;
 const { camaras } = comparativa(periodo);
 ---
 
 <Base
-  titulo="Votaciones nominales por legislador"
-  descripcion={`Cuántas veces figura cada senador y diputado del período legislativo ${periodo} como AUSENTE, NO VOTA y ABSTENCIÓN/BLANCO en las votaciones nominales de su cámara, y cuántas veces votó distinto a la mayoría de su bancada y de su partido, cada cifra con su denominador.`}
+  titulo={tx.votacionesNominalesPorLegislador}
+  descripcion={fill(tx.cuantasVecesFiguraCadaSenador, { periodo: periodo })}
 >
-  <p class="chico"><a href={rutas.legisladores()}>← Todos los legisladores</a></p>
-  <h1>Votaciones nominales por legislador</h1>
+  <p class="chico" set:html={md(tx.todosLosLegisladores, { url1: crudo(rutas.legisladores()) })} />
+  <h1>{tx.votacionesNominalesPorLegislador}</h1>
   <div class="lectura">
     <p>
-      Para cada legislador del período legislativo {periodo}, cinco cifras de las votaciones nominales de
-      su cámara. Cada una se calcula por separado, con su propio denominador, y no se suman.
+      {fill(tx.paraCadaLegisladorDelPeriodo, { periodo: periodo })}
     </p>
-    <h2 class="titulo-formula">Ausencias, NO VOTA y abstenciones</h2>
+    <h2 class="titulo-formula">{tx.ausenciasNoVotaYAbstenciones}</h2>
     <p class="formula">
-      Cifra de cada categoría = votaciones en que figura con esa categoría ÷ votaciones nominales en cuya
-      lista figura × 100
+      {tx.cifraDeCadaCategoriaVotaciones}
     </p>
     <ul class="chico">
-      <li>
-        <strong>Ausencias en votaciones nominales</strong> (AUSENTE). No registró su voto en esa votación.
-        No indica si estaba o no en la sesión.
-      </li>
-      <li><strong>NO VOTA.</strong> Figura en la votación sin emitir voto. Solo aparece en el Senado.</li>
-      <li><strong>ABSTENCIÓN/BLANCO.</strong> Voto oficial de abstención o en blanco.</li>
+      <li set:html={md(tx.ausenciasEnVotacionesNominalesAusente, {  })} />
+      <li set:html={md(tx.noVotaFiguraEnLa, {  })} />
+      <li set:html={md(tx.abstencionBlancoVotoOficialDe, {  })} />
     </ul>
-    <h2 class="titulo-formula">Votos distintos a la mayoría de su bancada o de su partido</h2>
+    <h2 class="titulo-formula">{tx.votosDistintosALaMayoria}</h2>
     <p class="formula">
-      Votos distintos = votaciones en que su voto difiere de la mayoría del grupo ÷ votaciones comparables
-      × 100
+      {tx.votosDistintosVotacionesEnQue}
     </p>
     <ul class="chico">
+      <li set:html={md(tx.mayoriaDelGrupoLaCategoria, {  })} />
+      <li set:html={md(tx.votacionesComparablesLasVotacionesEn, {  })} />
       <li>
-        <strong>Mayoría del grupo.</strong> La categoría con más votos entre los votos emitidos de los
-        miembros de su bancada, o de su partido, en esa votación, contando también el suyo.
-      </li>
-      <li>
-        <strong>Votaciones comparables.</strong> Las votaciones en que emitió voto (SI, NO,
-        ABSTENCIÓN/BLANCO o una moción) y su grupo tuvo una mayoría. No cuentan los empates en el primer
-        lugar ni las votaciones en que fue el único de su grupo que emitió voto. AUSENTE y NO VOTA no son
-        votos emitidos.
-      </li>
-      <li>
-        Votar distinto a la mayoría no es bueno ni malo. Es un dato para comparar cómo vota cada
-        legislador respecto de su grupo.
+        {tx.votarDistintoALaMayoria}
       </li>
     </ul>
     <p class="chico texto-suave">
-      Las cámaras se muestran por separado porque el Senado publica muchas menos votaciones nominales
-      que Diputados. Los porcentajes de quienes figuran en pocas votaciones cambian mucho con cada
-      votación, por eso cada cifra lleva su denominador. La API no informa si había permiso o licencia, ni
-      el motivo. Partido y bancada son los que la API registra para el período, no necesariamente los de
-      la fecha de cada votación. Ordenar la tabla por una cifra solo cambia el orden de las filas.{" "}
-      <a href={rutas.metodologia(rutas.anclasMetodologia.noVotaAbstencion)}>Cómo se calculan las ausencias, NO VOTA y abstenciones</a>
+      {tx.lasCamarasSeMuestranPor} 
+      <a href={rutas.metodologia(rutas.anclasMetodologia.noVotaAbstencion)}>{tx.comoSeCalculanLasAusencias}</a>
       {" · "}
-      <a href={rutas.metodologia(rutas.anclasMetodologia.mayoria)}>Cómo se calculan los votos distintos a la mayoría</a>
+      <a href={rutas.metodologia(rutas.anclasMetodologia.mayoria)}>{tx.comoSeCalculanLosVotos}</a>
       {" · "}
-      <a href={rutas.archivoCalculado(periodo, NOMBRE_VOTACIONES_NOMINALES, "csv")} download>Descargar la tabla (CSV)</a>
+      <a href={rutas.archivoCalculado(periodo, NOMBRE_VOTACIONES_NOMINALES, "csv")} download>{txc.descargarLaTablaCsv}</a>
       {" · "}
-      <a href={rutas.rankings()}>Rankings de más «rebeldes» y más «ausentes»</a>
+      <a href={rutas.rankings()}>{tx.rankingsDeMasRebeldesY}</a>
       {" · "}
-      <a href={rutas.coincidencia()}>Coincidencia de votos entre partidos y bancadas</a>
+      <a href={rutas.coincidencia()}>{txc.coincidenciaDeVotosEntrePartidos}</a>
     </p>
   </div>
   <OrdenComparativa />
   {
     camaras.map((c: any) => (
       <section>
-        <h2>{c.camara ?? "Sin dato"} ({c.filas.length})</h2>
-        <TablaComparativa titulo={`${c.camara ?? "Sin dato"}, votaciones nominales por legislador`} filas={c.filas} />
+        <h2>{c.camara ?? txc.sinDato} ({c.filas.length})</h2>
+        <TablaComparativa titulo={fill(tx.tituloPorCamara, { camara: c.camara ?? textos.general.comunes.sinDato })} filas={c.filas} />
       </section>
     ))
   }

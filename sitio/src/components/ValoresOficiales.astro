@@ -1,11 +1,13 @@
 ---
 // Muestra uno o varios valores oficiales tal como vienen. Si los registros de una misma ley
 // publican valores distintos, se muestran todos.
+import { textos } from "../lib/contenido.js";
+const txc = textos.general.comunes;
 interface Props {
   valores: string[];
   vacio?: string;
 }
-const { valores, vacio = "Sin dato" } = Astro.props;
+const { valores, vacio = txc.sinDato } = Astro.props;
 ---
 
 {

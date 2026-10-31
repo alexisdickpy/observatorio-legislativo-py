@@ -20,6 +20,8 @@ import { indice, posicionCamara, proporcion, valor } from "./ficha.js";
 import { esDeProyectoDeLey, mayoriasDelPeriodo } from "./legisladores.js";
 import { nombreConocido, partidoUnificado } from "./partidos.js";
 import { slug } from "./texto.js";
+import { textos, fill } from "./contenido.js";
+const tx = textos.coincidencia.textos;
 
 /** Votaciones en común por debajo de las cuales no se calcula el porcentaje. */
 export const UMBRAL = 20;
@@ -297,9 +299,9 @@ export function tablaCoincidencia(periodo) {
  * null si alguno de los dos grupos no tiene legisladores en esa cámara.
  */
 export function textoDeCoincidencia(c) {
-  if (!c) return "Sin legisladores en esta cámara";
-  if (!c.total) return "Sin votaciones en común";
-  return c.suficiente ? c.texto : `${c.fraccion} (menos de ${UMBRAL} votaciones en común, sin porcentaje)`;
+  if (!c) return tx.sinLegisladoresEnEstaCamara;
+  if (!c.total) return tx.sinVotacionesEnComun;
+  return c.suficiente ? c.texto : fill(tx.menosDeVotacionesEnComun, { fraccion: c.fraccion, umbral: UMBRAL });
 }
 
 /**

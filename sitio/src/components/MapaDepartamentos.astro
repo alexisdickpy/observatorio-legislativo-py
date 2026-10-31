@@ -7,6 +7,9 @@
 import { clasePartido } from "../lib/partidos.js";
 import * as rutas from "../lib/rutas.js";
 import { legible } from "../lib/texto.js";
+import { textos, fill } from "../lib/contenido.js";
+const tx = textos.legisladores.mapaDepartamentos;
+const txc = textos.general.comunes;
 
 interface Props {
   mapa: any;
@@ -18,13 +21,13 @@ const enlace = (z: any) => (sinLista ? `${rutas.mapaDiputados()}#${z.ancla}` : `
 const CAPITAL = "PY-ASU";
 const DESVIO_CAPITAL = [-32, -14];
 const posicion = (z: any) => (z.codigo === CAPITAL ? [z.etiqueta[0] + DESVIO_CAPITAL[0], z.etiqueta[1] + DESVIO_CAPITAL[1]] : z.etiqueta);
-const plural = (n: number) => (n === 1 ? "1 diputado" : `${n} diputados`);
-const partido = (d: any) => legible(d.partidoConocido ? `${d.partido} (${d.partidoConocido})` : (d.partido ?? "Sin dato"));
+const plural = (n: number) => (n === 1 ? tx.t1Diputado : `${n} diputados`);
+const partido = (d: any) => legible(d.partidoConocido ? `${d.partido} (${d.partidoConocido})` : (d.partido ?? txc.sinDato));
 ---
 
 <div class:list={["mapa-departamentos", { "sin-lista": sinLista }]}>
   <figure class="mapa-dibujo">
-    <svg viewBox={`0 0 ${mapa.ancho} ${mapa.alto}`} role="group" aria-label="Mapa del Paraguay por departamento">
+    <svg viewBox={`0 0 ${mapa.ancho} ${mapa.alto}`} role="group" aria-label={tx.mapaDelParaguayPorDepartamento}>
       {
         mapa.zonas.map((z: any) => (
           <a href={enlace(z)} class="zona" data-ancla={z.ancla} aria-label={`${z.nombre}, ${plural(z.cantidad)}`}>
@@ -51,23 +54,23 @@ const partido = (d: any) => legible(d.partidoConocido ? `${d.partido} (${d.parti
       <ul class="leyenda">
         {mapa.niveles.map((n: any) => <li><span class={`muestra nivel-${n.nivel}`}></span>{n.texto}</li>)}
       </ul>
-      El color depende solo de la cantidad de diputados. El círculo es {mapa.zonas.find((z: any) => z.codigo === CAPITAL)?.nombre}.
+      {tx.elColorDependeSoloDe} {mapa.zonas.find((z: any) => z.codigo === CAPITAL)?.nombre}.
     </figcaption>
   </figure>
   <div class="mapa-detalle" id="mapa-detalle" aria-live="polite" hidden>
-    <p class="texto-suave">Elegí un departamento en el mapa.</p>
+    <p class="texto-suave">{tx.elegiUnDepartamentoEnEl}</p>
   </div>
 </div>
 
-{!sinLista && <h2>Diputados por departamento</h2>}
+{!sinLista && <h2>{tx.diputadosPorDepartamento}</h2>}
 <div class="mapa-lista" hidden={sinLista}>
   {
     mapa.zonas.map((z: any) => (
       <section id={z.ancla} class="departamento">
         <h3>{z.nombre} <span class="texto-suave">· {plural(z.cantidad)}</span></h3>
-        {z.oficialDistinto.length > 0 && <p class="chico texto-suave">Figura en la API como {z.oficialDistinto.join(" y ")}.</p>}
+        {z.oficialDistinto.length > 0 && <p class="chico texto-suave">{tx.figuraEnLaApiComo} {z.oficialDistinto.join(" y ")}.</p>}
         {z.cantidad === 0 ? (
-          <p class="chico">Sin diputados en ejercicio según la API.</p>
+          <p class="chico">{tx.sinDiputadosEnEjercicioSegun}</p>
         ) : (
           <ul>
             {z.diputados.map((d: any) => <li class="diputado">{d.foto ? <img src={d.foto} alt="" width="40" height="40" loading="lazy" /> : <span class="sin-foto" aria-hidden="true" />}<span><a href={d.url}>{d.nombre}</a><br /><span class="chico texto-suave"><span class={`pip ${clasePartido(d.partido)}`}></span> {partido(d)}</span></span></li>)}
@@ -79,7 +82,7 @@ const partido = (d: any) => legible(d.partidoConocido ? `${d.partido} (${d.parti
   {
     mapa.sinZona.map((g: any) => (
       <section class="departamento">
-        <h3>{g.departamento} <span class="texto-suave">· {plural(g.diputados.length)}, sin zona en el mapa</span></h3>
+        <h3>{g.departamento} <span class="texto-suave">{fill(tx.sinZonaEnElMapa, { diputados: plural(g.diputados.length) })}</span></h3>
         <ul>
           {g.diputados.map((d: any) => <li class="diputado">{d.foto ? <img src={d.foto} alt="" width="40" height="40" loading="lazy" /> : <span class="sin-foto" aria-hidden="true" />}<span><a href={d.url}>{d.nombre}</a><br /><span class="chico texto-suave"><span class={`pip ${clasePartido(d.partido)}`}></span> {partido(d)}</span></span></li>)}
         </ul>

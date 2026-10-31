@@ -8,6 +8,9 @@ import VotacionesTema from "../../components/VotacionesTema.astro";
 import { periodos } from "../../lib/datos.js";
 import * as rutas from "../../lib/rutas.js";
 import { votosPorTema } from "../../lib/votosPorTema.js";
+import { textos, fill, md, crudo } from "../../lib/contenido.js";
+const tx = textos.temas.tema;
+const txc = textos.general.comunes;
 
 export function getStaticPaths() {
   const periodo = periodos().find((p) => p.vigente).id;
@@ -21,22 +24,20 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
 ---
 
 <Base
-  titulo={`Votos de partidos en ${tema.nombre}`}
-  descripcion={`Cómo votaron los legisladores de cada partido en las ${numero(tema.total)} votaciones nominales sobre proyectos de ley del tema ${tema.nombre}, período legislativo ${periodo}, en cada cámara.`}
+  titulo={fill(tx.votosDePartidosEn, { nombre: tema.nombre })}
+  descripcion={fill(tx.comoVotaronLosLegisladoresDe, { total: numero(tema.total), nombre: tema.nombre, periodo: periodo })}
 >
-  <p class="chico"><a href={rutas.votosPorTema()}>← Votos de partidos por tema</a></p>
-  <h1>Votos de partidos en {tema.nombre}</h1>
+  <p class="chico" set:html={md(tx.votosDePartidosPorTema, { url1: crudo(rutas.votosPorTema()) })} />
+  <h1>{fill(tx.votosDePartidosEn, { nombre: tema.nombre })}</h1>
   <div class="lectura">
     {tema.definicion && <p class="texto-suave">{tema.definicion}</p>}
     <p>
-      Votos de cada partido en las {plural(tema.total, "votación nominal", "votaciones nominales")}
-      de este tema, sobre todos sus votos registrados (con AUSENTE y NO VOTA).{" "}
-      <a href={rutas.metodologia(rutas.anclasMetodologia.votosPorTema)}>Cómo se calcula</a>
+      {tx.votosDeCadaPartidoEn} {plural(tema.total, txc.votacionNominal, txc.votacionesNominales)}
+      {tx.deEsteTemaSobreTodos} 
+      <a href={rutas.metodologia(rutas.anclasMetodologia.votosPorTema)}>{txc.comoSeCalcula}</a>
     </p>
     <p class="chico texto-suave">
-      Un NO puede ser a una modificación o a una objeción del Poder Ejecutivo, y no a la ley. Por eso la
-      lista de votaciones muestra la etapa de cada una. El partido es el que la API registra para
-      el período, no necesariamente el de la fecha de cada votación.
+      {tx.unNoPuedeSerA}
     </p>
   </div>
 
@@ -44,21 +45,21 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
     tema.camaras.map((c: any) => (
       <section class="camara-tema">
         <h2>{c.camara}</h2>
-        <p class="chico">{plural(c.votaciones.length, "votación nominal", "votaciones nominales")} · {plural(c.votos, "voto registrado", "votos registrados")}</p>
+        <p class="chico">{plural(c.votaciones.length, txc.votacionNominal, txc.votacionesNominales)} · {plural(c.votos, tx.votoRegistrado, tx.votosRegistrados)}</p>
         <ul class="leyenda chico" aria-hidden="true">
           {c.leyenda.map((l: any) => <li><span class={`muestra ${l.clase}`}></span>{l.categoria}</li>)}
         </ul>
-        <RepartoTema titulo="Por partido" categorias={c.categorias} filas={c.partidos} />
+        <RepartoTema titulo={txc.porPartido} categorias={c.categorias} filas={c.partidos} />
         <details>
-          <summary>Ver las {plural(c.votaciones.length, "votación", "votaciones")} de la {c.camara}</summary>
+          <summary>{tx.verLas} {plural(c.votaciones.length, txc.votacion, "votaciones")} {fill(tx.deLa, { camara: c.camara })}</summary>
           <VotacionesTema votaciones={c.votaciones} />
         </details>
       </section>
     ))
   }
 
-  <h2>Otros temas</h2>
-  <nav class="otros-temas" aria-label="Otros temas">
+  <h2>{tx.otrosTemas}</h2>
+  <nav class="otros-temas" aria-label={tx.otrosTemas}>
     {otros.map((t: any) => (t.id === tema.id ? <strong class="tema" data-tema={t.id} aria-current="page">{t.nombreCorto}</strong> : <a class="tema" data-tema={t.id} href={t.url} title={t.nombre}>{t.nombreCorto}</a>))}
   </nav>
 </Base>

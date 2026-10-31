@@ -2,6 +2,8 @@
 // Botones para compartir una página (#45): copiar el enlace, WhatsApp y X con enlaces simples (sin
 // scripts de esos servicios ni cookies) y, si hay, la imagen vertical para estados e historias. El
 // botón de copiar aparece solo con JavaScript. Recibe lo preparado por lib/compartir.js.
+import { textos } from "../lib/contenido.js";
+const tx = textos.votaciones.compartir;
 interface Props {
   url: string;
   enlaces: { whatsapp: string; x: string };
@@ -11,15 +13,17 @@ const { url, enlaces, vertical } = Astro.props;
 ---
 
 <div class="compartir chico" data-compartir={url}>
-  <strong>Compartir</strong>
-  <button type="button" data-copiar hidden>Copiar enlace</button>
-  <a href={enlaces.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp</a>
-  <a href={enlaces.x} target="_blank" rel="noopener noreferrer">X</a>
-  {vertical && <a href={vertical} download>Imagen para estados</a>}
+  <strong>{tx.compartir}</strong>
+  <button type="button" data-copiar hidden>{tx.copiarEnlace}</button>
+  <a href={enlaces.whatsapp} target="_blank" rel="noopener noreferrer">{tx.whatsapp}</a>
+  <a href={enlaces.x} target="_blank" rel="noopener noreferrer">{tx.x}</a>
+  {vertical && <a href={vertical} download>{tx.imagenParaEstados}</a>}
   <span class="texto-suave" role="status" data-copiado></span>
 </div>
 
 <script>
+  import interaccion from "../contenido/interaccion.json";
+  const ti = interaccion.compartir;
   /** Copia con el método anterior, para navegadores que no permiten navigator.clipboard en la página. */
   function copiarConSeleccion(texto: string) {
     const campo = document.createElement("textarea");
@@ -47,7 +51,7 @@ const { url, enlaces, vertical } = Astro.props;
       } catch {
         copiado = copiarConSeleccion(url);
       }
-      aviso.textContent = copiado ? "Enlace copiado" : "No se pudo copiar el enlace";
+      aviso.textContent = copiado ? ti.enlaceCopiado : ti.noSePudoCopiar;
     });
   }
 </script>

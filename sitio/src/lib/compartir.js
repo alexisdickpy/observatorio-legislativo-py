@@ -16,6 +16,9 @@ import { claseDeCategoria, porSentido } from "./ficha.js";
 import * as rutas from "./rutas.js";
 import { nombreSitio, temaDeLey } from "./seo.js";
 import { recortar } from "./texto.js";
+import { textos, fill } from "./contenido.js";
+const tx = textos.votaciones.textosCompartir;
+const txc = textos.general.comunes;
 
 /** Medidas de cada imagen: la horizontal para la vista previa del enlace y la vertical para estados e historias. */
 export const FORMATOS = {
@@ -23,7 +26,7 @@ export const FORMATOS = {
   vertical: { ancho: 1080, alto: 1920 },
 };
 
-const SIN_DATO = "Sin dato";
+const SIN_DATO = txc.sinDato;
 /** Largo máximo del tema en las imágenes y en el texto para compartir. */
 const LARGO_TEMA = 140;
 const LARGO_TEMA_TEXTO = 90;
@@ -31,7 +34,7 @@ const LARGO_DESCRIPCION = 300;
 
 /** "Ley 7123" (o varias, si la votación quedó en más de una ley) o "Expediente S-2603294". */
 export function referenciaDe(v) {
-  return v.leyes.length ? v.leyes.map((l) => `Ley ${l.numero}`).join(" y ") : `Expediente ${v.proyecto.expediente ?? SIN_DATO}`;
+  return v.leyes.length ? v.leyes.map((l) => fill(tx.ley, { numero: l.numero })).join(" y ") : fill(txc.expedienteNumero, { expediente: v.proyecto.expediente ?? SIN_DATO });
 }
 
 /** Título oficial del proyecto de una votación: el de la ley, si llegó a serlo. */
@@ -50,17 +53,17 @@ export function compartirVotacion(v) {
   const totales = v.totales.map((t) => `${t.categoria} ${t.cantidad}`).join(" · ");
   const url = rutas.absoluta(v.pagina);
   // Con el número oficial de la votación: un mismo proyecto puede votarse varias veces el mismo día.
-  const titulo = `${referencia}, votación ${v.id} del ${fecha}`;
-  const texto = `${referencia}${tema ? ` «${recortar(tema, LARGO_TEMA_TEXTO)}»` : ""}. Votación en la ${camara} del ${fecha}. Resultado ${resultado} (${totales}).`;
-  const alt = `${titulo} en la ${camara}. Resultado ${resultado}. ${totales}.`;
+  const titulo = fill(tx.votacionDel, { referencia: referencia, id: v.id, fecha: fecha });
+  const texto = fill(tx.textoParaCompartir, { referencia, tema: tema ? ` ${fill(tx.temaCitado, { tema: recortar(tema, LARGO_TEMA_TEXTO) })}` : "", camara, fecha, resultado, totales });
+  const alt = fill(tx.enLaResultado, { titulo: titulo, camara: camara, resultado: resultado, totales: totales });
   const imagenes = Object.fromEntries(
     Object.entries(FORMATOS).map(([formato, medidas]) => [formato, { url: rutas.imagenVotacion(v.id, formato), ...medidas }]),
   );
   return {
     titulo,
     descripcion: recortar(
-      `Votación nominal ${v.id} en la ${camara} del ${fecha} (${v.etapa ?? SIN_DATO}) sobre ${referencia}. Resultado ${resultado}. ${totales}.` +
-        `${tema ? ` Proyecto «${tema}».` : ""}`,
+      fill(tx.descripcionVotacion, { id: v.id, camara, fecha, etapa: v.etapa ?? SIN_DATO, referencia, resultado, totales }) +
+        (tema ? ` ${fill(tx.proyectoCitado, { tema })}` : ""),
       LARGO_DESCRIPCION,
     ),
     url,
@@ -80,7 +83,7 @@ export function compartirVotacion(v) {
       registrados: v.registrados,
       marca: nombreSitio,
       sitio: new URL(rutas.absoluta(rutas.inicio())).host,
-      pie: `${cita().cita} · Actualizado el ${actualizacion().texto}`,
+      pie: fill(tx.actualizadoEl, { cita: cita().cita, texto: actualizacion().texto }),
     },
   };
 }
@@ -99,7 +102,7 @@ export function datosDeVotacion(v, c) {
       "@type": "Legislation",
       name: tituloOficial(v) ?? c.titulo,
       legislationIdentifier: referenciaDe(v),
-      legislationJurisdiction: { "@type": "Country", name: "Paraguay" },
+      legislationJurisdiction: { "@type": "Country", name: tx.paraguay },
       ...(v.leyes.length && { url: rutas.absoluta(rutas.ley(v.leyes[0].numero)) }),
     },
     isBasedOn: cita().url,

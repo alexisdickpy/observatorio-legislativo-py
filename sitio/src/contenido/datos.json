@@ -1,0 +1,38 @@
+{
+  "pagina": {
+    "descargaDeLosDatosDel": "Descarga de los datos del Congreso Nacional del Paraguay que usa este sitio, en CSV y JSON, con su diccionario de datos.",
+    "todosLosDatosQueUsa": "Todos los datos que usa este sitio se pueden descargar y reutilizar libremente bajo la licencia {licencia}, citando **\"{cita}\"** y la fecha de actualización ({fecha}).",
+    "losArchivosDeValoresOficiales": "Los archivos de *valores oficiales* contienen los datos exactamente como los publica el Congreso; lo que agrega este proyecto está en columnas cuyo nombre empieza con `_propio`. El [diccionario de datos]({url1}) describe cada campo.",
+    "lasFotosDeLosLegisladores": "Las fotos de los legisladores son una copia de las que publica el Congreso (campo `fotoURL`) y están en `{rutaFotos}`.",
+    "archivo": "Archivo",
+    "contenido": "Contenido",
+    "descargas": "Descargas"
+  },
+  "descargas": {
+    "diccionarioDeDatosConCada": "Diccionario de datos, con cada campo de cada tabla, su tipo, su origen (oficial o propio) y su descripción.",
+    "elMismoDiccionarioEnFormato": "El mismo diccionario, en formato JSON.",
+    "fechaDeLaUltimaComprobacion": "Fecha de la última comprobación con la fuente, última modificación y cantidades por período.",
+    "periodosLegislativosIncluidosConSus": "Períodos legislativos incluidos, con sus fechas.",
+    "registroDeLasUltimasSincronizaciones": "Registro de las últimas sincronizaciones con la API del Congreso.",
+    "explicacionDeLosArchivosY": "Explicación de los archivos y sus convenciones.",
+    "unaFilaPorLeySancionada": "Una fila por ley sancionada en el período, con datos de su proyecto.",
+    "cadaPasoDeLaTramitacion": "Cada paso de la tramitación del proyecto de cada ley.",
+    "unaFilaPorVotacionNominal": "Una fila por votación nominal, con sus totales. El voto de cada legislador está en votos.",
+    "elVotoDeCadaLegislador": "El voto de cada legislador en cada votación nominal.",
+    "legisladoresDelPeriodoVigentesO": "Legisladores del período, vigentes o no.",
+    "autoresDelProyectoDeCada": "Autores del proyecto de cada ley y de los proyectos de ley votados en el período.",
+    "identificadorPropioDeCadaLegislador": "Identificador propio de cada legislador, que se mantiene igual entre legislaturas y se usa en las direcciones del sitio.",
+    "partidoUnificadoDeCadaTexto": "Partido unificado de cada texto oficial de partido, que dice qué textos corresponden al mismo partido, con el fundamento de cada caso y los nombres conocidos. Los textos oficiales no cambian.",
+    "temasDeLaClasificacionPropia": "Temas de la clasificación propia de las leyes, con la definición de cada uno y las palabras clave de sus reglas.",
+    "temasDeCadaProyectoDe": "Temas de cada proyecto de ley con ley o con votación en el período, con la regla o la revisión que asignó cada uno. Es una clasificación propia, no oficial.",
+    "problemasQueEsteProyectoDetecto": "Problemas que este proyecto detectó en los datos oficiales (fechas mal escritas, totales que no coinciden, etc.). Los valores oficiales no se corrigen.",
+    "porLegisladorLasVotacionesNominales": "Por legislador, las votaciones nominales en que figura como AUSENTE, NO VOTA y ABSTENCIÓN/BLANCO, cada una por separado, sobre todas las votaciones nominales en cuya lista figura, y las votaciones en que votó distinto a la mayoría de su bancada y de su partido, sobre las votaciones comparables de cada grupo. Es la tabla de la vista comparativa.",
+    "porCamaraCadaParDe": "Por cámara, cada par de partidos y cada par de bancadas, con las votaciones nominales sobre proyectos de ley en que los dos tuvieron posición y en cuántas fue la misma. Los partidos se identifican con el partido unificado y las bancadas con su nombre oficial. El porcentaje queda vacío con menos de 20 votaciones en común. Es la tabla de la página de coincidencia de votos.",
+    "porTemaCamaraPartidoO": "Por tema, cámara, partido o bancada y categoría oficial de voto, cuántos votos individuales sumaron sus legisladores en las votaciones nominales sobre proyectos de ley de ese tema, sobre sus votos registrados. El tema es la clasificación propia; los partidos se identifican con el partido unificado y las bancadas con su nombre oficial. Es la tabla de la página de votos por tema.",
+    "documentacionYEstado": "Documentación y estado",
+    "valoresOficialesDelPeriodoLegislativo": "Valores oficiales del período legislativo {id}",
+    "datosAgregadosPorEsteProyecto": "Datos agregados por este proyecto (no oficiales)",
+    "cifrasCalculadasPorEsteProyecto": "Cifras calculadas por este proyecto (no oficiales)",
+    "otrosArchivos": "Otros archivos"
+  }
+}

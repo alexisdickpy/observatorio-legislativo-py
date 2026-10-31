@@ -4,6 +4,9 @@
 // Cada una enlaza a la votación oficial en SILpy. Recibe los valores de lib/legisladores.js.
 // Filas en una sola línea y estilos globales con prefijo de clase (ver TablaLegisladores).
 import * as rutas from "../lib/rutas.js";
+import { textos, fill } from "../lib/contenido.js";
+const tx = textos.legisladores.ausencias;
+const txc = textos.general.comunes;
 
 interface Props {
   ausencias: any;
@@ -11,36 +14,33 @@ interface Props {
   camara: string | null;
 }
 const { ausencias: a, periodo, camara } = Astro.props;
-const sinDato = "Sin dato";
+const sinDato = txc.sinDato;
 const sesion = (s: any) => [s.numero && `N.º ${s.numero}`, s.tipo].filter(Boolean).join(", ") || sinDato;
 ---
 
 <div class="ausencias-votaciones">
   <p class="cifra"><strong>{a.texto}</strong></p>
   <p class="chico texto-suave lectura">
-    Votaciones nominales del período {periodo} en que figura como AUSENTE, sobre todas las votaciones
-    nominales de su cámara en cuya lista oficial figura, de proyectos de ley y de otros expedientes como
-    resoluciones o declaraciones. AUSENTE indica que no registró su voto en esa votación, no que no
-    estuviera en la sesión.
-    {camara === "CAMARA DE SENADORES" && " El Senado publica muchas menos votaciones nominales que Diputados."}{" "}
-    <a href={rutas.metodologia(rutas.anclasMetodologia.ausencias)}>Cómo se calcula</a>
+    {fill(tx.votacionesNominalesDelPeriodoEn, { periodo: periodo })}
+    {camara === "CAMARA DE SENADORES" && tx.elSenadoPublicaMuchasMenos}{" "}
+    <a href={rutas.metodologia(rutas.anclasMetodologia.ausencias)}>{txc.comoSeCalcula}</a>
   </p>
   {
     a.lista.length > 0 && (
       <details>
-        <summary>Ver las {a.lista.length} votaciones en que figura como AUSENTE</summary>
+        <summary>{fill(tx.verLasVotacionesEnQue, { lista: a.lista.length })}</summary>
         <div class="historial-desplazable">
           <table>
-            <caption class="solo-lectores">Votaciones nominales en que figura como AUSENTE</caption>
+            <caption class="solo-lectores">{tx.votacionesNominalesEnQueFigura}</caption>
             <thead>
               <tr>
-                <th scope="col">Fecha</th>
-                <th scope="col">Sesión</th>
-                <th scope="col">Votación en SILpy</th>
+                <th scope="col">{txc.fecha}</th>
+                <th scope="col">{tx.sesion}</th>
+                <th scope="col">{txc.votacionEnSilpy}</th>
               </tr>
             </thead>
             <tbody data-paginar>
-              {a.lista.map((x: any) => <tr data-ausencia><td>{x.fecha ?? sinDato}</td><td>{sesion(x.sesion)}</td><td>{x.url ? <a href={x.url}>Expediente {x.expediente ?? sinDato}</a> : `Expediente ${x.expediente ?? sinDato}`}</td></tr>)}
+              {a.lista.map((x: any) => <tr data-ausencia><td>{x.fecha ?? sinDato}</td><td>{sesion(x.sesion)}</td><td>{x.url ? <a href={x.url}>{txc.expediente} {x.expediente ?? sinDato}</a> : fill(textos.general.comunes.expedienteNumero, { expediente: x.expediente ?? sinDato })}</td></tr>)}
             </tbody>
           </table>
         </div>

@@ -1,0 +1,116 @@
+{
+  "compartir": {
+    "compartir": "Compartir",
+    "copiarEnlace": "Copiar enlace",
+    "whatsapp": "WhatsApp",
+    "x": "X",
+    "imagenParaEstados": "Imagen para estados"
+  },
+  "pagina": {
+    "votacionesYPosicionDeCada": "Votaciones y posición de cada partido",
+    "lasVotacionesNominalesSobreProyectos": "Las {votaciones} votaciones nominales sobre proyectos de ley del período legislativo {periodo}, con el resultado oficial, los totales y lo que votó la mayoría de cada partido.",
+    "las": "Las",
+    "sobreProyectosDeLeyDel": "sobre proyectos de ley del período legislativo {periodo} ({porCamara}), con el resultado oficial, los totales de cada categoría y la posición de cada partido.",
+    "posicionDeUnPartidoLa": "Posición de un partido = la categoría con más votos entre los votos emitidos de sus legisladores en esa votación",
+    "votosEmitidosSiNoAbstencion": "**Votos emitidos.** SI, NO, ABSTENCIÓN/BLANCO o una moción. AUSENTE y NO VOTA no cuentan. Si dos categorías empatan en el primer lugar, la etiqueta dice «empate». Si ningún legislador del partido emitió voto, dice «sin votos emitidos».",
+    "siglasSonPropiasDeEste": "**Siglas.** Son propias de este sitio, para que las etiquetas entren en poco espacio. Al pasar el cursor sobre una etiqueta se ve el nombre oficial del partido y cuántos votos tuvo esa categoría sobre los votos emitidos del partido.",
+    "totalesLosQuePublicaEl": "**Totales.** Los que publica el Congreso, sobre los legisladores registrados en la lista oficial de la votación.",
+    "partidoEsElQueLa": "Partido es el que la API registra para cada legislador en el período, no necesariamente el de la fecha de cada votación. [Cómo se calcula la posición de cada partido]({url1}) · [Coincidencia de votos entre partidos]({url2})",
+    "decisionesSinVotacionNominalCon": "[{decisiones} decisiones sin votación nominal]({url1}), con su resultado oficial, aparte porque no tienen votos individuales.",
+    "votacionesPorAno": "Votaciones por año",
+    "elAnoEsElDe": "El año es el de la fecha del trámite en que se votó. En cada año se puede filtrar por cámara, estado del proyecto y resultado.",
+    "votacionesMasAjustadas": "Votaciones más ajustadas",
+    "porCamaraLasVotacionesDel": "Por cámara, las {cantidad} votaciones del período con menor diferencia entre los totales oficiales de SI y de NO. A igual diferencia, primero la más reciente. No se cuentan las votaciones sin votos SI ni NO. [Cómo se eligen]({url1})"
+  },
+  "anio": {
+    "votacionesDe": "Votaciones de {anio}",
+    "lasVotacionesNominalesSobreProyectos": "Las {votaciones} votaciones nominales sobre proyectos de ley de {anio} en el Congreso Nacional, con el resultado oficial, los totales y lo que votó la mayoría de cada partido.",
+    "votacionesYPosicionDeCada": "[← Votaciones y posición de cada partido]({url1})",
+    "otrosAnos": "Otros años",
+    "votacionesNominalesSobreProyectosDe": "{votaciones} votaciones nominales sobre proyectos de ley ({porCamaraTexto}), de la más reciente a la más antigua. Cada etiqueta muestra la sigla del partido y la categoría con más votos entre los votos emitidos de sus legisladores. [Cómo se calcula]({url1})",
+    "partidoEsElQueLa": "Partido es el que la API registra para cada legislador en el período, no necesariamente el de la fecha de cada votación."
+  },
+  "sinNominal": {
+    "resultadoOficialDeDecisionesDel": "Resultado oficial de {decisiones} decisiones del plenario sobre proyectos de ley sin votación nominal publicada, período legislativo {periodo}.",
+    "votaciones": "[← Votaciones]({url1})",
+    "decisionesDelPlenarioSobreProyectos": "{decisiones} decisiones del plenario sobre proyectos de ley del período legislativo {periodo} sin votación nominal publicada. Se muestra el resultado oficial.",
+    "sinVotosIndividualesNoSe": "Sin votos individuales no se puede saber cómo votó cada legislador o partido, así que estas decisiones no entran en los gráficos ni en los cálculos del sitio. La lista incluye los proyectos cuyo detalle guarda este sitio y puede no ser completa. [Cómo se arma esta lista]({url1})",
+    "ano": "Año",
+    "resultado": "Resultado",
+    "ley": "Ley {numero}",
+    "enSilpy": "en SILpy",
+    "expediente": "Expediente {expediente}",
+    "sesionEnSilpy": "[Sesión en SILpy]({url1})"
+  },
+  "paginaPropia": {
+    "votacionesDe": "[← Votaciones de {anio}]({url1})",
+    "ley": "Ley {numero}",
+    "presentadoPor": "Presentado por",
+    "iniciativaDel": "Iniciativa del {iniciativa}",
+    "hemicicloConLegisladores": "Hemiciclo con {registrados} legisladores: {etiqueta}.",
+    "unPuntoPorLegisladorAgrupados": "Un punto por legislador, agrupados por voto. No es la ubicación real de las bancas."
+  },
+  "votacion": {
+    "resultado": "Resultado:",
+    "sesionNO": "· Sesión {tipo} n.º {numero}",
+    "observacion": "Observación: {observacion}",
+    "totalesSobreLosLegisladoresRegistrados": "Totales sobre los {registrados} legisladores registrados en la votación.",
+    "elCongresoNoPublicaUn": "* El Congreso no publica un total para esta categoría. Es un recuento propio de los votos individuales.",
+    "notaDelObservatorio": "Nota del Observatorio.",
+    "losTotalesPublicadosNoCoinciden": "Los totales publicados no coinciden con el recuento de los votos individuales (",
+    "notaDelObservatorio2": "**Nota del Observatorio.** {valor}",
+    "posicionDeCadaPartido": "Posición de cada partido",
+    "enCadaPartidoYBancada": "En cada partido y bancada, el total (\"de …\") son sus legisladores que figuran en la lista oficial de esta votación, incluidos los suplentes en ejercicio y los ausentes.",
+    "porPartidoEnNumeros": "Por partido, en números",
+    "verPorBancada": "Ver por bancada",
+    "porBancada": "Por bancada",
+    "verElVotoDeCada": "Ver el voto de cada legislador ({votos})",
+    "votoDeCadaLegislador": "Voto de cada legislador",
+    "voto": "Voto",
+    "legislador": "Legislador",
+    "compartirEstaVotacion": "Compartir esta votación",
+    "sesionEnSilpy": "Sesión en SILpy"
+  },
+  "lista": {
+    "ley": "Ley {numero}",
+    "presentadoPor": "Presentado por",
+    "iniciativaDel": "Iniciativa del",
+    "resultado": "· Resultado",
+    "diferenciaEntreSiYNo": "· Diferencia entre SI y NO",
+    "deLegisladoresRegistrados": "(de {registrados} legisladores registrados)",
+    "verVotacion": "[Ver votación]({url1})"
+  },
+  "filtro": {
+    "resultadoOficial": "Resultado oficial",
+    "sinResultadoOficial": "Sin resultado oficial",
+    "temaClasificacionDelObservatorio": "Tema (clasificación del Observatorio)",
+    "todos": "Todos ({total})",
+    "publicadoEsElEstadoDe": "PUBLICADO es el estado de los proyectos que llegaron a ser ley."
+  },
+  "posicionPorSentido": {
+    "votosEmitidos": "{votantes} votos emitidos",
+    "paraCadaPartidoLaCategoria": "Para cada partido, la categoría con más votos entre los votos emitidos de sus legisladores en esta votación. Entre paréntesis, los votos de esa categoría sobre los votos emitidos del partido. Las siglas son propias de este sitio. [Cómo se calcula]({url1})",
+    "legisladorSinVoto": "{miembros} legislador sin voto emitido",
+    "legisladoresSinVoto": "{miembros} legisladores sin voto emitido"
+  },
+  "posicionPartidos": {
+    "de": "{partido}, {cantidad} de {votantes}",
+    "deConVotoEmitido": "{partido}, {votantes} de {miembros} con voto emitido"
+  },
+  "textosCompartir": {
+    "ley": "Ley {numero}",
+    "votacionDel": "{referencia}, votación {id} del {fecha}",
+    "enLaResultado": "{titulo} en la {camara}. Resultado {resultado}. {totales}.",
+    "actualizadoEl": "{cita} · Actualizado el {texto}",
+    "paraguay": "Paraguay",
+    "textoParaCompartir": "{referencia}{tema}. Votación en la {camara} del {fecha}. Resultado {resultado} ({totales}).",
+    "temaCitado": "«{tema}»",
+    "descripcionVotacion": "Votación nominal {id} en la {camara} del {fecha} ({etapa}) sobre {referencia}. Resultado {resultado}. {totales}.",
+    "proyectoCitado": "Proyecto «{tema}»."
+  },
+  "textosFicha": {
+    "sinVotosEmitidos": "sin votos emitidos",
+    "empate": "Empate",
+    "sinVotosEmitidos2": "Sin votos emitidos"
+  }
+}

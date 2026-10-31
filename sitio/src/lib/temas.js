@@ -9,10 +9,12 @@
 
 import { leerJson } from "./datos.js";
 import * as rutas from "./rutas.js";
+import { textos } from "./contenido.js";
+const tx = textos.temas.textos;
 
 /** Valor de filtro de las leyes y votaciones pendientes de clasificación. */
 export const PENDIENTE = "pendiente";
-export const TEXTO_PENDIENTE = "Pendiente de clasificación";
+export const TEXTO_PENDIENTE = tx.pendienteDeClasificacion;
 
 let temasCache;
 /** Temas en el orden de temas.json: { id, nombre, nombreCorto (etiquetas), definicion, url (catálogo filtrado) }. */

@@ -15,11 +15,13 @@
 
 import { fuente } from "./datos.js";
 import { valor } from "./ficha.js";
+import { textos } from "./contenido.js";
+const tx = textos.legisladores.textosComisiones;
 
 const TIPOS = ["PERMANENTE", "BICAMERAL", "ESPECIAL", "NACIONAL", "FRENTE PARLAMENTARIO"];
 export const COMISIONES_ESPECIALES = "COMISIONES ESPECIALES";
 export const NOTA_COMISIONES_ESPECIALES =
-  "El Congreso publica esta entrada sin indicar a qué comisión especial corresponde.";
+  tx.elCongresoPublicaEstaEntrada;
 
 /** Tipo oficial sin "(A)" ni espacios de más, en mayúsculas: "ESPECIAL  (A)" → "ESPECIAL". */
 export const tipoBase = (tipo) =>
