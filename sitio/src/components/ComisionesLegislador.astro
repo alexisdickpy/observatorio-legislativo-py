@@ -4,23 +4,26 @@
 // oficial va en <span class="titulo-…">, como los títulos oficiales, para que las pruebas de textos propios
 // no lo revisen (hay una comisión de «Asistencia, protección y bienestar animal»).
 import * as rutas from "../lib/rutas.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.legisladores.comisiones;
+const txc = textos.general.comunes;
 
 interface Props {
   comisiones: any;
   periodo: string;
 }
 const { comisiones: c, periodo } = Astro.props;
-const sinDato = "Sin dato";
+const sinDato = txc.sinDato;
 ---
 
 <div class="comisiones-legislador">
   {
     c.total === 0 ? (
-      <p class="lectura">No figura como miembro de ninguna comisión en las listas que publica el Congreso para el período {periodo}.</p>
+      <p class="lectura">{fill(tx.noFiguraComoMiembroDe, { periodo: periodo })}</p>
     ) : (
       c.periodos.map((p: any) => (
-        <section aria-label={`Período parlamentario ${p.nombre ?? sinDato}`}>
-          <p class="comisiones-periodo">Período parlamentario {p.nombre ?? sinDato} ({p.comisiones.length})</p>
+        <section aria-label={fill(tx.periodoParlamentarioDe, { nombre: p.nombre ?? sinDato })}>
+          <p class="comisiones-periodo">{tx.periodoParlamentario} {p.nombre ?? sinDato} ({p.comisiones.length})</p>
           <ul>
             {p.comisiones.map((x: any) => (
               <li>
@@ -34,12 +37,7 @@ const sinDato = "Sin dato";
       ))
     )
   }
-  <p class="chico texto-suave lectura">
-    Según las listas de miembros que publica el Congreso para cada período parlamentario, de julio a junio.
-    Incluye comisiones permanentes, bicamerales, especiales y nacionales y frentes parlamentarios. La fuente
-    no indica el cargo de cada miembro dentro de la comisión ni quién firmó cada dictamen.{" "}
-    <a href={rutas.metodologia(rutas.anclasMetodologia.comisiones)}>Más información</a>
-  </p>
+  <p class="chico texto-suave lectura" set:html={md(tx.segunLasListasDeMiembros, { url1: crudo(rutas.metodologia(rutas.anclasMetodologia.comisiones)) })} />
 </div>
 
 <style is:global>

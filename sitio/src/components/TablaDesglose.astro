@@ -3,6 +3,8 @@
 // Estilos globales con prefijo de clase: los estilos con alcance agregan un atributo a cada celda.
 import { clasePartido } from "../lib/partidos.js";
 import { legible } from "../lib/texto.js";
+import { textos } from "../lib/contenido.js";
+const txc = textos.general.comunes;
 
 interface Props {
   titulo: string;
@@ -24,7 +26,7 @@ const { titulo, grupo, categorias, filas } = Astro.props;
     </thead>
     <tbody>
       {/* Filas en una sola línea: con compressHTML desactivado, la sangría se copia en cada celda. */}
-      {filas.map((f) => <tr><th scope="row" class={f.nombre ? undefined : "texto-suave"}>{grupo === "Partido" && f.nombre && <span class={`pip ${clasePartido(f.nombre)}`}></span>} {legible(f.nombre) ?? "Sin dato"}{f.nombreConocido && <span class="texto-suave"> ({f.nombreConocido})</span>}</th>{f.celdas.map((c: any) => (c.cantidad ? <td>{c.fraccion} <span class="porcentaje">{c.porcentajeTexto}</span></td> : <td class="texto-suave">0</td>))}</tr>)}
+      {filas.map((f) => <tr><th scope="row" class={f.nombre ? undefined : "texto-suave"}>{grupo === "Partido" && f.nombre && <span class={`pip ${clasePartido(f.nombre)}`}></span>} {legible(f.nombre) ?? txc.sinDato}{f.nombreConocido && <span class="texto-suave"> ({f.nombreConocido})</span>}</th>{f.celdas.map((c: any) => (c.cantidad ? <td>{c.fraccion} <span class="porcentaje">{c.porcentajeTexto}</span></td> : <td class="texto-suave">0</td>))}</tr>)}
     </tbody>
   </table>
 </div>

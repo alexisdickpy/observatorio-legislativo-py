@@ -12,6 +12,9 @@ import ListaRanking from "./ListaRanking.astro";
 import EtiquetasTema from "./EtiquetasTema.astro";
 import { vistasDeAnalisis } from "../lib/navegacion.js";
 import { vistaPrevia } from "../lib/portada.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.portada.analisis;
+const txc = textos.general.comunes;
 
 interface Props {
   periodo: string;
@@ -25,7 +28,7 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
 
 {parte === "tarjetas" && (
 <section class="analisis" aria-labelledby="titulo-analisis">
-  <h2 id="titulo-analisis">Análisis</h2>
+  <h2 id="titulo-analisis">{tx.analisis}</h2>
   <div class="tarjetas">
     {
       vistasDeAnalisis()
@@ -38,7 +41,7 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
           <p class="chico">{v.descripcion}</p>
           {v.clave === "coincidencia" && (
             <form class="selector-partido chico" id="selector-partido-portada" hidden>
-              <label for="partido-portada">Comparar con</label>
+              <label for="partido-portada">{tx.compararCon}</label>
               <select id="partido-portada">
                 {previa.partidos.map((p) => <option value={p.id}>{p.nombre}</option>)}
               </select>
@@ -48,7 +51,7 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
             previa.coincidencia.map((c, n) => (
               <div class={`camara camara-${n}`}>
                 <h4 class="chico">{c.camara}</h4>
-                <p class="chico texto-suave">{plural(c.votaciones, "votación nominal", "votaciones nominales")} sobre proyectos de ley.</p>
+                <p class="chico texto-suave">{plural(c.votaciones, txc.votacionNominal, txc.votacionesNominales)} {tx.sobreProyectosDeLey}</p>
                 {c.graficos.map((g, i) => (
                   <div data-grafico-partido={g.id} hidden={i > 0}>
                     {g.barras.length > 0 ? (
@@ -56,16 +59,15 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
                     ) : (
                       <p class="chico texto-suave">
                         {g.referencia
-                          ? `${g.referencia} no tiene votaciones en común con otros partidos en esta cámara.`
-                          : `${previa.partidos[i].nombre} no tiene legisladores en esta cámara.`}
+                          ? fill(tx.noTieneVotacionesEnComun, { referencia: g.referencia })
+                          : fill(tx.noTieneLegisladoresEnEsta, { nombre: previa.partidos[i].nombre })}
                       </p>
                     )}
                   </div>
                 ))}
                 {c.mayor && (
                   <p class="chico">
-                    Entre todos los pares, más coincidencia entre {c.mayor.a} y {c.mayor.b} ({c.mayor.porcentajeTexto}) y menos
-                    entre {c.menor.a} y {c.menor.b} ({c.menor.porcentajeTexto}).
+                    {fill(tx.entreTodosLosParesMas, { valor: c.mayor.a, valor2: c.mayor.b, porcentajeTexto: c.mayor.porcentajeTexto, valor3: c.menor.a, valor4: c.menor.b, porcentajeTexto2: c.menor.porcentajeTexto })}
                   </p>
                 )}
               </div>
@@ -79,9 +81,7 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
               </div>
             ))
           )}
-          <p class="chico ver-mas">
-            <a href={v.url}>Ver {v.titulo.toLowerCase()}</a>
-          </p>
+          <p class="chico ver-mas" set:html={md(tx.ver, { url1: crudo(v.url), titulo: v.titulo.toLowerCase() })} />
         </article>
       ))
     }
@@ -100,7 +100,7 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
           {v.clave === "temas" && <EtiquetasTema clasificacion={{ temas: previa.temas, pendiente: false }} enlaces />}
           {v.clave === "votaciones" && <ListaVotaciones votaciones={previa.votaciones} />}
           <p class="chico">
-            <a href={v.url}>{v.clave === "votaciones" ? "Ver todas las votaciones y las más ajustadas" : `Ver ${v.titulo.toLowerCase()}`}</a>
+            <a href={v.url}>{v.clave === "votaciones" ? tx.verTodasLasVotacionesY : fill(tx.ver2, { titulo: v.titulo.toLowerCase() })}</a>
           </p>
         </article>
       ))

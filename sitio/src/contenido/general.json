@@ -1,0 +1,88 @@
+{
+  "sitio": {
+    "nombre": "Observatorio Legislativo",
+    "cita": "Origen de los datos: Datos Abiertos Poder Legislativo"
+  },
+  "comunes": {
+    "bancada": "Bancada",
+    "coincidenciaDeVotosEntrePartidos": "Coincidencia de votos entre partidos y bancadas",
+    "camara": "Cámara",
+    "camaraDeOrigen": "Cámara de origen",
+    "comoSeCalcula": "Cómo se calcula",
+    "datosAbiertos": "Datos abiertos",
+    "decisionesSinVotacionNominal": "Decisiones sin votación nominal",
+    "departamento": "Departamento",
+    "descargarLaTablaCsv": "Descargar la tabla (CSV)",
+    "estado": "Estado",
+    "estadoDelProyecto": "Estado del proyecto",
+    "estadoOficialDelProyecto": "Estado oficial del proyecto",
+    "expediente": "Expediente",
+    "fecha": "Fecha",
+    "lasDos": "Las dos",
+    "leyesSancionadas": "Leyes sancionadas",
+    "nombre": "Nombre",
+    "partido": "Partido",
+    "porPartido": "Por partido",
+    "sinDato": "Sin dato",
+    "sinEstadoOficial": "Sin estado oficial",
+    "sinPartidoRegistrado": "Sin partido registrado",
+    "testDeAfinidad": "Test de afinidad",
+    "todos": "Todos",
+    "votacionEnSilpy": "Votación en SILpy",
+    "votacionesNominales": "votaciones nominales",
+    "votacion": "votación",
+    "votacionNominal": "votación nominal",
+    "expedienteNumero": "Expediente {expediente}",
+    "sinDatoMinuscula": "sin dato"
+  },
+  "pie": {
+    "metodologia": "Metodología",
+    "privacidadYAvisoLegal": "Privacidad y aviso legal",
+    "avisosPorTelegram": "Avisos por Telegram",
+    "codigoFuente": "Código fuente",
+    "actualizadoEl": "**{cita}.** Actualizado el {fecha}.",
+    "losDatosProvienenDeLa": "Los datos provienen de la API de Datos Abiertos del Congreso Nacional y se muestran tal como allí se publican, con sus posibles errores. Este sitio no corrige los valores oficiales. Si un dato parece incorrecto, compáralo con la [fuente oficial]({url1}). Este es un proyecto independiente, sin vínculo con el Congreso.",
+    "pieDePagina": "Pie de página",
+    "datosConLicenciaCodigoCon": "Datos con licencia [{licencia}]({url1}) · Código con licencia [AGPL-3.0]({url2})",
+    "desarrolladoPorAlexisDickCon": "Desarrollado por Alexis Dick con asistencia de IA."
+  },
+  "encabezado": {
+    "principal": "Principal",
+    "modoClaro": "Modo claro"
+  },
+  "estructura": {
+    "saltarAlContenido": "Saltar al contenido"
+  },
+  "menu": {
+    "votaciones": "Votaciones",
+    "votacionesYPosicionDeCada": "Votaciones y posición de cada partido",
+    "lasVotacionesNominalesSobreProyectos": "Las votaciones nominales sobre proyectos de ley con su resultado oficial y lo que votó la mayoría de cada partido. Aquí, las más recientes.",
+    "partidos": "Partidos",
+    "queTanSeguidoVotaronIgual": "Qué tan seguido votaron igual los partidos y las bancadas de cada cámara en las votaciones nominales sobre proyectos de ley.",
+    "temas": "Temas",
+    "votosDePartidosPorTema": "Votos de partidos por tema",
+    "comoVotaronLosLegisladoresDe": "Cómo votaron los legisladores de cada partido en las votaciones nominales de cada tema, por cámara.",
+    "rankings": "Rankings",
+    "masRebeldes": "Más «rebeldes»",
+    "legisladoresQueMasVecesVotaron": "Legisladores que más veces votaron distinto a la mayoría de su partido en las votaciones nominales de su cámara.",
+    "leyes": "Leyes",
+    "proyectos": "Proyectos",
+    "legisladores": "Legisladores",
+    "estadisticas": "Estadísticas",
+    "botDeTelegram": "Bot de Telegram",
+    "buscarLeyes": "Buscar leyes"
+  },
+  "buscadores": {
+    "paraguay": "Paraguay",
+    "ley": "Ley {numero}",
+    "leyN": "Ley N° {numeroOficial}",
+    "ley2": "Ley",
+    "datosDel": "Datos del {name} ({nombreSitio})",
+    "alexisDick": "Alexis Dick",
+    "sancionadaEl": ", sancionada el {fecha}",
+    "descripcionLey": "Ley {numero} del Paraguay{sancion}. {titulo}",
+    "descripcionLegislador": "Ficha de {nombre} en la {camara}, período legislativo {periodo} ({partido}). Sus votos en {votos} votaciones nominales sobre proyectos de ley y {leyes} leyes de su autoría.",
+    "fotoOficial": "Foto oficial de {nombre}",
+    "leyConTema": "Ley {numero} — {tema}"
+  }
+}

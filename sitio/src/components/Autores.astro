@@ -3,6 +3,9 @@
 // El nombre de cada autor del período enlaza a su ficha; el de otras legislaturas, a SILpy.
 import { clasePartido } from "../lib/partidos.js";
 import { legible } from "../lib/texto.js";
+import { textos } from "../lib/contenido.js";
+const tx = textos.leyes.autores;
+const txc = textos.general.comunes;
 
 interface Props {
   detalle: any;
@@ -10,19 +13,19 @@ interface Props {
 }
 const { detalle: d, nivel } = Astro.props;
 const Titulo = `h${nivel}`;
-const sinDato = "Sin dato";
+const sinDato = txc.sinDato;
 ---
 
-<Titulo>Iniciativa y autores</Titulo>
+<Titulo>{tx.iniciativaYAutores}</Titulo>
 <dl class="iniciativa">
   <div>
-    <dt>Iniciativa</dt>
+    <dt>{tx.iniciativa}</dt>
     <dd class={d.iniciativa ? undefined : "texto-suave"}>{d.iniciativa ?? sinDato}</dd>
   </div>
   {
     d.ministerios.length > 0 && (
       <div>
-        <dt>{d.ministerios.length > 1 ? "Ministerios autores" : "Ministerio autor"}</dt>
+        <dt>{d.ministerios.length > 1 ? tx.ministeriosAutores : tx.ministerioAutor}</dt>
         <dd>{d.ministerios.join(" · ")}</dd>
       </div>
     )
@@ -31,15 +34,15 @@ const sinDato = "Sin dato";
 {
   d.autores.length === 0 ? (
     // Sin legisladores autores: si hay ministerio, ya figura arriba como autor del proyecto.
-    d.ministerios.length === 0 && <p class="texto-suave">Sin dato de autores</p>
+    d.ministerios.length === 0 && <p class="texto-suave">{tx.sinDatoDeAutores}</p>
   ) : (
     <ul class="autores">
       {d.autores.map((a: any) => (
         <li>
           {a.ficha || a.url ? <a href={a.ficha ?? a.url}>{a.nombre ?? sinDato}</a> : <span>{a.nombre ?? sinDato}</span>}
           <span class="chico texto-suave">
-            {" "}— Partido: {a.partido && <span class={`pip ${clasePartido(a.partido)}`}></span>} {legible(a.partido) ?? sinDato}{a.partidoConocido && ` (${a.partidoConocido})`} · Bancada: {legible(a.bancada) ?? sinDato} · {a.camara ?? sinDato}
-            {!a.delPeriodo && <strong> · Legislatura {a.legislatura ?? sinDato}</strong>}
+             {tx.partido} {a.partido && <span class={`pip ${clasePartido(a.partido)}`}></span>} {legible(a.partido) ?? sinDato}{a.partidoConocido && ` (${a.partidoConocido})`} {tx.bancada} {legible(a.bancada) ?? sinDato} · {a.camara ?? sinDato}
+            {!a.delPeriodo && <strong> {tx.legislatura} {a.legislatura ?? sinDato}</strong>}
           </span>
         </li>
       ))}
@@ -49,8 +52,7 @@ const sinDato = "Sin dato";
 {
   d.autores.some((a: any) => !a.delPeriodo) && (
     <p class="chico texto-suave lectura">
-      Algunos autores eran legisladores de otra legislatura. En ese caso se indica la legislatura, y su
-      partido, bancada y cámara son los que la API registra para ella.
+      {tx.algunosAutoresEranLegisladoresDe}
     </p>
   )
 }

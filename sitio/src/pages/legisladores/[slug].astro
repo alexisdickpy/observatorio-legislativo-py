@@ -17,6 +17,9 @@ import VotosDistintos from "../../components/VotosDistintos.astro";
 import { ficha, legisladores } from "../../lib/legisladores.js";
 import * as rutas from "../../lib/rutas.js";
 import { datosDeLegislador, descripcionDeLegislador, imagenDe } from "../../lib/seo.js";
+import { textos, fill, md, crudo } from "../../lib/contenido.js";
+const tx = textos.legisladores.ficha;
+const txc = textos.general.comunes;
 
 export function getStaticPaths() {
   return legisladores().map((persona) => ({ params: { slug: persona.slug }, props: { persona } }));
@@ -26,7 +29,7 @@ const { persona } = Astro.props;
 const f = ficha(persona);
 const varios = f.bloques.length > 1;
 const Titulo = varios ? "h3" : "h2";
-const sinDato = "Sin dato";
+const sinDato = txc.sinDato;
 const actual = f.bloques[0];
 const descripcion = descripcionDeLegislador(f, sinDato);
 ---
@@ -38,54 +41,52 @@ const descripcion = descripcionDeLegislador(f, sinDato);
   datos={datosDeLegislador(f, persona.url)}
   tipo="profile"
 >
-  <p class="chico"><a href={rutas.legisladores()}>← Todos los legisladores</a></p>
+  <p class="chico" set:html={md(tx.todosLosLegisladores, { url1: crudo(rutas.legisladores()) })} />
   <article data-pagefind-body>
     <h1 data-pagefind-meta="title">{f.nombre ?? sinDato}</h1>
     {
       f.bloques.map((b: any) => (
         <section class="bloque">
-          {varios && <h2>Período legislativo {b.periodo}</h2>}
+          {varios && <h2>{fill(tx.periodoLegislativo, { periodo: b.periodo })}</h2>}
           <div class="cabecera">
             {b.foto && (
               <figure>
-                <img src={b.foto} alt={`Foto oficial de ${b.nombre ?? sinDato}`} width="160" height="160" />
-                <figcaption class="chico texto-suave">Foto del Congreso Nacional (SILpy)</figcaption>
+                <img src={b.foto} alt={fill(textos.general.buscadores.fotoOficial, { nombre: b.nombre ?? sinDato })} width="160" height="160" />
+                <figcaption class="chico texto-suave">{tx.fotoDelCongresoNacionalSilpy}</figcaption>
               </figure>
             )}
             <dl>
-              <div><dt>Período legislativo</dt><dd>{b.periodo}</dd></div>
-              <div><dt>Cámara</dt><dd>{b.camara ?? sinDato}</dd></div>
-              <div><dt>Tipo</dt><dd>{b.tipo ?? sinDato}</dd></div>
-              <div><dt>Departamento</dt><dd>{b.departamento ?? sinDato}</dd></div>
-              <div><dt>Partido</dt><dd>{b.partido && <span class={`pip ${clasePartido(b.partido)}`}></span>} {legible(b.partido) ?? sinDato}{b.partidoConocido && ` (${b.partidoConocido})`}</dd></div>              <div><dt>Bancada</dt><dd>{legible(b.bancada) ?? sinDato}</dd></div>
-              <div><dt>Cargo en la bancada</dt><dd class={b.cargoBancada ? undefined : "texto-suave"}>{b.cargoBancada ?? sinDato}</dd></div>
-              <div><dt>Correo</dt><dd class={b.correo ? "contacto" : "texto-suave"}>{b.correo ? <a href={`mailto:${b.correo}`}>{b.correo}</a> : sinDato}</dd></div>
-              <div><dt>Teléfono</dt><dd class={b.telefono ? undefined : "texto-suave"}>{b.telefono ?? sinDato}</dd></div>
-              {b.periodoVigente && <div><dt>Situación</dt><dd>{b.vigente ? "En ejercicio" : "Ya no ejerce"}</dd></div>}
+              <div><dt>{tx.periodoLegislativo2}</dt><dd>{b.periodo}</dd></div>
+              <div><dt>{txc.camara}</dt><dd>{b.camara ?? sinDato}</dd></div>
+              <div><dt>{tx.tipo}</dt><dd>{b.tipo ?? sinDato}</dd></div>
+              <div><dt>{txc.departamento}</dt><dd>{b.departamento ?? sinDato}</dd></div>
+              <div><dt>{txc.partido}</dt><dd>{b.partido && <span class={`pip ${clasePartido(b.partido)}`}></span>} {legible(b.partido) ?? sinDato}{b.partidoConocido && ` (${b.partidoConocido})`}</dd></div>              <div><dt>{txc.bancada}</dt><dd>{legible(b.bancada) ?? sinDato}</dd></div>
+              <div><dt>{tx.cargoEnLaBancada}</dt><dd class={b.cargoBancada ? undefined : "texto-suave"}>{b.cargoBancada ?? sinDato}</dd></div>
+              <div><dt>{tx.correo}</dt><dd class={b.correo ? "contacto" : "texto-suave"}>{b.correo ? <a href={`mailto:${b.correo}`}>{b.correo}</a> : sinDato}</dd></div>
+              <div><dt>{tx.telefono}</dt><dd class={b.telefono ? undefined : "texto-suave"}>{b.telefono ?? sinDato}</dd></div>
+              {b.periodoVigente && <div><dt>{tx.situacion}</dt><dd>{b.vigente ? tx.enEjercicio : tx.yaNoEjerce}</dd></div>}
             </dl>
           </div>
           {
             b.periodoVigente && !b.vigente && (
               <p class="aviso lectura">
-                Ya no figura entre los legisladores en ejercicio que publica la API. Esta ficha conserva
-                sus votos y sus leyes del período.
+                {tx.yaNoFiguraEntreLos}
               </p>
             )
           }
           <p class="aviso chico lectura">
-            Partido y bancada son los que la API registra en el período {b.periodo};
-            no necesariamente eran los vigentes en la fecha de cada votación.
-            {b.camara === "CAMARA DE SENADORES" && " Los senadores se eligen en una circunscripción nacional, por eso la API registra su departamento como NACIONAL."}
-            {b.partidoConocido && " El nombre entre paréntesis es el nombre por el que se conoce a su partido, un agregado de este sitio. El que va antes es el oficial."}            {" "}<a href={rutas.metodologia(rutas.anclasMetodologia.afiliacion)}>Más información</a>
+            {fill(tx.partidoYBancadaSonLos, { periodo: b.periodo })}
+            {b.camara === "CAMARA DE SENADORES" && tx.losSenadoresSeEligenEn}
+            {b.partidoConocido && tx.elNombreEntreParentesisEs}            {" "}<a href={rutas.metodologia(rutas.anclasMetodologia.afiliacion)}>{tx.masInformacion}</a>
           </p>
-          {b.urlSilpy && <p class="chico"><a href={b.urlSilpy}>Ficha oficial en SILpy</a></p>}
+          {b.urlSilpy && <p class="chico" set:html={md(tx.fichaOficialEnSilpy, { url1: crudo(b.urlSilpy) })} />}
 
           <div data-pagefind-ignore="all" data-votos>
-            <Titulo>Sus votos en votaciones nominales sobre proyectos de ley</Titulo>
+            <Titulo>{tx.susVotosEnVotacionesNominales}</Titulo>
             {
               b.votos.total === 0 ? (
                 <p class="lectura">
-                  No figura en ninguna votación nominal sobre proyectos de ley del período {b.periodo}.
+                  {fill(tx.noFiguraEnNingunaVotacion, { periodo: b.periodo })}
                 </p>
               ) : (
                 <Fragment>
@@ -95,10 +96,10 @@ const descripcion = descripcionDeLegislador(f, sinDato);
               )
             }
 
-            <Titulo>Ausencias en votaciones nominales</Titulo>
+            <Titulo>{tx.ausenciasEnVotacionesNominales}</Titulo>
             {
               b.ausencias.total === 0 ? (
-                <p class="lectura">No figura en ninguna votación nominal del período {b.periodo}.</p>
+                <p class="lectura">{fill(tx.noFiguraEnNingunaVotacion2, { periodo: b.periodo })}</p>
               ) : (
                 <AusenciasVotaciones ausencias={b.ausencias} periodo={b.periodo} camara={b.camara} />
               )
@@ -107,7 +108,7 @@ const descripcion = descripcionDeLegislador(f, sinDato);
             {
               b.ausencias.total > 0 && (
                 <Fragment>
-                  <Titulo>NO VOTA y abstenciones en votaciones nominales</Titulo>
+                  <Titulo>{tx.noVotaYAbstencionesEn}</Titulo>
                   <NoVotaAbstencion noVota={b.noVota} abstencion={b.abstencion} periodo={b.periodo} />
                 </Fragment>
               )
@@ -116,47 +117,41 @@ const descripcion = descripcionDeLegislador(f, sinDato);
             {
               b.mayoria.emitidos > 0 && (
                 <Fragment>
-                  <Titulo>Votos distintos a la mayoría de su bancada y de su partido</Titulo>
+                  <Titulo>{tx.votosDistintosALaMayoria}</Titulo>
                   <VotosDistintos mayoria={b.mayoria} periodo={b.periodo} />
                 </Fragment>
               )
             }
 
-            <Titulo>Leyes sancionadas de su autoría ({b.autoria.length})</Titulo>
+            <Titulo>{fill(tx.leyesSancionadasDeSuAutoria, { autoria: b.autoria.length })}</Titulo>
             {
               b.autoria.length === 0 ? (
                 <p class="lectura">
-                  No figura entre los autores del proyecto de ninguna ley sancionada en el período {b.periodo}.
+                  {fill(tx.noFiguraEntreLosAutores, { periodo: b.periodo })}
                 </p>
               ) : (
                 <Fragment>
                   <p class="chico texto-suave lectura">
-                    Leyes del período en cuyo proyecto figura entre los autores, de la más reciente a la más antigua.
+                    {tx.leyesDelPeriodoEnCuyo}
                   </p>
                   <ul class="autoria">
-                    {b.autoria.map((l: any) => <li><a href={l.url}>Ley {l.numero}</a> <span class="texto-suave chico">· {l.fechaSancion ? `Sancionada el ${l.fechaSancion}` : "Fecha de sanción sin dato"}</span><span class="titulo chico">{l.titulo ?? sinDato}</span></li>)}
+                    {b.autoria.map((l: any) => <li><a href={l.url}>{fill(tx.ley, { numero: l.numero })}</a> <span class="texto-suave chico">· {l.fechaSancion ? fill(tx.sancionadaEl, { fechaSancion: l.fechaSancion }) : tx.fechaDeSancionSinDato}</span><span class="titulo chico">{l.titulo ?? sinDato}</span></li>)}
                   </ul>
                 </Fragment>
               )
             }
 
-            <Titulo>Expedientes presentados en el período ({b.expedientes.total})</Titulo>
+            <Titulo>{fill(tx.expedientesPresentadosEnElPeriodo, { total: b.expedientes.total })}</Titulo>
             <ExpedientesPresentados expedientes={b.expedientes} periodo={b.periodo} urlLista={rutas.expedientesLegislador(persona.slug)} />
 
-            <Titulo>Comisiones</Titulo>
+            <Titulo>{tx.comisiones}</Titulo>
             <ComisionesLegislador comisiones={b.comisiones} periodo={b.periodo} />
 
             {
               b.votos.total > 0 && (
                 <Fragment>
-                  <Titulo>Historial de votos ({b.votos.total})</Titulo>
-                  <p class="chico texto-suave lectura">
-                    De la más reciente a la más antigua. Cada ley lleva a la votación dentro de su ficha,
-                    con los totales y el voto de cada legislador. Los proyectos que no son leyes
-                    sancionadas del período llevan a su expediente oficial en SILpy. El trámite indica
-                    qué se votó, así que un NO no significa siempre oponerse al proyecto.{" "}
-                    <a href={rutas.metodologia(rutas.anclasMetodologia.votosLegislador)}>Más información</a>
-                  </p>
+                  <Titulo>{fill(tx.historialDeVotos, { total: b.votos.total })}</Titulo>
+                  <p class="chico texto-suave lectura" set:html={md(tx.deLaMasRecienteA, { url1: crudo(rutas.metodologia(rutas.anclasMetodologia.votosLegislador)) })} />
                   <HistorialVotos historial={b.votos.historial} />
                 </Fragment>
               )

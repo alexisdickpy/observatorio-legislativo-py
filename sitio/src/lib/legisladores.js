@@ -56,6 +56,9 @@ import { esVotoEmitido, mayoriaDe } from "./mayoria.js";
 import { partidoUnificado } from "./partidos.js";
 import * as rutas from "./rutas.js";
 import { normalizar, recortar, slug } from "./texto.js";
+import { textos } from "./contenido.js";
+const tx = textos.legisladores.textosCifras;
+const txc = textos.general.comunes;
 
 const AUSENTE = "AUSENTE";
 const NO_VOTA = "NO VOTA";
@@ -518,15 +521,15 @@ export const conProyectosDeLey = () =>
 
 /** Cifras de la vista comparativa, en el orden de sus columnas. */
 export const CIFRAS_COMPARATIVAS = [
-  { campo: "ausencias", categoria: AUSENTE, titulo: "Ausencias en votaciones nominales" },
+  { campo: "ausencias", categoria: AUSENTE, titulo: tx.ausenciasEnVotacionesNominales },
   { campo: "noVota", categoria: NO_VOTA, titulo: "NO VOTA" },
   { campo: "abstencion", categoria: ABSTENCION, titulo: "ABSTENCIÓN/BLANCO" },
 ];
 
 /** Cifras de votos distintos a la mayoría en la vista comparativa, en el orden de sus columnas. */
 export const CIFRAS_MAYORIA = [
-  { campo: "mayoriaBancada", grupo: "bancada", titulo: "Votos distintos a la mayoría de su bancada" },
-  { campo: "mayoriaPartido", grupo: "partido", titulo: "Votos distintos a la mayoría de su partido" },
+  { campo: "mayoriaBancada", grupo: "bancada", titulo: tx.votosDistintosALaMayoria },
+  { campo: "mayoriaPartido", grupo: "partido", titulo: tx.votosDistintosALaMayoria2 },
 ];
 
 const comparativas = new Map();

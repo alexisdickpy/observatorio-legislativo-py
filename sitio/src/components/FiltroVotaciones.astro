@@ -4,6 +4,9 @@
 // dentro del mismo contenedor [data-votaciones], oculta las votaciones que no cumplen el filtro y lo
 // refleja en la dirección (?camara=…&estado=…&resultado=…&tema=…). Opciones de lib/votaciones.js.
 import { parametrosVotaciones } from "../lib/rutas.js";
+import { textos, fill } from "../lib/contenido.js";
+const tx = textos.votaciones.filtro;
+const txc = textos.general.comunes;
 
 interface Props {
   opciones: { camara: any[]; estado: any[]; resultado: any[]; tema: any[] };
@@ -11,10 +14,10 @@ interface Props {
 }
 const { opciones, total } = Astro.props;
 const campos = [
-  { campo: "camara", etiqueta: "Cámara", sinDato: "Sin dato" },
-  { campo: "estado", etiqueta: "Estado oficial del proyecto", sinDato: "Sin estado oficial" },
-  { campo: "resultado", etiqueta: "Resultado oficial", sinDato: "Sin resultado oficial" },
-  { campo: "tema", etiqueta: "Tema (clasificación del Observatorio)", sinDato: "Sin dato" },
+  { campo: "camara", etiqueta: txc.camara, sinDato: txc.sinDato },
+  { campo: "estado", etiqueta: txc.estadoOficialDelProyecto, sinDato: txc.sinEstadoOficial },
+  { campo: "resultado", etiqueta: tx.resultadoOficial, sinDato: tx.sinResultadoOficial },
+  { campo: "tema", etiqueta: tx.temaClasificacionDelObservatorio, sinDato: txc.sinDato },
 ] as const;
 const plural = (n: number) => `${n} ${n === 1 ? "votación" : "votaciones"}`;
 ---
@@ -26,14 +29,14 @@ const plural = (n: number) => `${n} ${n === 1 ? "votación" : "votaciones"}`;
         <div class="campo">
           <label for={`filtro-votaciones-${c.campo}`}>{c.etiqueta}</label>
           <select id={`filtro-votaciones-${c.campo}`} name={parametrosVotaciones[c.campo]} data-campo={c.campo}>
-            <option value="">Todos ({plural(total)})</option>
+            <option value="">{fill(tx.todos, { total: plural(total) })}</option>
             {opciones[c.campo].map((o) => <option value={o.valor}>{o.texto ?? c.sinDato} ({plural(o.total)})</option>)}
           </select>
         </div>
       ))
     }
   </div>
-  <p class="chico texto-suave">PUBLICADO es el estado de los proyectos que llegaron a ser ley.</p>
+  <p class="chico texto-suave">{tx.publicadoEsElEstadoDe}</p>
   <p class="resultado" data-filtro-votaciones-resultado aria-live="polite"></p>
 </form>
 

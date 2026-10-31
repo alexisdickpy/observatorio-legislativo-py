@@ -1,0 +1,195 @@
+{
+  "mapaDepartamentos": {
+    "t1Diputado": "1 diputado",
+    "mapaDelParaguayPorDepartamento": "Mapa del Paraguay por departamento",
+    "elColorDependeSoloDe": "El color depende solo de la cantidad de diputados. El círculo es",
+    "elegiUnDepartamentoEnEl": "Elegí un departamento en el mapa.",
+    "diputadosPorDepartamento": "Diputados por departamento",
+    "figuraEnLaApiComo": "Figura en la API como",
+    "sinDiputadosEnEjercicioSegun": "Sin diputados en ejercicio según la API.",
+    "sinZonaEnElMapa": "· {diputados}, sin zona en el mapa"
+  },
+  "listado": {
+    "legisladores": "Legisladores",
+    "senadoresYDiputadosDelCongreso": "Senadores y diputados del Congreso Nacional del Paraguay en el período legislativo {periodo}, con su partido, su bancada, sus votos en las votaciones nominales y las leyes de su autoría.",
+    "legisladoresEnEjercicioEnEl": "{enEjercicio} legisladores en ejercicio en el período legislativo {periodo}, primero los de la Cámara de Senadores y luego los de Diputados, por apellido. Cada nombre lleva a su ficha, con sus votos y las leyes de su autoría.",
+    "losDatosSonLosQue": "Los datos son los que publica el Congreso. Partido y bancada son los que la API registra para cada legislador en el período, no necesariamente los de cada fecha. Los senadores se eligen en una circunscripción nacional, por eso la API registra su departamento como NACIONAL.",
+    "elNombreEntreParentesisEs": " El nombre entre paréntesis es el nombre por el que se conoce a un partido, un agregado de este sitio.",
+    "votacionesNominalesPorLegisladorUna": "[Votaciones nominales por legislador]({url1}), una tabla con las ausencias, NO VOTA, abstenciones y votos distintos a la mayoría de su bancada y de su partido de todos los legisladores, cada cifra con su denominador.",
+    "mapaDeDiputadosPorDepartamento": "[Mapa de diputados por departamento]({url1}), cuántos diputados tiene cada departamento y quiénes son.",
+    "coincidenciaDeVotosEntrePartidos": "[Coincidencia de votos entre partidos y bancadas]({url1}), qué tan seguido votó igual cada grupo que cada uno de los demás de su cámara.",
+    "enEjercicio": "En ejercicio",
+    "legisladoresEnEjercicio": "Legisladores en ejercicio",
+    "yaNoEjercenEnEl": "Ya no ejercen en el período",
+    "legisladoresDelPeriodoQueYa": "{noEjercen} legisladores del período {periodo} que ya no figuran entre los que están en ejercicio según la API (por ejemplo, por renuncia, pérdida de investidura o fin de una suplencia). Sus fichas conservan sus votos y sus leyes.",
+    "legisladoresQueYaNoEjercen": "Legisladores que ya no ejercen"
+  },
+  "ficha": {
+    "todosLosLegisladores": "[← Todos los legisladores]({url1})",
+    "periodoLegislativo": "Período legislativo {periodo}",
+    "fotoDelCongresoNacionalSilpy": "Foto del Congreso Nacional (SILpy)",
+    "periodoLegislativo2": "Período legislativo",
+    "tipo": "Tipo",
+    "cargoEnLaBancada": "Cargo en la bancada",
+    "correo": "Correo",
+    "telefono": "Teléfono",
+    "situacion": "Situación",
+    "enEjercicio": "En ejercicio",
+    "yaNoEjerce": "Ya no ejerce",
+    "yaNoFiguraEntreLos": "Ya no figura entre los legisladores en ejercicio que publica la API. Esta ficha conserva sus votos y sus leyes del período.",
+    "partidoYBancadaSonLos": "Partido y bancada son los que la API registra en el período {periodo}; no necesariamente eran los vigentes en la fecha de cada votación.",
+    "losSenadoresSeEligenEn": " Los senadores se eligen en una circunscripción nacional, por eso la API registra su departamento como NACIONAL.",
+    "elNombreEntreParentesisEs": " El nombre entre paréntesis es el nombre por el que se conoce a su partido, un agregado de este sitio. El que va antes es el oficial.",
+    "masInformacion": "Más información",
+    "fichaOficialEnSilpy": "[Ficha oficial en SILpy]({url1})",
+    "susVotosEnVotacionesNominales": "Sus votos en votaciones nominales sobre proyectos de ley",
+    "noFiguraEnNingunaVotacion": "No figura en ninguna votación nominal sobre proyectos de ley del período {periodo}.",
+    "ausenciasEnVotacionesNominales": "Ausencias en votaciones nominales",
+    "noFiguraEnNingunaVotacion2": "No figura en ninguna votación nominal del período {periodo}.",
+    "noVotaYAbstencionesEn": "NO VOTA y abstenciones en votaciones nominales",
+    "votosDistintosALaMayoria": "Votos distintos a la mayoría de su bancada y de su partido",
+    "leyesSancionadasDeSuAutoria": "Leyes sancionadas de su autoría ({autoria})",
+    "noFiguraEntreLosAutores": "No figura entre los autores del proyecto de ninguna ley sancionada en el período {periodo}.",
+    "leyesDelPeriodoEnCuyo": "Leyes del período en cuyo proyecto figura entre los autores, de la más reciente a la más antigua.",
+    "ley": "Ley {numero}",
+    "sancionadaEl": "Sancionada el {fechaSancion}",
+    "fechaDeSancionSinDato": "Fecha de sanción sin dato",
+    "expedientesPresentadosEnElPeriodo": "Expedientes presentados en el período ({total})",
+    "comisiones": "Comisiones",
+    "historialDeVotos": "Historial de votos ({total})",
+    "deLaMasRecienteA": "De la más reciente a la más antigua. Cada ley lleva a la votación dentro de su ficha, con los totales y el voto de cada legislador. Los proyectos que no son leyes sancionadas del período llevan a su expediente oficial en SILpy. El trámite indica qué se votó, así que un NO no significa siempre oponerse al proyecto. [Más información]({url1})"
+  },
+  "mapa": {
+    "mapaDeDiputadosPorDepartamento": "Mapa de diputados por departamento",
+    "losDiputadosEnEjercicioDel": "Los {total} diputados en ejercicio del Congreso Nacional del Paraguay en el período legislativo {periodo}, por departamento, con su partido y el enlace a su ficha.",
+    "diputadosEnEjercicioEnEl": "{total} diputados en ejercicio en el período legislativo {periodo}, según el departamento que registra la API para cada uno. Cada nombre lleva a su ficha.",
+    "losSenadoresNoFiguranPorque": "Los senadores no figuran porque se eligen en una circunscripción nacional. Tampoco los {diputadosQueNoEjercen} diputados del período que ya no ejercen, que están en [Legisladores]({url1}). Contorno de los departamentos de [Natural Earth]({url2}) ({licencia}), simplificado por este proyecto. [Cómo se arma el mapa]({url3})."
+  },
+  "comparativa": {
+    "votacionesNominalesPorLegislador": "Votaciones nominales por legislador",
+    "cuantasVecesFiguraCadaSenador": "Cuántas veces figura cada senador y diputado del período legislativo {periodo} como AUSENTE, NO VOTA y ABSTENCIÓN/BLANCO en las votaciones nominales de su cámara, y cuántas veces votó distinto a la mayoría de su bancada y de su partido, cada cifra con su denominador.",
+    "todosLosLegisladores": "[← Todos los legisladores]({url1})",
+    "paraCadaLegisladorDelPeriodo": "Para cada legislador del período legislativo {periodo}, cinco cifras de las votaciones nominales de su cámara. Cada una se calcula por separado, con su propio denominador, y no se suman.",
+    "ausenciasNoVotaYAbstenciones": "Ausencias, NO VOTA y abstenciones",
+    "cifraDeCadaCategoriaVotaciones": "Cifra de cada categoría = votaciones en que figura con esa categoría ÷ votaciones nominales en cuya lista figura × 100",
+    "ausenciasEnVotacionesNominalesAusente": "**Ausencias en votaciones nominales** (AUSENTE). No registró su voto en esa votación. No indica si estaba o no en la sesión.",
+    "noVotaFiguraEnLa": "**NO VOTA.** Figura en la votación sin emitir voto. Solo aparece en el Senado.",
+    "abstencionBlancoVotoOficialDe": "**ABSTENCIÓN/BLANCO.** Voto oficial de abstención o en blanco.",
+    "votosDistintosALaMayoria": "Votos distintos a la mayoría de su bancada o de su partido",
+    "votosDistintosVotacionesEnQue": "Votos distintos = votaciones en que su voto difiere de la mayoría del grupo ÷ votaciones comparables × 100",
+    "mayoriaDelGrupoLaCategoria": "**Mayoría del grupo.** La categoría con más votos entre los votos emitidos de los miembros de su bancada, o de su partido, en esa votación, contando también el suyo.",
+    "votacionesComparablesLasVotacionesEn": "**Votaciones comparables.** Las votaciones en que emitió voto (SI, NO, ABSTENCIÓN/BLANCO o una moción) y su grupo tuvo una mayoría. No cuentan los empates en el primer lugar ni las votaciones en que fue el único de su grupo que emitió voto. AUSENTE y NO VOTA no son votos emitidos.",
+    "votarDistintoALaMayoria": "Votar distinto a la mayoría no es bueno ni malo. Es un dato para comparar cómo vota cada legislador respecto de su grupo.",
+    "lasCamarasSeMuestranPor": "Las cámaras se muestran por separado porque el Senado publica muchas menos votaciones nominales que Diputados. Los porcentajes de quienes figuran en pocas votaciones cambian mucho con cada votación, por eso cada cifra lleva su denominador. La API no informa si había permiso o licencia, ni el motivo. Partido y bancada son los que la API registra para el período, no necesariamente los de la fecha de cada votación. Ordenar la tabla por una cifra solo cambia el orden de las filas.",
+    "comoSeCalculanLasAusencias": "Cómo se calculan las ausencias, NO VOTA y abstenciones",
+    "comoSeCalculanLosVotos": "Cómo se calculan los votos distintos a la mayoría",
+    "rankingsDeMasRebeldesY": "Rankings de más «rebeldes» y más «ausentes»",
+    "tituloPorCamara": "{camara}, votaciones nominales por legislador"
+  },
+  "filtro": {
+    "todas": "Todas",
+    "limpiar": "Limpiar"
+  },
+  "tabla": {
+    "tipo": "Tipo"
+  },
+  "ausencias": {
+    "votacionesNominalesDelPeriodoEn": "Votaciones nominales del período {periodo} en que figura como AUSENTE, sobre todas las votaciones nominales de su cámara en cuya lista oficial figura, de proyectos de ley y de otros expedientes como resoluciones o declaraciones. AUSENTE indica que no registró su voto en esa votación, no que no estuviera en la sesión.",
+    "elSenadoPublicaMuchasMenos": " El Senado publica muchas menos votaciones nominales que Diputados.",
+    "verLasVotacionesEnQue": "Ver las {lista} votaciones en que figura como AUSENTE",
+    "votacionesNominalesEnQueFigura": "Votaciones nominales en que figura como AUSENTE",
+    "sesion": "Sesión"
+  },
+  "comisiones": {
+    "noFiguraComoMiembroDe": "No figura como miembro de ninguna comisión en las listas que publica el Congreso para el período {periodo}.",
+    "periodoParlamentario": "Período parlamentario",
+    "segunLasListasDeMiembros": "Según las listas de miembros que publica el Congreso para cada período parlamentario, de julio a junio. Incluye comisiones permanentes, bicamerales, especiales y nacionales y frentes parlamentarios. La fuente no indica el cargo de cada miembro dentro de la comisión ni quién firmó cada dictamen. [Más información]({url1})",
+    "periodoParlamentarioDe": "Período parlamentario {nombre}"
+  },
+  "expedientes": {
+    "noFiguraEntreLosAutores": "No figura entre los autores de ningún expediente ingresado en el período {periodo}.",
+    "expedientesPresentadosPorTipo": "Expedientes presentados por tipo",
+    "tipoDeExpediente": "Tipo de expediente",
+    "cantidad": "Cantidad",
+    "susProyectosDeLeyPor": "Sus {total} proyectos de ley, por estado oficial",
+    "proyectosDeLey": "Proyectos de ley",
+    "verLaListaDeSus": "[Ver la lista de sus {total} proyectos de ley]({url1})",
+    "expedientesIngresadosDesdeElInicio": "Expedientes ingresados desde el inicio del período en que figura entre los autores. La cantidad no mide la calidad ni el esfuerzo. Los pedidos de informe son control al Poder Ejecutivo, no proyectos de ley. Un expediente con varios autores cuenta para cada uno, y el estado es el de la última actualización, así que muchos proyectos siguen en trámite. [Más información]({url1})"
+  },
+  "filtroExpedientes": {
+    "todosProyectosDeLey": "Todos ({total} proyectos de ley)"
+  },
+  "filtroVotos": {
+    "todosVotaciones": "Todos ({total} votaciones)",
+    "votaciones": "({total} votaciones)",
+    "publicadoEsElEstadoDe": "PUBLICADO es el estado de los proyectos que llegaron a ser ley. El filtro se aplica al resumen y al historial de votos."
+  },
+  "historial": {
+    "votoEnCadaVotacionNominal": "Voto en cada votación nominal sobre un proyecto de ley",
+    "proyecto": "Proyecto",
+    "tramite": "Trámite",
+    "resultado": "Resultado",
+    "suVoto": "Su voto",
+    "ley": "Ley {numero}"
+  },
+  "noVotaAbstencion": {
+    "noVota": "NO VOTA",
+    "abstencionBlanco": "ABSTENCIÓN/BLANCO",
+    "votacionesNominalesDelPeriodoEn": "Votaciones nominales del período {periodo} en que figura con cada categoría, sobre las mismas votaciones que las ausencias. NO VOTA indica que figura en la votación sin emitir voto y solo aparece en el Senado. ABSTENCIÓN/BLANCO es un voto oficial. Son cifras distintas y no se suman. [Cómo se calcula]({url1}) · [Comparar con los demás legisladores]({url2})"
+  },
+  "resumenVotos": {
+    "susVotosEnLasVotaciones": "Sus votos en las {total} votaciones nominales sobre proyectos de ley del período {periodo} en cuya lista oficial figura, hayan llegado a ser ley o no. Según el estado oficial del proyecto, {porEstado}.",
+    "comoSeCalculaEsteResumen": "[Cómo se calcula este resumen]({url1}) · [Qué significa cada categoría de voto]({url2})",
+    "votosConEstado": "Sus votos en las {total} votaciones nominales del período {periodo} sobre proyectos de ley con estado oficial {estado}.",
+    "votosSinEstado": "Sus votos en las {total} votaciones nominales del período {periodo} sobre proyectos de ley sin estado oficial."
+  },
+  "votosDistintos": {
+    "deSuBancada": "De su bancada",
+    "deSuPartido": "De su partido",
+    "sinBancadaRegistrada": "Sin bancada registrada",
+    "sinVotacionesComparables": "Sin votaciones comparables",
+    "empate": "Empate",
+    "unicoVotante": "Único votante",
+    "sinContar": "Sin contar {grupo}",
+    "votacionesNominalesDelPeriodoEn": "Votaciones nominales del período {periodo} en que su voto fue distinto a la categoría más votada por los miembros de su bancada, o de su partido, que emitieron voto, sobre las votaciones en que emitió voto y su grupo tuvo una mayoría. No cuentan los empates, las votaciones en que fue el único de su grupo que votó, ni AUSENTE y NO VOTA. Votar distinto no es bueno ni malo. [Cómo se calcula]({url1}) · [Comparar con los demás legisladores]({url2})",
+    "verLasVotacionesEnQue": "Ver las {lista} votaciones en que votó distinto a una de las dos mayorías",
+    "votacionesNominalesEnQueVoto": "Votaciones nominales en que votó distinto a la mayoría de su bancada o de su partido",
+    "etapa": "Etapa",
+    "suVoto": "Su voto",
+    "mayoriaDeSuBancada": "Mayoría de su bancada",
+    "mayoriaDeSuPartido": "Mayoría de su partido",
+    "enNegritaLaMayoriaDe": "En negrita, la mayoría de la que difiere su voto.",
+    "conEmpateCantidad": "{cantidad} con empate",
+    "unicoVotanteCantidad": "{cantidad} en que fue el único votante del grupo"
+  },
+  "tablaComparativa": {
+    "sinBancadaRegistrada": "Sin bancada registrada",
+    "sinVotacionesComparables": "Sin votaciones comparables",
+    "votacionesEnSuLista": "Votaciones en su lista",
+    "yaNoEjerce": "(ya no ejerce)"
+  },
+  "ordenComparativa": {
+    "ordenarPor": "Ordenar por"
+  },
+  "listaExpedientes": {
+    "proyectosDeLeyDe": "Proyectos de ley de {nombre}",
+    "proyectosDeLeyDeLos": "{total} proyectos de ley de los que {nombre} figura entre los autores, con su estado oficial y su expediente en SILpy.",
+    "fichaDe": "[← Ficha de {nombre}]({url1})",
+    "proyectosDeLeyIngresadosDesde": "Proyectos de ley ingresados desde el inicio del período en que figura entre los autores, del más reciente al más antiguo. La cantidad no mide la calidad ni el esfuerzo. Un proyecto con varios autores cuenta para cada uno, y el estado es el de la última actualización. [Más información]({url1})",
+    "periodoLegislativo": "Período legislativo {periodo}",
+    "proyectosDeLeyDelPeriodo": "Proyectos de ley del período {periodo}",
+    "ingreso": "Ingreso",
+    "proyecto": "Proyecto"
+  },
+  "textosComisiones": {
+    "elCongresoPublicaEstaEntrada": "El Congreso publica esta entrada sin indicar a qué comisión especial corresponde."
+  },
+  "textosCifras": {
+    "ausenciasEnVotacionesNominales": "Ausencias en votaciones nominales",
+    "votosDistintosALaMayoria": "Votos distintos a la mayoría de su bancada",
+    "votosDistintosALaMayoria2": "Votos distintos a la mayoría de su partido"
+  },
+  "textosMapa": {
+    "oMas": "{desde} o más"
+  }
+}

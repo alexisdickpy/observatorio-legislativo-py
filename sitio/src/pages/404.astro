@@ -3,17 +3,19 @@
 // respondería cualquier dirección con la portada. No se indexa.
 import Base from "../layouts/Base.astro";
 import * as rutas from "../lib/rutas.js";
+import { textos, md, crudo } from "../lib/contenido.js";
+const tx = textos.error404.pagina;
 ---
 
-<Base titulo="Página no encontrada" descripcion="La dirección no corresponde a ninguna página de este sitio." indexar={false}>
+<Base titulo={tx.paginaNoEncontrada} descripcion={tx.laDireccionNoCorrespondeA} indexar={false}>
   <div class="lectura">
-    <h1>Página no encontrada</h1>
-    <p>Esta dirección no corresponde a ninguna página del sitio. Puede que esté mal escrita o que la página haya cambiado de lugar.</p>
+    <h1>{tx.paginaNoEncontrada}</h1>
+    <p>{tx.estaDireccionNoCorrespondeA}</p>
     <ul>
-      <li><a href={rutas.inicio()}>Ir al inicio</a></li>
-      <li><a href={rutas.leyes()}>Ver todas las leyes</a></li>
-      <li><a href={rutas.legisladores()}>Ver todos los legisladores</a></li>
-      <li><a href={rutas.buscar()}>Buscar en el sitio</a></li>
+      <li set:html={md(tx.irAlInicio, { url1: crudo(rutas.inicio()) })} />
+      <li set:html={md(tx.verTodasLasLeyes, { url1: crudo(rutas.leyes()) })} />
+      <li set:html={md(tx.verTodosLosLegisladores, { url1: crudo(rutas.legisladores()) })} />
+      <li set:html={md(tx.buscarEnElSitio, { url1: crudo(rutas.buscar()) })} />
     </ul>
   </div>
 </Base>

@@ -4,6 +4,9 @@
 // contenedor [data-votos], oculta las filas del historial de otros estados, muestra el resumen del
 // estado elegido y refleja el filtro en la dirección.
 import { parametroEstadoVotos } from "../lib/rutas.js";
+import { textos, fill } from "../lib/contenido.js";
+const tx = textos.legisladores.filtroVotos;
+const txc = textos.general.comunes;
 
 interface Props {
   porEstado: { estado: string | null; filtro: string; total: number }[];
@@ -16,15 +19,14 @@ const id = `filtro-votos-${periodo}`;
 
 <form class="filtro-votos" data-filtro-votos role="search" hidden>
   <div class="campo">
-    <label for={id}>Estado oficial del proyecto</label>
+    <label for={id}>{txc.estadoOficialDelProyecto}</label>
     <select id={id} name={parametroEstadoVotos}>
-      <option value="">Todos ({total} votaciones)</option>
-      {porEstado.map((e) => <option value={e.filtro}>{e.estado ?? "Sin estado oficial"} ({e.total} votaciones)</option>)}
+      <option value="">{fill(tx.todosVotaciones, { total: total })}</option>
+      {porEstado.map((e) => <option value={e.filtro}>{e.estado ?? txc.sinEstadoOficial} {fill(tx.votaciones, { total: e.total })}</option>)}
     </select>
   </div>
   <p class="chico texto-suave">
-    PUBLICADO es el estado de los proyectos que llegaron a ser ley. El filtro se aplica al resumen y al
-    historial de votos.
+    {tx.publicadoEsElEstadoDe}
   </p>
   <p class="resultado" data-filtro-votos-resultado aria-live="polite"></p>
 </form>

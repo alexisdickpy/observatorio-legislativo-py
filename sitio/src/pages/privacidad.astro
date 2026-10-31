@@ -1,80 +1,22 @@
 ---
 import Base from "../layouts/Base.astro";
+import Secciones from "../components/Secciones.astro";
 import { actualizacion, cita } from "../lib/catalogo.js";
-import * as rutas from "../lib/rutas.js";
+import { crudo, textos } from "../lib/contenido.js";
 
+const tx = textos.privacidad;
 const fuente = cita();
 const fecha = actualizacion();
+const valores = {
+  cita: fuente.cita,
+  licencia: fuente.licencia,
+  fecha: crudo(`<time datetime="${fecha.iso}">${fecha.texto}</time>`),
+};
 ---
 
-<Base
-  titulo="Privacidad y aviso legal"
-  descripcion="Qué datos recoge este sitio sobre sus visitantes, de dónde vienen los datos que muestra y bajo qué licencias se publican."
->
+<Base titulo={tx.pagina.titulo} descripcion={tx.pagina.descripcion}>
   <div class="lectura">
-    <h1>Privacidad y aviso legal</h1>
-
-    <h2 id="privacidad">Privacidad</h2>
-    <p>
-      Este sitio no recoge datos personales de sus visitantes ni usa cookies. No hay formularios,
-      cuentas de usuario ni publicidad.
-    </p>
-    <p>
-      Para saber cuántas personas lo visitan se usan estadísticas anónimas de Cloudflare Web Analytics,
-      que no usan cookies ni guardan la dirección IP ni identifican a nadie. Solo cuentan visitas por
-      página, el sitio desde el que se llegó, el país, el tipo de dispositivo, el navegador, el sistema
-      y el tiempo de carga.
-    </p>
-    <p>
-      Las fotos de los legisladores se sirven desde este mismo sitio, a partir de una copia de las que
-      publica el Congreso, así que ver una ficha no conecta al visitante con otros servidores.
-    </p>
-    <p>
-      El <a href={rutas.testAfinidad()}>test de afinidad</a> calcula el resultado en el navegador del
-      visitante. Las respuestas no se guardan ni se envían a ningún servidor.
-    </p>
-    <p>
-      Si eliges el modo claro, esa preferencia queda solo en tu navegador y no se envía a ningún servidor.
-    </p>
-
-    <p>
-      El bot de Telegram es un servicio aparte y opcional. Para enviar los avisos elegidos, guarda en
-      Cloudflare el número de chat de Telegram y esos avisos, sin nombre, usuario ni teléfono. No se publica ni
-      se comparte, y el comando /baja o bloquear el bot lo borra. Telegram trata los mensajes según su propia
-      política de privacidad.
-    </p>
-
-    <h2 id="origen-de-los-datos">Origen de los datos</h2>
-    <p>
-      <strong>{fuente.cita}.</strong> Los datos provienen de la
-      <a href={fuente.url}>API de Datos Abiertos del Congreso Nacional</a> y se copian una vez por día.
-      La última actualización es del <time datetime={fecha.iso}>{fecha.texto}</time>.
-    </p>
-    <p>
-      Se muestran tal como los publica el Congreso, con sus posibles errores. Este sitio no corrige los
-      valores oficiales. Si un dato parece incorrecto, el error puede estar en la propia fuente oficial;
-      conviene compararlo con ella. Las observaciones automáticas sobre los datos se listan en la
-      <a href={rutas.metodologia(rutas.anclasMetodologia.observaciones)}>metodología</a>, junto con lo que el
-      sitio agrega o calcula por su cuenta.
-    </p>
-
-    <h2 id="independencia">Independencia</h2>
-    <p>
-      Este es un proyecto independiente. No tiene vínculo con el Congreso Nacional ni cuenta con su
-      aval. Ningún contenido de este sitio es una comunicación oficial.
-    </p>
-
-    <h2 id="licencias">Licencias y cómo citar</h2>
-    <ul>
-      <li>
-        Los datos tienen licencia <a href={rutas.licenciaDatos()}>{fuente.licencia}</a>, la misma con
-        que los publica el Congreso. Se pueden reutilizar citando «{fuente.cita}» y la fecha de actualización.
-        Se descargan en <a href={rutas.datosAbiertos()}>Datos abiertos</a>.
-      </li>
-      <li>
-        El código tiene licencia <a href={rutas.licenciaCodigo()}>AGPL-3.0</a> y está publicado en el
-        <a href={rutas.codigoFuente()}>repositorio del proyecto</a>.
-      </li>
-    </ul>
+    <h1>{tx.pagina.titulo}</h1>
+    <Secciones secciones={tx.secciones} valores={valores} />
   </div>
 </Base>

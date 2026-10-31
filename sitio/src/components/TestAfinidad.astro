@@ -7,6 +7,8 @@
 import EtiquetasTema from "./EtiquetasTema.astro";
 import { MINIMO_COMPARADAS, RESPUESTAS } from "../lib/afinidad.js";
 import * as rutas from "../lib/rutas.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.test.test;
 
 interface Props {
   datos: any;
@@ -21,7 +23,7 @@ const json = JSON.stringify(datos).replace(/</g, "\\u003c");
 
 <div class="test" id="test-afinidad">
   <div class="progreso" data-progreso hidden>
-    <p class="chico texto-suave" aria-live="polite"><span data-numero>1</span> de {total}</p>
+    <p class="chico texto-suave" aria-live="polite"><span data-numero>1</span> {fill(tx.de, { total: total })}</p>
     <div class="barra-progreso" aria-hidden="true"><span data-barra></span></div>
   </div>
 
@@ -32,15 +34,15 @@ const json = JSON.stringify(datos).replace(/</g, "\\u003c");
         <h2 id={`pregunta-${n}`}>{p.pregunta}</h2>
         {p.explicacion && <p class="explicacion">{p.explicacion}</p>}
         <p class="chico">
-          Ley N° {p.numeroLey}
+          {fill(tx.leyN, { numeroLey: p.numeroLey })}
           {p.proyecto && (
             <Fragment>
               {" · "}
-              <a href={p.proyecto} target="_blank" rel="noopener">Ver el proyecto de ley</a>
+              <a href={p.proyecto} target="_blank" rel="noopener">{tx.verElProyectoDeLey}</a>
             </Fragment>
           )}
         </p>
-        <p class="que-votarias">¿Qué habrías votado?</p>
+        <p class="que-votarias">{tx.queHabriasVotado}</p>
         <div class="opciones">
           {RESPUESTAS.map((r) => (
             <button type="button" data-respuesta={r.valor} disabled>
@@ -53,28 +55,27 @@ const json = JSON.stringify(datos).replace(/</g, "\\u003c");
   }
 
   <p class="navegacion" data-navegacion hidden>
-    <button type="button" class="enlace" data-anterior>← Pregunta anterior</button>
+    <button type="button" class="enlace" data-anterior>{tx.preguntaAnterior}</button>
   </p>
 </div>
 
 <section class="resultado" id="resultado-test" tabindex="-1" hidden aria-labelledby="titulo-resultado">
-  <h2 id="titulo-resultado">Tu afinidad con los partidos</h2>
+  <h2 id="titulo-resultado">{tx.tuAfinidadConLosPartidos}</h2>
   <p class="texto-suave" data-resumen></p>
   <ol class="ranking" data-ranking></ol>
-  <p class="chico texto-suave">
-    Coincidencia con la posición de la mayoría de cada partido en esas votaciones, sobre las preguntas que se
-    pudieron comparar. Con menos de {MINIMO_COMPARADAS} no se muestra porcentaje. Coincidir no es bueno ni
-    malo. <a href={rutas.metodologia(rutas.anclasMetodologia.testAfinidad)}>Cómo se calcula</a>
-  </p>
+  <p class="chico texto-suave" set:html={md(tx.coincidenciaConLaPosicionDe, { minimo: MINIMO_COMPARADAS, url1: crudo(rutas.metodologia(rutas.anclasMetodologia.testAfinidad)) })} />
   <details class="detalle">
-    <summary>Tus respuestas y las votaciones</summary>
+    <summary>{tx.tusRespuestasYLasVotaciones}</summary>
     <ol data-detalle></ol>
   </details>
-  <p><button type="button" class="secundario" data-reiniciar>Volver a empezar</button></p>
+  <p><button type="button" class="secundario" data-reiniciar>{tx.volverAEmpezar}</button></p>
 </section>
 
 <script>
   import { calcularAfinidad, POSICION, RESPUESTAS } from "../lib/afinidad.js";
+  import interaccion from "../contenido/interaccion.json";
+  import { fill } from "../lib/rellenar.js";
+  const ti = interaccion.test;
 
   const datos = JSON.parse(document.getElementById("datos-test-afinidad")!.textContent!);
   const test = document.getElementById("test-afinidad")!;
@@ -85,10 +86,10 @@ const json = JSON.stringify(datos).replace(/</g, "\\u003c");
   const anterior = test.querySelector<HTMLButtonElement>("[data-anterior]")!;
   const textoRespuesta = Object.fromEntries(RESPUESTAS.map((r) => [r.valor, r.texto]));
   const textoPosicion: Record<string, string> = {
-    [POSICION.favor]: "a favor",
-    [POSICION.contra]: "en contra",
-    [POSICION.sinMayoria]: "sin mayoría a favor o en contra",
-    [POSICION.dividido]: "distinta en cada cámara",
+    [POSICION.favor]: ti.posicionAFavor,
+    [POSICION.contra]: ti.posicionEnContra,
+    [POSICION.sinMayoria]: ti.sinMayoria,
+    [POSICION.dividido]: ti.distintaPorCamara,
   };
   let respuestas: (string | undefined)[] = [];
   let actual = 0;
@@ -118,8 +119,8 @@ const json = JSON.stringify(datos).replace(/</g, "\\u003c");
     resultado.hidden = false;
     resultado.querySelector("[data-resumen]")!.textContent =
       r.respondidas === 0
-        ? "No respondiste ninguna pregunta A favor o En contra, así que no hay nada para comparar."
-        : `Resultado basado en las ${r.respondidas} preguntas que respondiste A favor o En contra.`;
+        ? ti.nadaParaComparar
+        : fill(ti.resultadoBasado, { respondidas: r.respondidas });
     resultado.querySelector("[data-ranking]")!.replaceChildren(
       ...r.partidos.map((x: any) => {
         const li = elemento("li");
@@ -131,7 +132,7 @@ const json = JSON.stringify(datos).replace(/</g, "\\u003c");
         if (x.c.suficiente) barra.style.setProperty("--ancho", `${Math.round(x.c.porcentaje * 100)}%`);
         const cifra = elemento("span", "cifra");
         cifra.append(elemento("strong", undefined, x.c.porcentajeTexto ?? "—"));
-        cifra.append(elemento("span", "chico texto-suave", `${x.c.coinciden} de ${x.c.comparadas}`));
+        cifra.append(elemento("span", "chico texto-suave", fill(ti.coincidenDe, { coinciden: x.c.coinciden, comparadas: x.c.comparadas })));
         li.append(nombre, barra, cifra);
         return li;
       }),
@@ -140,13 +141,13 @@ const json = JSON.stringify(datos).replace(/</g, "\\u003c");
       ...datos.preguntas.map((p: any, n: number) => {
         const li = elemento("li");
         li.append(elemento("p", "pregunta", p.pregunta));
-        li.append(elemento("p", "chico", respuestas[n] ? `Respondiste ${textoRespuesta[respuestas[n]!]}.` : "Sin responder."));
+        li.append(elemento("p", "chico", respuestas[n] ? fill(ti.respondiste, { respuesta: textoRespuesta[respuestas[n]!] }) : ti.sinResponder));
         const enlaces = elemento("p", "chico");
-        const ley = elemento("a", undefined, `Ley N° ${p.numeroLey}`) as HTMLAnchorElement;
+        const ley = elemento("a", undefined, fill(ti.leyNumero, { numero: p.numeroLey })) as HTMLAnchorElement;
         ley.href = p.ley;
         enlaces.append(ley);
         for (const v of p.votaciones) {
-          const a = elemento("a", undefined, `Votación, ${v.camara}, ${v.fechaTexto ?? "sin fecha"}`) as HTMLAnchorElement;
+          const a = elemento("a", undefined, fill(ti.votacionEn, { camara: v.camara, fecha: v.fechaTexto ?? ti.sinFecha })) as HTMLAnchorElement;
           a.href = v.url;
           enlaces.append(" · ", a);
         }
@@ -154,7 +155,7 @@ const json = JSON.stringify(datos).replace(/</g, "\\u003c");
         const posiciones = datos.partidos
           .filter((x: any) => x.posiciones[n] !== POSICION.noCorresponde)
           .map((x: any) => `${x.sigla ?? x.nombre} ${textoPosicion[x.posiciones[n]]}`);
-        if (posiciones.length) li.append(elemento("p", "chico texto-suave", `Mayoría de cada partido. ${posiciones.join("; ")}.`));
+        if (posiciones.length) li.append(elemento("p", "chico texto-suave", fill(ti.mayoriaDeCada, { posiciones: posiciones.join("; ") })));
         return li;
       }),
     );

@@ -9,32 +9,31 @@ import TestAfinidad from "../components/TestAfinidad.astro";
 import { periodos } from "../lib/datos.js";
 import { datosDelTest } from "../lib/testAfinidad.js";
 import * as rutas from "../lib/rutas.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.test.pagina;
+const txc = textos.general.comunes;
 
 const periodo = periodos().find((p) => p.vigente).id;
 const datos = datosDelTest(periodo);
 ---
 
 <Base
-  titulo="Test de afinidad"
-  descripcion={`Preguntas sobre leyes votadas por el Congreso Nacional del Paraguay en el período ${periodo}, para comparar tus respuestas con los votos de cada partido.`}
+  titulo={txc.testDeAfinidad}
+  descripcion={fill(tx.preguntasSobreLeyesVotadasPor, { periodo: periodo })}
   indexar={!datos.preliminar}
 >
   <div class="encabezado-test">
-    <h1>Test de afinidad</h1>
+    <h1>{txc.testDeAfinidad}</h1>
     {
       datos.preliminar && (
         <p class="aviso" data-preliminar>
-          Versión preliminar. Las preguntas todavía están en revisión y pueden cambiar.
+          {tx.versionPreliminarLasPreguntasTodavia}
         </p>
       )
     }
-    <p class="texto-suave">
-      {datos.preguntas.length} preguntas sobre leyes votadas por el Congreso en el período {periodo}. Al final ves
-      cuánto coinciden tus respuestas con lo que votó cada partido. Nada se guarda ni se envía.{" "}
-      <a href={rutas.metodologia(rutas.anclasMetodologia.testAfinidad)}>Cómo funciona</a>
-    </p>
+    <p class="texto-suave" set:html={md(tx.preguntasSobreLeyesVotadasPor2, { preguntas: datos.preguntas.length, periodo: periodo, url1: crudo(rutas.metodologia(rutas.anclasMetodologia.testAfinidad)) })} />
     <noscript>
-      <p class="aviso">El test necesita JavaScript para calcular el resultado en tu navegador.</p>
+      <p class="aviso">{tx.elTestNecesitaJavascriptPara}</p>
     </noscript>
   </div>
 

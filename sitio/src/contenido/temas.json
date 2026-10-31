@@ -1,0 +1,28 @@
+{
+  "indice": {
+    "votosDePartidosPorTema": "Votos de partidos por tema",
+    "comoVotaronLosLegisladoresDe": "Cómo votaron los legisladores de cada partido del Congreso Nacional del Paraguay en las votaciones nominales sobre proyectos de ley de cada tema, período legislativo {periodo}, cada cámara por separado.",
+    "paraCadaTemaLosVotos": "Para cada tema, los votos de los legisladores de cada partido en las votaciones nominales sobre proyectos de ley del período {periodo}, cámara por cámara. El tema es una clasificación del Observatorio, no del Congreso."
+  },
+  "tema": {
+    "votosDePartidosEn": "Votos de partidos en {nombre}",
+    "comoVotaronLosLegisladoresDe": "Cómo votaron los legisladores de cada partido en las {total} votaciones nominales sobre proyectos de ley del tema {nombre}, período legislativo {periodo}, en cada cámara.",
+    "votosDePartidosPorTema": "[← Votos de partidos por tema]({url1})",
+    "votosDeCadaPartidoEn": "Votos de cada partido en las",
+    "deEsteTemaSobreTodos": "de este tema, sobre todos sus votos registrados (con AUSENTE y NO VOTA).",
+    "unNoPuedeSerA": "Un NO puede ser a una modificación o a una objeción del Poder Ejecutivo, y no a la ley. Por eso la lista de votaciones muestra la etapa de cada una. El partido es el que la API registra para el período, no necesariamente el de la fecha de cada votación.",
+    "votoRegistrado": "voto registrado",
+    "votosRegistrados": "votos registrados",
+    "verLas": "Ver las",
+    "deLa": "de la {camara}",
+    "otrosTemas": "Otros temas"
+  },
+  "votaciones": {
+    "resultado": "· Resultado",
+    "ley": "Ley {numero}",
+    "verVotacion": "Ver votación"
+  },
+  "textos": {
+    "pendienteDeClasificacion": "Pendiente de clasificación"
+  }
+}

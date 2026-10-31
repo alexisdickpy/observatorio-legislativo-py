@@ -1,0 +1,10 @@
+{
+  "pagina": {
+    "buscarLeyes": "Buscar leyes",
+    "buscarLeyesDelCongresoNacional": "Buscar leyes del Congreso Nacional del Paraguay por número o por palabras del título.",
+    "numeroDeLeyOPalabras": "Número de ley o palabras del título",
+    "buscar": "Buscar",
+    "verMasResultados": "Ver más resultados",
+    "laBusquedaNecesitaJavascriptTambien": "La búsqueda necesita JavaScript. También podés recorrer la [lista completa de leyes]({url1})."
+  }
+}

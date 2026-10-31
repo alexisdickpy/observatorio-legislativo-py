@@ -1,0 +1,20 @@
+{
+  "pagina": {
+    "proyectosDeLey": "Proyectos de ley",
+    "proyectosDeLeyDelCongreso": "{proyectos} proyectos de ley del Congreso Nacional del Paraguay en el período legislativo {periodo}, con su estado oficial y su enlace, tengan o no votación nominal.",
+    "proyectosDeLeyDelPeriodo": "{proyectos} proyectos de ley del período legislativo {periodo}, con su estado oficial y su expediente. {sinNominal} no tienen votación nominal publicada.",
+    "losProyectosSinVotacionNominal": "Los proyectos sin votación nominal no entran en los cálculos por partido, porque no hay votos individuales. El título se recorta en esta lista y el completo está en el expediente. [Cómo se arma esta lista]({url1})",
+    "palabrasDelTituloOExpediente": "Palabras del título o expediente",
+    "votacionNominal": "Votación nominal",
+    "conOSin": "Con o sin",
+    "conVotacionNominal": "Con votación nominal",
+    "sinVotacionNominal": "Sin votación nominal",
+    "anoDeIngreso": "Año de ingreso",
+    "enSilpy": "en SILpy",
+    "ley": "Ley {numero}",
+    "t1VotacionNominal": "1 votación nominal",
+    "votacionesNominalesVerLaUltima": "{votaciones} votaciones nominales, ver la última",
+    "sinVotacionNominal2": " · Sin votación nominal",
+    "enElPlenario": " · {resultado} en el plenario, {fecha}"
+  }
+}

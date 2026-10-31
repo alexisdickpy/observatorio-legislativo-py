@@ -4,6 +4,8 @@
 // filtrado por ese tema. Se usa en la portada y en el catálogo de leyes.
 import * as rutas from "../lib/rutas.js";
 import { resumenPorTema } from "../lib/resumenTemas.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.portada.cuadroTemas;
 
 interface Props {
   periodo: string;
@@ -18,24 +20,21 @@ const plural = (n: number, singular: string, varios: string) => `${numero(n)} ${
 const sinLey = (c: any) =>
   [
     c.archivados && plural(c.archivados, "archivado", "archivados"),
-    c.enTramite && `${numero(c.enTramite)} en trámite`,
-    c.otros && plural(c.otros, "en otro estado", "en otro estado"),
+    c.enTramite && fill(tx.enTramite, { enTramite: numero(c.enTramite) }),
+    c.otros && plural(c.otros, tx.enOtroEstado, tx.enOtroEstado),
   ].filter(Boolean);
 ---
 
 <section class="cuadro-temas" aria-labelledby="titulo-cuadro-temas">
-  <Titulo id="titulo-cuadro-temas">Leyes por tema</Titulo>
-  <p class="chico texto-suave">
-    Clasificación del Observatorio, no del Congreso. Una ley puede tener más de un tema.
-    <a href={rutas.metodologia(rutas.anclasMetodologia.temas)}>Cómo se clasifica</a>
-  </p>
+  <Titulo id="titulo-cuadro-temas">{tx.leyesPorTema}</Titulo>
+  <p class="chico texto-suave" set:html={md(tx.clasificacionDelObservatorioNoDel, { url1: crudo(rutas.metodologia(rutas.anclasMetodologia.temas)) })} />
   <ul class="tarjetas-tema">
     {
       cuadros.map((c) => (
         <li class="tarjeta-tema" data-tema={c.id}>
           <Tema class="nombre"><a href={c.url}>{c.nombre}</a></Tema>
-          <p class="cifra"><strong>{plural(c.leyes, "ley sancionada", "leyes sancionadas")}</strong></p>
-          {sinLey(c).length > 0 && <p class="chico texto-suave">{plural(c.archivados + c.enTramite + c.otros, "proyecto votado", "proyectos votados")} sin ley ({sinLey(c).join(" · ")})</p>}
+          <p class="cifra"><strong>{plural(c.leyes, tx.leySancionada, tx.leyesSancionadas)}</strong></p>
+          {sinLey(c).length > 0 && <p class="chico texto-suave">{plural(c.archivados + c.enTramite + c.otros, tx.proyectoVotado, tx.proyectosVotados)} {tx.sinLey}{sinLey(c).join(" · ")})</p>}
         </li>
       ))
     }

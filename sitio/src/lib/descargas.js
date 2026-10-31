@@ -5,28 +5,30 @@
 import { archivosCalculados, NOMBRE_COINCIDENCIA, NOMBRE_VOTACIONES_NOMINALES, NOMBRE_VOTOS_POR_TEMA } from "./calculados.js";
 import { archivosDeDatos, diccionario, periodos } from "./datos.js";
 import * as rutas from "./rutas.js";
+import { textos, fill } from "./contenido.js";
+const tx = textos.datos.descargas;
 
 const GENERALES = {
-  "diccionario.md": "Diccionario de datos, con cada campo de cada tabla, su tipo, su origen (oficial o propio) y su descripción.",
-  "diccionario.json": "El mismo diccionario, en formato JSON.",
-  "estado.json": "Fecha de la última comprobación con la fuente, última modificación y cantidades por período.",
-  "periodos.json": "Períodos legislativos incluidos, con sus fechas.",
-  "sincronizaciones.json": "Registro de las últimas sincronizaciones con la API del Congreso.",
-  "README.md": "Explicación de los archivos y sus convenciones.",
+  "diccionario.md": tx.diccionarioDeDatosConCada,
+  "diccionario.json": tx.elMismoDiccionarioEnFormato,
+  "estado.json": tx.fechaDeLaUltimaComprobacion,
+  "periodos.json": tx.periodosLegislativosIncluidosConSus,
+  "sincronizaciones.json": tx.registroDeLasUltimasSincronizaciones,
+  "README.md": tx.explicacionDeLosArchivosY,
 };
 
 const TABLAS = {
-  leyes: "Una fila por ley sancionada en el período, con datos de su proyecto.",
-  tramitaciones: "Cada paso de la tramitación del proyecto de cada ley.",
-  votaciones: "Una fila por votación nominal, con sus totales. El voto de cada legislador está en votos.",
-  votos: "El voto de cada legislador en cada votación nominal.",
-  legisladores: "Legisladores del período, vigentes o no.",
-  autores: "Autores del proyecto de cada ley y de los proyectos de ley votados en el período.",
-  personas: "Identificador propio de cada legislador, que se mantiene igual entre legislaturas y se usa en las direcciones del sitio.",
-  partidos: "Partido unificado de cada texto oficial de partido, que dice qué textos corresponden al mismo partido, con el fundamento de cada caso y los nombres conocidos. Los textos oficiales no cambian.",
-  temas: "Temas de la clasificación propia de las leyes, con la definición de cada uno y las palabras clave de sus reglas.",
-  "clasificacion-temas": "Temas de cada proyecto de ley con ley o con votación en el período, con la regla o la revisión que asignó cada uno. Es una clasificación propia, no oficial.",
-  notas: "Problemas que este proyecto detectó en los datos oficiales (fechas mal escritas, totales que no coinciden, etc.). Los valores oficiales no se corrigen.",
+  leyes: tx.unaFilaPorLeySancionada,
+  tramitaciones: tx.cadaPasoDeLaTramitacion,
+  votaciones: tx.unaFilaPorVotacionNominal,
+  votos: tx.elVotoDeCadaLegislador,
+  legisladores: tx.legisladoresDelPeriodoVigentesO,
+  autores: tx.autoresDelProyectoDeCada,
+  personas: tx.identificadorPropioDeCadaLegislador,
+  partidos: tx.partidoUnificadoDeCadaTexto,
+  temas: tx.temasDeLaClasificacionPropia,
+  "clasificacion-temas": tx.temasDeCadaProyectoDe,
+  notas: tx.problemasQueEsteProyectoDetecto,
 };
 
 const sinMarcas = (texto) => texto.replaceAll("`", "");
@@ -42,11 +44,11 @@ const formato = (ruta) => ruta.split(".").pop().toUpperCase();
 
 const CALCULADOS = {
   [NOMBRE_VOTACIONES_NOMINALES]:
-    "Por legislador, las votaciones nominales en que figura como AUSENTE, NO VOTA y ABSTENCIÓN/BLANCO, cada una por separado, sobre todas las votaciones nominales en cuya lista figura, y las votaciones en que votó distinto a la mayoría de su bancada y de su partido, sobre las votaciones comparables de cada grupo. Es la tabla de la vista comparativa.",
+    tx.porLegisladorLasVotacionesNominales,
   [NOMBRE_COINCIDENCIA]:
-    "Por cámara, cada par de partidos y cada par de bancadas, con las votaciones nominales sobre proyectos de ley en que los dos tuvieron posición y en cuántas fue la misma. Los partidos se identifican con el partido unificado y las bancadas con su nombre oficial. El porcentaje queda vacío con menos de 20 votaciones en común. Es la tabla de la página de coincidencia de votos.",
+    tx.porCamaraCadaParDe,
   [NOMBRE_VOTOS_POR_TEMA]:
-    "Por tema, cámara, partido o bancada y categoría oficial de voto, cuántos votos individuales sumaron sus legisladores en las votaciones nominales sobre proyectos de ley de ese tema, sobre sus votos registrados. El tema es la clasificación propia; los partidos se identifican con el partido unificado y las bancadas con su nombre oficial. Es la tabla de la página de votos por tema.",
+    tx.porTemaCamaraPartidoO,
 };
 
 /** Archivos que genera la compilación (lib/calculados.js), agrupados por período y nombre. */
@@ -87,22 +89,22 @@ export function descargas() {
 
   const grupos = [
     {
-      titulo: "Documentación y estado",
+      titulo: tx.documentacionYEstado,
       tablas: Object.entries(GENERALES)
         .map(([ruta, descripcion]) => ({ nombre: ruta, descripcion, archivos: [archivo(ruta)].filter(Boolean) }))
         .filter((t) => t.archivos.length),
     },
     ...periodos().map((p) => ({
-      titulo: `Valores oficiales del período legislativo ${p.id}`,
+      titulo: fill(tx.valoresOficialesDelPeriodoLegislativo, { id: p.id }),
       tablas: tablasDe((a) => a.startsWith("fuente/"), p.id),
     })),
-    { titulo: "Datos agregados por este proyecto (no oficiales)", tablas: tablasDe((a) => a.startsWith("propios/"), "") },
-    { titulo: "Cifras calculadas por este proyecto (no oficiales)", tablas: calculadas() },
+    { titulo: tx.datosAgregadosPorEsteProyecto, tablas: tablasDe((a) => a.startsWith("propios/"), "") },
+    { titulo: tx.cifrasCalculadasPorEsteProyecto, tablas: calculadas() },
   ];
   const otros = [...archivos.keys()].filter((r) => !usados.has(r));
   if (otros.length) {
     grupos.push({
-      titulo: "Otros archivos",
+      titulo: tx.otrosArchivos,
       tablas: otros.map((ruta) => ({ nombre: ruta, descripcion: "", archivos: [archivo(ruta)] })),
     });
   }

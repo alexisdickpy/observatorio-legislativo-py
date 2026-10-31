@@ -5,6 +5,8 @@ import BarraVotos from "./BarraVotos.astro";
 
 import { clasePartido } from "../lib/partidos.js";
 import { legible } from "../lib/texto.js";
+import { textos } from "../lib/contenido.js";
+const txc = textos.general.comunes;
 
 interface Props {
   votacion: any;
@@ -17,7 +19,7 @@ const { votacion: v } = Astro.props;
     {v.leyenda.map((l: any) => <li><span class={`muestra ${l.clase}`}></span>{l.categoria}</li>)}
   </ul>
   <ul class="barras">
-    {v.porPartido.map((g: any) => <li><span class="nombre chico">{g.nombre && <span class={`pip ${clasePartido(g.nombre)}`}></span>} {legible(g.nombre) ?? "Sin dato"}{g.nombreConocido && ` (${g.nombreConocido})`} <span class="texto-suave">({g.total})</span></span><BarraVotos barra={g.barra} /></li>)}
+    {v.porPartido.map((g: any) => <li><span class="nombre chico">{g.nombre && <span class={`pip ${clasePartido(g.nombre)}`}></span>} {legible(g.nombre) ?? txc.sinDato}{g.nombreConocido && ` (${g.nombreConocido})`} <span class="texto-suave">({g.total})</span></span><BarraVotos barra={g.barra} /></li>)}
   </ul>
 </div>
 

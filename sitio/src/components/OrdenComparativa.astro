@@ -4,10 +4,12 @@
 // orden en la dirección. La lógica está en lib/ordenComparativa.js.
 import { ORDENES } from "../lib/ordenComparativa.js";
 import { parametroOrdenComparativa } from "../lib/rutas.js";
+import { textos } from "../lib/contenido.js";
+const tx = textos.legisladores.ordenComparativa;
 ---
 
 <form class="orden" id="orden-comparativa" hidden>
-  <label for="orden-campo">Ordenar por</label>
+  <label for="orden-campo">{tx.ordenarPor}</label>
   <select id="orden-campo" name={parametroOrdenComparativa}>
     {ORDENES.map((o) => <option value={o.valor}>{o.etiqueta}</option>)}
   </select>

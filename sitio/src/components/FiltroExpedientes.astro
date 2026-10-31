@@ -3,6 +3,9 @@
 // oculto y se ve la lista completa. Con JavaScript, dentro del mismo contenedor [data-expedientes],
 // oculta las filas de otros estados y refleja el filtro en la dirección (como FiltroVotos).
 import { parametroEstadoVotos } from "../lib/rutas.js";
+import { textos, fill } from "../lib/contenido.js";
+const tx = textos.legisladores.filtroExpedientes;
+const txc = textos.general.comunes;
 
 interface Props {
   porEstado: { estado: string | null; filtro: string; cantidad: number }[];
@@ -14,10 +17,10 @@ const id = `filtro-expedientes-${periodo}`;
 ---
 
 <form class="filtro-expedientes" data-filtro-expedientes role="search" hidden>
-  <label for={id}>Estado oficial del proyecto</label>
+  <label for={id}>{txc.estadoOficialDelProyecto}</label>
   <select id={id} name={parametroEstadoVotos}>
-    <option value="">Todos ({total} proyectos de ley)</option>
-    {porEstado.map((e) => <option value={e.filtro}>{e.estado ?? "Sin estado oficial"} ({e.cantidad})</option>)}
+    <option value="">{fill(tx.todosProyectosDeLey, { total: total })}</option>
+    {porEstado.map((e) => <option value={e.filtro}>{e.estado ?? txc.sinEstadoOficial} ({e.cantidad})</option>)}
   </select>
   <p class="resultado chico" data-filtro-expedientes-resultado aria-live="polite"></p>
 </form>
@@ -25,6 +28,9 @@ const id = `filtro-expedientes-${periodo}`;
 <script>
   import { escribirEstado, filtrarPorEstado, leerEstado } from "../lib/filtroVotos.js";
   import { parametroEstadoVotos as nombre } from "../lib/rutas.js";
+  import interaccion from "../contenido/interaccion.json";
+  import { fill } from "../lib/rellenar.js";
+  const ti = interaccion.filtroExpedientes;
 
   for (const form of document.querySelectorAll<HTMLFormElement>("form[data-filtro-expedientes]")) {
     const contenedor = form.closest<HTMLElement>("[data-expedientes]")!;
@@ -37,7 +43,7 @@ const id = `filtro-expedientes-${periodo}`;
     const aplicar = (estado: string, actualizarDireccion: boolean) => {
       const visibles = new Set(filtrarPorEstado(entradas, estado).map((e) => e.fila));
       for (const fila of filas) fila.hidden = !visibles.has(fila);
-      resultado.textContent = `Se muestran ${visibles.size} de ${filas.length} proyectos de ley.`;
+      resultado.textContent = fill(ti.resultado, { visibles: visibles.size, total: filas.length });
       if (actualizarDireccion) {
         const consulta = escribirEstado(new URLSearchParams(location.search), nombre, estado).toString();
         history.replaceState(null, "", consulta ? `?${consulta}` : location.pathname);

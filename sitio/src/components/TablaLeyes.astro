@@ -3,6 +3,9 @@
 // oficial, los temas de la clasificación propia (#36).
 import EtiquetasTema from "./EtiquetasTema.astro";
 import ValoresOficiales from "./ValoresOficiales.astro";
+import { textos, fill } from "../lib/contenido.js";
+const tx = textos.leyes.tabla;
+const txc = textos.general.comunes;
 
 interface Props {
   leyes: any[];
@@ -11,15 +14,15 @@ const { leyes } = Astro.props;
 ---
 
 <table class="tabla-leyes">
-  <caption class="solo-lectores">Leyes sancionadas</caption>
+  <caption class="solo-lectores">{txc.leyesSancionadas}</caption>
   <thead>
     <tr>
-      <th scope="col">Número</th>
-      <th scope="col">Título</th>
-      <th scope="col">Sanción</th>
-      <th scope="col">Promulgación</th>
-      <th scope="col">Publicación</th>
-      <th scope="col">Cámara de origen</th>
+      <th scope="col">{tx.numero}</th>
+      <th scope="col">{tx.titulo}</th>
+      <th scope="col">{tx.sancion}</th>
+      <th scope="col">{tx.promulgacion}</th>
+      <th scope="col">{tx.publicacion}</th>
+      <th scope="col">{txc.camaraDeOrigen}</th>
     </tr>
   </thead>
   <tbody data-paginar>
@@ -27,7 +30,7 @@ const { leyes } = Astro.props;
       leyes.map((l) => (
         <tr data-numero={l.numero}>
           <th scope="row" data-etiqueta="Número">
-            <a href={l.url}>Ley {l.numero}</a>
+            <a href={l.url}>{fill(tx.ley, { numero: l.numero })}</a>
           </th>
           <td data-etiqueta="Título" class="titulo">
             {l.titulos.map((t: string) => (
@@ -44,7 +47,7 @@ const { leyes } = Astro.props;
           <td data-etiqueta="Publicación">
             <ValoresOficiales valores={l.fechasPublicacion} />
           </td>
-          <td data-etiqueta="Cámara de origen">
+          <td data-etiqueta={tx.camaraDeOrigen}>
             <ValoresOficiales valores={l.camaras} />
           </td>
         </tr>

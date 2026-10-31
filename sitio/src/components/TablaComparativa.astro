@@ -5,17 +5,20 @@
 // lib/legisladores.js (comparativa). Los atributos data-* los usa OrdenComparativa para reordenar.
 // Filas en una sola línea y estilos globales con prefijo de clase (ver TablaLegisladores).
 import { CIFRAS_COMPARATIVAS, CIFRAS_MAYORIA } from "../lib/legisladores.js";
+import { textos } from "../lib/contenido.js";
+const tx = textos.legisladores.tablaComparativa;
+const txc = textos.general.comunes;
 
 interface Props {
   titulo: string;
   filas: any[];
 }
 const { titulo, filas } = Astro.props;
-const sinDato = "Sin dato";
-const sinGrupo = { bancada: "Sin bancada registrada", partido: "Sin partido registrado" };
+const sinDato = txc.sinDato;
+const sinGrupo = { bancada: tx.sinBancadaRegistrada, partido: txc.sinPartidoRegistrado };
 /** Texto de una cifra de mayoría: la proporción, o el motivo por el que no hay votaciones comparables. */
 const textoMayoria = (c: any, grupo: "bancada" | "partido") =>
-  !c.grupo ? sinGrupo[grupo] : c.total ? c.texto : "Sin votaciones comparables";
+  !c.grupo ? sinGrupo[grupo] : c.total ? c.texto : tx.sinVotacionesComparables;
 /** Porcentaje para ordenar; -1 deja al final a quien no tiene votaciones comparables. */
 const ordenMayoria = (c: any) => (c.total ? c.porcentaje : -1);
 ---
@@ -25,14 +28,14 @@ const ordenMayoria = (c: any) => (c.total ? c.porcentaje : -1);
     <caption class="solo-lectores">{titulo}</caption>
     <thead>
       <tr>
-        <th scope="col">Nombre</th>
-        <th scope="col">Votaciones en su lista</th>
+        <th scope="col">{txc.nombre}</th>
+        <th scope="col">{tx.votacionesEnSuLista}</th>
         {CIFRAS_COMPARATIVAS.map((c) => <th scope="col">{c.titulo}</th>)}
         {CIFRAS_MAYORIA.map((c) => <th scope="col">{c.titulo}</th>)}
       </tr>
     </thead>
     <tbody data-paginar>
-      {filas.map((f, n) => <tr data-comparativa data-slug={f.slug} data-posicion={n} data-ausencias={f.ausencias.porcentaje} data-no-vota={f.noVota.porcentaje} data-abstencion={f.abstencion.porcentaje} data-mayoria-bancada={ordenMayoria(f.mayoriaBancada)} data-mayoria-partido={ordenMayoria(f.mayoriaPartido)}><th scope="row"><a href={f.url}>{f.nombre ?? sinDato}</a>{!f.vigente && <span class="chico texto-suave"> (ya no ejerce)</span>}</th><td data-etiqueta="Votaciones en su lista">{f.ausencias.total.toLocaleString("es-PY")}</td>{CIFRAS_COMPARATIVAS.map((c) => <td data-etiqueta={c.titulo}>{f[c.campo].texto}</td>)}{CIFRAS_MAYORIA.map((c) => <td data-etiqueta={c.titulo}>{textoMayoria(f[c.campo], c.grupo)}</td>)}</tr>)}
+      {filas.map((f, n) => <tr data-comparativa data-slug={f.slug} data-posicion={n} data-ausencias={f.ausencias.porcentaje} data-no-vota={f.noVota.porcentaje} data-abstencion={f.abstencion.porcentaje} data-mayoria-bancada={ordenMayoria(f.mayoriaBancada)} data-mayoria-partido={ordenMayoria(f.mayoriaPartido)}><th scope="row"><a href={f.url}>{f.nombre ?? sinDato}</a>{!f.vigente && <span class="chico texto-suave"> {tx.yaNoEjerce}</span>}</th><td data-etiqueta={tx.votacionesEnSuLista}>{f.ausencias.total.toLocaleString("es-PY")}</td>{CIFRAS_COMPARATIVAS.map((c) => <td data-etiqueta={c.titulo}>{f[c.campo].texto}</td>)}{CIFRAS_MAYORIA.map((c) => <td data-etiqueta={c.titulo}>{textoMayoria(f[c.campo], c.grupo)}</td>)}</tr>)}
     </tbody>
   </table>
 </div>

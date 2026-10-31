@@ -1,0 +1,67 @@
+{
+  "presentacion": {
+    "leyesSancionadasPorElCongreso": "Leyes sancionadas por el Congreso Nacional del Paraguay en el período legislativo {id}, con datos abiertos.",
+    "queVotaElCongresoDel": "Qué vota el Congreso del Paraguay",
+    "leyesSancionadasPorElCongreso2": "Leyes sancionadas por el Congreso Nacional del Paraguay en el período legislativo {id}, a partir de los datos abiertos que publica el propio Congreso.",
+    "seccionesDelSitio": "Secciones del sitio",
+    "verLasLeyesDelPeriodo": "[Ver las {cantidad} leyes del período]({url1})",
+    "verLosLegisladoresSusVotos": "[Ver los legisladores, sus votos y sus leyes]({url1})",
+    "verElMapaDeDiputados": "[Ver el mapa de diputados por departamento]({url1})",
+    "buscarUnaLey": "[Buscar una ley]({url1})",
+    "descargarLosDatosAbiertos": "[Descargar los datos abiertos]({url1})",
+    "preguntasSobreLeyesVotadasEn": "{preguntas} preguntas sobre leyes votadas en el período. Al final ves cuánto coinciden tus respuestas con lo que votó cada partido.",
+    "hacerElTest": "Hacer el test",
+    "avisosPorTelegram": "Avisos por Telegram",
+    "unBotTeAvisaDe": "Un bot te avisa de las novedades del Congreso. Eliges qué avisos recibir y te das de baja cuando quieras con el comando /baja.",
+    "abrirElBot": "Abrir el bot",
+    "diputadosPorDepartamento": "Diputados por departamento",
+    "diputadosEnEjercicioElegiUn": "{total} diputados en ejercicio. Elegí un departamento para ver quiénes son, o mirá el [mapa con la lista completa]({url1})."
+  },
+  "analisis": {
+    "analisis": "Análisis",
+    "compararCon": "Comparar con",
+    "sobreProyectosDeLey": "sobre proyectos de ley.",
+    "noTieneVotacionesEnComun": "{referencia} no tiene votaciones en común con otros partidos en esta cámara.",
+    "noTieneLegisladoresEnEsta": "{nombre} no tiene legisladores en esta cámara.",
+    "entreTodosLosParesMas": "Entre todos los pares, más coincidencia entre {valor} y {valor2} ({porcentajeTexto}) y menos entre {valor3} y {valor4} ({porcentajeTexto2}).",
+    "ver": "[Ver {titulo}]({url1})",
+    "verTodasLasVotacionesY": "Ver todas las votaciones y las más ajustadas",
+    "ver2": "Ver {titulo}"
+  },
+  "composicion": {
+    "composicionActual": "Composición actual",
+    "elegirCamara": "Elegir cámara",
+    "laListaOficialMarcaA": "La lista oficial marca a {total} como vigentes y la cámara tiene {bancas} bancas. Se muestra tal como se publica.",
+    "unPuntoPorBancaAgrupados": "Un punto por banca, agrupados por partido, sin los senadores vitalicios. No es la ubicación real de las bancas."
+  },
+  "ultimaVotacion": {
+    "ultimaVotacionNominal": "Última votación nominal ·",
+    "expediente": "· Expediente",
+    "ley": "Ley {numero}",
+    "unPuntoPorLegisladorAgrupados": "Un punto por legislador, agrupados por voto. No es la ubicación real de las bancas.",
+    "notaDelObservatorio": "Nota del Observatorio.",
+    "losTotalesPublicadosNoCoinciden": "Los totales publicados no coinciden con el recuento de los votos individuales (",
+    "votoDeCadaPartidoEn": "Voto de cada partido en esta votación",
+    "verComoVotoCadaLegislador": "[Ver cómo votó cada legislador]({url1})",
+    "hemicicloCon": "Hemiciclo con {registrados} legisladores: {leyenda}."
+  },
+  "cuadroTemas": {
+    "enTramite": "{enTramite} en trámite",
+    "enOtroEstado": "en otro estado",
+    "leyesPorTema": "Leyes por tema",
+    "clasificacionDelObservatorioNoDel": "Clasificación del Observatorio, no del Congreso. Una ley puede tener más de un tema. [Cómo se clasifica]({url1})",
+    "leySancionada": "ley sancionada",
+    "leyesSancionadas": "leyes sancionadas",
+    "proyectoVotado": "proyecto votado",
+    "proyectosVotados": "proyectos votados",
+    "sinLey": "sin ley ("
+  },
+  "barrasCoincidencia": {
+    "votacionesEnQueCadaPartido": "Votaciones en que cada partido tuvo la misma posición que {referencia}",
+    "sin": "{fraccion}, sin %"
+  },
+  "textos": {
+    "senadores": "Senadores",
+    "diputados": "Diputados"
+  }
+}

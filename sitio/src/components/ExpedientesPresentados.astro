@@ -3,6 +3,9 @@
 // sus proyectos de ley, cantidad y porcentaje por estado oficial, con enlace a la lista en su página
 // aparte. Recibe los valores de lib/expedientes.js. Estilos globales con prefijo de clase.
 import * as rutas from "../lib/rutas.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.legisladores.expedientes;
+const txc = textos.general.comunes;
 
 interface Props {
   expedientes: any;
@@ -10,20 +13,20 @@ interface Props {
   urlLista: string;
 }
 const { expedientes: e, periodo, urlLista } = Astro.props;
-const sinDato = "Sin dato";
+const sinDato = txc.sinDato;
 const leyes = e.proyectosDeLey;
 ---
 
 <div class="expedientes-presentados">
   {
     e.total === 0 ? (
-      <p class="lectura">No figura entre los autores de ningún expediente ingresado en el período {periodo}.</p>
+      <p class="lectura">{fill(tx.noFiguraEntreLosAutores, { periodo: periodo })}</p>
     ) : (
       <Fragment>
         <table>
-          <caption class="solo-lectores">Expedientes presentados por tipo</caption>
+          <caption class="solo-lectores">{tx.expedientesPresentadosPorTipo}</caption>
           <thead>
-            <tr><th scope="col">Tipo de expediente</th><th scope="col">Cantidad</th></tr>
+            <tr><th scope="col">{tx.tipoDeExpediente}</th><th scope="col">{tx.cantidad}</th></tr>
           </thead>
           <tbody data-paginar>
             {e.porTipo.map((t: any) => <tr><td>{t.tipo ?? sinDato}</td><td class="numero">{t.cantidad}</td></tr>)}
@@ -33,28 +36,22 @@ const leyes = e.proyectosDeLey;
           leyes.total > 0 && (
             <Fragment>
               <table>
-                <caption>Sus {leyes.total} proyectos de ley, por estado oficial</caption>
+                <caption>{fill(tx.susProyectosDeLeyPor, { total: leyes.total })}</caption>
                 <thead>
-                  <tr><th scope="col">Estado</th><th scope="col">Proyectos de ley</th></tr>
+                  <tr><th scope="col">{txc.estado}</th><th scope="col">{tx.proyectosDeLey}</th></tr>
                 </thead>
                 <tbody data-paginar>
                   {leyes.porEstado.map((x: any) => <tr><td>{x.estado ?? sinDato}</td><td class="numero">{x.texto}</td></tr>)}
                 </tbody>
               </table>
-              <p><a href={urlLista}>Ver la lista de sus {leyes.total} proyectos de ley</a></p>
+              <p set:html={md(tx.verLaListaDeSus, { url1: crudo(urlLista), total: leyes.total })} />
             </Fragment>
           )
         }
       </Fragment>
     )
   }
-  <p class="chico texto-suave lectura">
-    Expedientes ingresados desde el inicio del período en que figura entre los autores. La cantidad no mide
-    la calidad ni el esfuerzo. Los pedidos de informe son control al Poder Ejecutivo, no proyectos de ley.
-    Un expediente con varios autores cuenta para cada uno, y el estado es el de la última actualización,
-    así que muchos proyectos siguen en trámite.{" "}
-    <a href={rutas.metodologia(rutas.anclasMetodologia.expedientes)}>Más información</a>
-  </p>
+  <p class="chico texto-suave lectura" set:html={md(tx.expedientesIngresadosDesdeElInicio, { url1: crudo(rutas.metodologia(rutas.anclasMetodologia.expedientes)) })} />
 </div>
 
 <style is:global>

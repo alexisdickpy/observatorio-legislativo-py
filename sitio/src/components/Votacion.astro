@@ -8,6 +8,9 @@ import BarraVotos from "./BarraVotos.astro";
 import GraficoPartidos from "./GraficoPartidos.astro";
 import PosicionPorSentido from "./PosicionPorSentido.astro";
 import TablaDesglose from "./TablaDesglose.astro";
+import { textos, fill, md } from "../lib/contenido.js";
+const tx = textos.votaciones.votacion;
+const txc = textos.general.comunes;
 
 interface Props {
   votacion: any;
@@ -18,20 +21,20 @@ interface Props {
 const { votacion: v, nivel, propia = false } = Astro.props;
 const Titulo = `h${nivel}`;
 const Subtitulo = `h${Math.min(nivel + 1, 6)}`;
-const sinDato = "Sin dato";
+const sinDato = txc.sinDato;
 ---
 
 <section class="votacion" id={v.ancla}>
   <Titulo>{v.fecha ?? sinDato} · {v.etapa ?? sinDato}</Titulo>
   <p class="chico">
     {v.subetapa && <span>{v.subetapa} · </span>}
-    Resultado: <strong>{v.resultado ?? sinDato}</strong>
-    {v.sesion.numero && <span> · Sesión {v.sesion.tipo} n.º {v.sesion.numero}</span>}
+    {tx.resultado} <strong>{v.resultado ?? sinDato}</strong>
+    {v.sesion.numero && <span> {fill(tx.sesionNO, { tipo: v.sesion.tipo, numero: v.sesion.numero })}</span>}
   </p>
   {v.descripcion && <p class="lectura">{v.descripcion}</p>}
-  {v.observacion && <p class="lectura chico">Observación: {v.observacion}</p>}
+  {v.observacion && <p class="lectura chico">{fill(tx.observacion, { observacion: v.observacion })}</p>}
 
-  <p class="chico texto-suave">Totales sobre los {v.registrados} legisladores registrados en la votación.</p>
+  <p class="chico texto-suave">{fill(tx.totalesSobreLosLegisladoresRegistrados, { registrados: v.registrados })}</p>
   <BarraVotos barra={v.barraTotal} />
   <ul class="totales">
     {
@@ -45,54 +48,51 @@ const sinDato = "Sin dato";
   {
     v.hayRecuentoPropio && (
       <p class="chico texto-suave lectura">
-        * El Congreso no publica un total para esta categoría. Es un recuento propio de los votos
-        individuales.
+        {tx.elCongresoNoPublicaUn}
       </p>
     )
   }
   {
     !v.totalesCoinciden && (
       <p class="nota chico lectura">
-        <strong>Nota del Observatorio.</strong> Los totales publicados no coinciden con el recuento de
-        los votos individuales ({v.recalculados.map((r: any) => `${r.categoria} ${r.cantidad}`).join(" · ")}).
+        <strong>{tx.notaDelObservatorio}</strong> {tx.losTotalesPublicadosNoCoinciden}{v.recalculados.map((r: any) => `${r.categoria} ${r.cantidad}`).join(" · ")}).
       </p>
     )
   }
-  {v.notas.map((n: string) => <p class="nota chico lectura"><strong>Nota del Observatorio.</strong> {n}</p>)}
+  {v.notas.map((n: string) => <p class="nota chico lectura" set:html={md(tx.notaDelObservatorio2, { valor: n })} />)}
 
   {
     v.posicionesPorSentido.length > 0 && (
       <Fragment>
-        <Subtitulo class="subtitulo">Posición de cada partido</Subtitulo>
+        <Subtitulo class="subtitulo">{tx.posicionDeCadaPartido}</Subtitulo>
         <PosicionPorSentido grupos={v.posicionesPorSentido} />
       </Fragment>
     )
   }
 
   <p class="chico texto-suave lectura">
-    En cada partido y bancada, el total ("de …") son sus legisladores que figuran en la lista oficial
-    de esta votación, incluidos los suplentes en ejercicio y los ausentes.
+    {tx.enCadaPartidoYBancada}
   </p>
-  <Subtitulo class="subtitulo">Por partido</Subtitulo>
+  <Subtitulo class="subtitulo">{txc.porPartido}</Subtitulo>
   <GraficoPartidos votacion={v} />
-  <TablaDesglose titulo="Por partido, en números" grupo="Partido" categorias={v.categorias} filas={v.porPartido} />
+  <TablaDesglose titulo={tx.porPartidoEnNumeros} grupo="Partido" categorias={v.categorias} filas={v.porPartido} />
 
   <details>
-    <summary>Ver por bancada</summary>
-    <TablaDesglose titulo="Por bancada" grupo="Bancada" categorias={v.categorias} filas={v.porBancada} />
+    <summary>{tx.verPorBancada}</summary>
+    <TablaDesglose titulo={tx.porBancada} grupo="Bancada" categorias={v.categorias} filas={v.porBancada} />
   </details>
 
   <details>
-    <summary>Ver el voto de cada legislador ({v.votos.length})</summary>
+    <summary>{fill(tx.verElVotoDeCada, { votos: v.votos.length })}</summary>
     <div class="desplazable">
       <table class="votos">
-        <caption class="solo-lectores">Voto de cada legislador</caption>
+        <caption class="solo-lectores">{tx.votoDeCadaLegislador}</caption>
         <thead>
           <tr>
-            <th scope="col">Voto</th>
-            <th scope="col">Legislador</th>
-            <th scope="col">Partido</th>
-            <th scope="col">Bancada</th>
+            <th scope="col">{tx.voto}</th>
+            <th scope="col">{tx.legislador}</th>
+            <th scope="col">{txc.partido}</th>
+            <th scope="col">{txc.bancada}</th>
           </tr>
         </thead>
         <tbody data-paginar>
@@ -103,7 +103,7 @@ const sinDato = "Sin dato";
     </div>
   </details>
 
-  <p class="chico">{!propia && <Fragment><a href={v.pagina}>Compartir esta votación</a> · </Fragment>}<a href={v.url}>Votación en SILpy</a>{v.sesion.url && <Fragment> · <a href={v.sesion.url}>Sesión en SILpy</a></Fragment>}</p>
+  <p class="chico">{!propia && <Fragment><a href={v.pagina}>{tx.compartirEstaVotacion}</a> · </Fragment>}<a href={v.url}>{txc.votacionEnSilpy}</a>{v.sesion.url && <Fragment> · <a href={v.sesion.url}>{tx.sesionEnSilpy}</a></Fragment>}</p>
 </section>
 
 <style is:global>

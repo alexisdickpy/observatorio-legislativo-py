@@ -8,6 +8,9 @@ import { periodos } from "../../lib/datos.js";
 import { decisionesSinNominal } from "../../lib/decisiones.js";
 import * as rutas from "../../lib/rutas.js";
 import { CANTIDAD_AJUSTADAS, masAjustadas, votacionesDelPeriodo } from "../../lib/votaciones.js";
+import { textos, fill, md, crudo } from "../../lib/contenido.js";
+const tx = textos.votaciones.pagina;
+const txc = textos.general.comunes;
 
 const periodo = periodos().find((p) => p.vigente).id;
 const { votaciones, anios, porCamara } = votacionesDelPeriodo(periodo);
@@ -19,58 +22,35 @@ const porCamaraTexto = (lista: any[]) => lista.map((c) => `${c.camara} ${numero(
 ---
 
 <Base
-  titulo="Votaciones y posición de cada partido"
-  descripcion={`Las ${numero(votaciones.length)} votaciones nominales sobre proyectos de ley del período legislativo ${periodo}, con el resultado oficial, los totales y lo que votó la mayoría de cada partido.`}
+  titulo={tx.votacionesYPosicionDeCada}
+  descripcion={fill(tx.lasVotacionesNominalesSobreProyectos, { votaciones: numero(votaciones.length), periodo: periodo })}
 >
-  <h1>Votaciones y posición de cada partido</h1>
+  <h1>{tx.votacionesYPosicionDeCada}</h1>
   <div class="lectura">
     <p>
-      Las {plural(votaciones.length, "votación nominal", "votaciones nominales")} sobre proyectos de ley del
-      período legislativo {periodo} ({porCamaraTexto(porCamara)}), con el resultado oficial, los totales de
-      cada categoría y la posición de cada partido.
+      {tx.las} {plural(votaciones.length, txc.votacionNominal, txc.votacionesNominales)} {fill(tx.sobreProyectosDeLeyDel, { periodo: periodo, porCamara: porCamaraTexto(porCamara) })}
     </p>
     <p class="formula">
-      Posición de un partido = la categoría con más votos entre los votos emitidos de sus legisladores en
-      esa votación
+      {tx.posicionDeUnPartidoLa}
     </p>
     <ul class="chico">
-      <li>
-        <strong>Votos emitidos.</strong> SI, NO, ABSTENCIÓN/BLANCO o una moción. AUSENTE y NO VOTA no
-        cuentan. Si dos categorías empatan en el primer lugar, la etiqueta dice «empate». Si ningún
-        legislador del partido emitió voto, dice «sin votos emitidos».
-      </li>
-      <li>
-        <strong>Siglas.</strong> Son propias de este sitio, para que las etiquetas entren en poco espacio.
-        Al pasar el cursor sobre una etiqueta se ve el nombre oficial del partido y cuántos votos tuvo esa
-        categoría sobre los votos emitidos del partido.
-      </li>
-      <li>
-        <strong>Totales.</strong> Los que publica el Congreso, sobre los legisladores registrados en la
-        lista oficial de la votación.
-      </li>
+      <li set:html={md(tx.votosEmitidosSiNoAbstencion, {  })} />
+      <li set:html={md(tx.siglasSonPropiasDeEste, {  })} />
+      <li set:html={md(tx.totalesLosQuePublicaEl, {  })} />
     </ul>
-    <p class="chico texto-suave">
-      Partido es el que la API registra para cada legislador en el período, no necesariamente el de la
-      fecha de cada votación.{" "}
-      <a href={rutas.metodologia(rutas.anclasMetodologia.posicionPartidos)}>Cómo se calcula la posición de cada partido</a>
-      {" · "}
-      <a href={rutas.coincidencia()}>Coincidencia de votos entre partidos</a>
-    </p>
+    <p class="chico texto-suave" set:html={md(tx.partidoEsElQueLa, { url1: crudo(rutas.metodologia(rutas.anclasMetodologia.posicionPartidos)), url2: crudo(rutas.coincidencia()) })} />
   </div>
 
-  <p class="lectura">
-    <a href={rutas.decisionesSinNominal()}>{numero(decisiones.length)} decisiones sin votación nominal</a>, con su
-    resultado oficial, aparte porque no tienen votos individuales.
-  </p>
+  <p class="lectura" set:html={md(tx.decisionesSinVotacionNominalCon, { url1: crudo(rutas.decisionesSinNominal()), decisiones: numero(decisiones.length) })} />
 
   <section aria-labelledby="titulo-anios">
-    <h2 id="titulo-anios">Votaciones por año</h2>
-    <p class="chico texto-suave">El año es el de la fecha del trámite en que se votó. En cada año se puede filtrar por cámara, estado del proyecto y resultado.</p>
+    <h2 id="titulo-anios">{tx.votacionesPorAno}</h2>
+    <p class="chico texto-suave">{tx.elAnoEsElDe}</p>
     <ul class="anios">
       {
         anios.map((a: any) => (
           <li data-anio={a.anio}>
-            <a href={a.url}>{a.anio}</a> <span class="chico">{plural(a.total, "votación", "votaciones")}</span>{" "}
+            <a href={a.url}>{a.anio}</a> <span class="chico">{plural(a.total, txc.votacion, "votaciones")}</span>{" "}
             <span class="chico texto-suave">({porCamaraTexto(a.porCamara)})</span>
           </li>
         ))
@@ -79,17 +59,12 @@ const porCamaraTexto = (lista: any[]) => lista.map((c) => `${c.camara} ${numero(
   </section>
 
   <section aria-labelledby="titulo-ajustadas">
-    <h2 id="titulo-ajustadas">Votaciones más ajustadas</h2>
-    <p class="lectura chico">
-      Por cámara, las {CANTIDAD_AJUSTADAS} votaciones del período con menor diferencia entre los totales
-      oficiales de SI y de NO. A igual diferencia, primero la más reciente. No se cuentan las votaciones sin
-      votos SI ni NO.{" "}
-      <a href={rutas.metodologia(rutas.anclasMetodologia.masAjustadas)}>Cómo se eligen</a>
-    </p>
+    <h2 id="titulo-ajustadas">{tx.votacionesMasAjustadas}</h2>
+    <p class="lectura chico" set:html={md(tx.porCamaraLasVotacionesDel, { cantidad: CANTIDAD_AJUSTADAS, url1: crudo(rutas.metodologia(rutas.anclasMetodologia.masAjustadas)) })} />
     {
       ajustadas.map((c: any) => (
         <section data-camara-ajustadas>
-          <h3>{c.camara ?? "Sin dato"}</h3>
+          <h3>{c.camara ?? txc.sinDato}</h3>
           <ListaVotaciones votaciones={c.votaciones} diferencia />
         </section>
       ))

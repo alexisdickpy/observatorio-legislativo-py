@@ -1,0 +1,36 @@
+{
+  "pagina": {
+    "titulo": "Privacidad y aviso legal",
+    "descripcion": "Qué datos recoge este sitio sobre sus visitantes, de dónde vienen los datos que muestra y bajo qué licencias se publican."
+  },
+  "secciones": [
+    {
+      "ancla": "privacidad",
+      "nivel": 2,
+      "titulo": "Privacidad",
+      "texto": "Este sitio no recoge datos personales de sus visitantes ni usa cookies. No hay formularios, cuentas de usuario ni publicidad.\n\nPara saber cuántas personas lo visitan se usan estadísticas anónimas de Cloudflare Web Analytics, que no usan cookies ni guardan la dirección IP ni identifican a nadie. Solo cuentan visitas por página, el sitio desde el que se llegó, el país, el tipo de dispositivo, el navegador, el sistema y el tiempo de carga.\n\nLas fotos de los legisladores se sirven desde este mismo sitio, a partir de una copia de las que publica el Congreso, así que ver una ficha no conecta al visitante con otros servidores.\n\nEl [test de afinidad](/test-de-afinidad/) calcula el resultado en el navegador del visitante. Las respuestas no se guardan ni se envían a ningún servidor.\n\nSi eliges el modo claro, esa preferencia queda solo en tu navegador y no se envía a ningún servidor.\n\nEl bot de Telegram es un servicio aparte y opcional. Para enviar los avisos elegidos, guarda en Cloudflare el número de chat de Telegram y esos avisos, sin nombre, usuario ni teléfono. No se publica ni se comparte, y el comando /baja o bloquear el bot lo borra. Telegram trata los mensajes según su propia política de privacidad.",
+      "textoDespues": ""
+    },
+    {
+      "ancla": "origen-de-los-datos",
+      "nivel": 2,
+      "titulo": "Origen de los datos",
+      "texto": "**{cita}.** Los datos provienen de la [API de Datos Abiertos del Congreso Nacional](https://datosv2.congreso.gov.py/web/api) y se copian una vez por día. La última actualización es del {fecha}.\n\nSe muestran tal como los publica el Congreso, con sus posibles errores. Este sitio no corrige los valores oficiales. Si un dato parece incorrecto, el error puede estar en la propia fuente oficial; conviene compararlo con ella. Las observaciones automáticas sobre los datos se listan en la [metodología](/metodologia/#observaciones-sobre-los-datos), junto con lo que el sitio agrega o calcula por su cuenta.",
+      "textoDespues": ""
+    },
+    {
+      "ancla": "independencia",
+      "nivel": 2,
+      "titulo": "Independencia",
+      "texto": "Este es un proyecto independiente. No tiene vínculo con el Congreso Nacional ni cuenta con su aval. Ningún contenido de este sitio es una comunicación oficial.",
+      "textoDespues": ""
+    },
+    {
+      "ancla": "licencias",
+      "nivel": 2,
+      "titulo": "Licencias y cómo citar",
+      "texto": "- Los datos tienen licencia [{licencia}](https://github.com/alexisdickpy/observatorio-legislativo-py/blob/main/LICENSE-DATOS.md), la misma con que los publica el Congreso. Se pueden reutilizar citando «{cita}» y la fecha de actualización. Se descargan en [Datos abiertos](/datos/).\n- El código tiene licencia [AGPL-3.0](https://github.com/alexisdickpy/observatorio-legislativo-py/blob/main/LICENSE) y está publicado en el [repositorio del proyecto](https://github.com/alexisdickpy/observatorio-legislativo-py).",
+      "textoDespues": ""
+    }
+  ]
+}

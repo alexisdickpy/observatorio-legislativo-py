@@ -9,12 +9,14 @@ interface Props {
 }
 import { clasePartido } from "../lib/partidos.js";
 import { legible } from "../lib/texto.js";
+import { textos, fill } from "../lib/contenido.js";
+const tx = textos.portada.barrasCoincidencia;
 
 const { referencia, barras } = Astro.props;
 ---
 
 <figure class="barras-coincidencia">
-  <figcaption class="chico texto-suave">Votaciones en que cada partido tuvo la misma posición que {referencia}</figcaption>
+  <figcaption class="chico texto-suave">{fill(tx.votacionesEnQueCadaPartido, { referencia: referencia })}</figcaption>
   <ul>
     {
       barras.map((b) => (
@@ -26,7 +28,7 @@ const { referencia, barras } = Astro.props;
                 <strong>{b.porcentajeTexto}</strong> <span class="texto-suave">{b.fraccion}</span>
               </span>
             ) : (
-              <span class="valor texto-suave">{b.fraccion}, sin %</span>
+              <span class="valor texto-suave">{fill(tx.sin, { fraccion: b.fraccion })}</span>
             )}
           </span>
           {b.suficiente && (

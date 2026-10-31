@@ -6,6 +6,8 @@ import TablaLegisladores from "../../components/TablaLegisladores.astro";
 import { periodos } from "../../lib/datos.js";
 import { listado, opcionesDelListado } from "../../lib/legisladores.js";
 import * as rutas from "../../lib/rutas.js";
+import { textos, fill, md, crudo } from "../../lib/contenido.js";
+const tx = textos.legisladores.listado;
 
 const periodo = periodos().find((p) => p.vigente).id;
 const { enEjercicio, noEjercen } = listado(periodo);
@@ -14,51 +16,35 @@ const conNombreConocido = todos.some((l) => l.partidoConocido);
 ---
 
 <Base
-  titulo="Legisladores"
-  descripcion={`Senadores y diputados del Congreso Nacional del Paraguay en el período legislativo ${periodo}, con su partido, su bancada, sus votos en las votaciones nominales y las leyes de su autoría.`}
+  titulo={tx.legisladores}
+  descripcion={fill(tx.senadoresYDiputadosDelCongreso, { periodo: periodo })}
 >
-  <h1>Legisladores</h1>
+  <h1>{tx.legisladores}</h1>
   <div class="lectura">
     <p>
-      {enEjercicio.length} legisladores en ejercicio en el período legislativo {periodo}, primero los
-      de la Cámara de Senadores y luego los de Diputados, por apellido. Cada nombre lleva a su ficha, con sus
-      votos y las leyes de su autoría.
+      {fill(tx.legisladoresEnEjercicioEnEl, { enEjercicio: enEjercicio.length, periodo: periodo })}
     </p>
     <p class="chico texto-suave">
-      Los datos son los que publica el Congreso. Partido y bancada son los que la API registra para
-      cada legislador en el período, no necesariamente los de cada fecha. Los senadores se eligen en
-      una circunscripción nacional, por eso la API registra su departamento como NACIONAL.
-      {conNombreConocido && " El nombre entre paréntesis es el nombre por el que se conoce a un partido, un agregado de este sitio."}
+      {tx.losDatosSonLosQue}
+      {conNombreConocido && tx.elNombreEntreParentesisEs}
     </p>
-    <p>
-      <a href={rutas.votacionesNominales()}>Votaciones nominales por legislador</a>, una tabla con las
-      ausencias, NO VOTA, abstenciones y votos distintos a la mayoría de su bancada y de su partido de
-      todos los legisladores, cada cifra con su denominador.
-    </p>
-    <p>
-      <a href={rutas.mapaDiputados()}>Mapa de diputados por departamento</a>, cuántos diputados tiene
-      cada departamento y quiénes son.
-    </p>
-    <p>
-      <a href={rutas.coincidencia()}>Coincidencia de votos entre partidos y bancadas</a>, qué tan seguido
-      votó igual cada grupo que cada uno de los demás de su cámara.
-    </p>
+    <p set:html={md(tx.votacionesNominalesPorLegisladorUna, { url1: crudo(rutas.votacionesNominales()) })} />
+    <p set:html={md(tx.mapaDeDiputadosPorDepartamento, { url1: crudo(rutas.mapaDiputados()) })} />
+    <p set:html={md(tx.coincidenciaDeVotosEntrePartidos, { url1: crudo(rutas.coincidencia()) })} />
   </div>
   <FiltroLegisladores entradas={todos.map((l) => l.filtro)} opciones={opcionesDelListado(periodo)} />
   <section data-filtro-legisladores>
-    <h2 class="solo-lectores">En ejercicio</h2>
-    <TablaLegisladores titulo="Legisladores en ejercicio" filas={enEjercicio} />
+    <h2 class="solo-lectores">{tx.enEjercicio}</h2>
+    <TablaLegisladores titulo={tx.legisladoresEnEjercicio} filas={enEjercicio} />
   </section>
   {
     noEjercen.length > 0 && (
       <section data-filtro-legisladores>
-        <h2>Ya no ejercen en el período</h2>
+        <h2>{tx.yaNoEjercenEnEl}</h2>
         <p class="chico texto-suave lectura">
-          {noEjercen.length} legisladores del período {periodo} que ya no figuran entre los que están en
-          ejercicio según la API (por ejemplo, por renuncia, pérdida de investidura o fin de una
-          suplencia). Sus fichas conservan sus votos y sus leyes.
+          {fill(tx.legisladoresDelPeriodoQueYa, { noEjercen: noEjercen.length, periodo: periodo })}
         </p>
-        <TablaLegisladores titulo="Legisladores que ya no ejercen" filas={noEjercen} />
+        <TablaLegisladores titulo={tx.legisladoresQueYaNoEjercen} filas={noEjercen} />
       </section>
     )
   }

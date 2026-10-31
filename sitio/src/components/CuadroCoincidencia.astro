@@ -8,6 +8,8 @@
 import { intensidadDe } from "../lib/coincidencia.js";
 import { clasePartido } from "../lib/partidos.js";
 import { legible } from "../lib/texto.js";
+import { textos } from "../lib/contenido.js";
+const tx = textos.coincidencia.cuadro;
 
 interface Props {
   titulo: string;
@@ -26,7 +28,7 @@ const { titulo, filas } = Astro.props;
       </tr>
     </thead>
     <tbody>
-      {filas.map((f) => <tr data-cuadro-fila={f.id}><th scope="row"><span class={`pip ${clasePartido(f.nombre)}`}></span> {legible(f.nombre)}<span class="bancas">{f.legisladores} {f.legisladores === 1 ? "legislador" : "legisladores"} en ejercicio</span></th>{f.celdas.map((c) => !c ? <td class="diagonal"><span aria-hidden="true">—</span><span class="solo-lectores">Mismo partido</span></td> : c.suficiente ? <td style={`--intensidad: ${intensidadDe(c)}`}><span class="porcentaje">{c.porcentajeTexto}</span> <span class="fraccion">{c.fraccion}</span></td> : <td class="sin-porcentaje"><span class="fraccion">{c.fraccion}</span> <span class="fraccion">sin %</span></td>)}</tr>)}
+      {filas.map((f) => <tr data-cuadro-fila={f.id}><th scope="row"><span class={`pip ${clasePartido(f.nombre)}`}></span> {legible(f.nombre)}<span class="bancas">{f.legisladores} {f.legisladores === 1 ? "legislador" : "legisladores"} {tx.enEjercicio}</span></th>{f.celdas.map((c) => !c ? <td class="diagonal"><span aria-hidden="true">—</span><span class="solo-lectores">{tx.mismoPartido}</span></td> : c.suficiente ? <td style={`--intensidad: ${intensidadDe(c)}`}><span class="porcentaje">{c.porcentajeTexto}</span> <span class="fraccion">{c.fraccion}</span></td> : <td class="sin-porcentaje"><span class="fraccion">{c.fraccion}</span> <span class="fraccion">{tx.sin}</span></td>)}</tr>)}
     </tbody>
   </table>
 </div>

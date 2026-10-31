@@ -12,6 +12,9 @@ import { legible, recortar } from "./texto.js";
 import { ultimasVotaciones } from "./votaciones.js";
 import { CANTIDAD_PORTADA, votosDistintosAlPartido } from "./votosDistintos.js";
 import { votosPorTema } from "./votosPorTema.js";
+import { textos } from "./contenido.js";
+const tx = textos.portada.textos;
+const txc = textos.general.comunes;
 
 const porMayorCoincidencia = (a, b) => b.porcentaje - a.porcentaje || b.total - a.total || a.nombres.localeCompare(b.nombres, "es");
 
@@ -52,8 +55,8 @@ const VITALICIO = "VITALICIO";
 
 /** Las dos cámaras en su orden, con sus bancas según la Constitución. */
 const CAMARAS = [
-  { camara: "CAMARA DE SENADORES", nombre: "Senadores", bancas: 45 },
-  { camara: "CAMARA DE DIPUTADOS", nombre: "Diputados", bancas: 80 },
+  { camara: "CAMARA DE SENADORES", nombre: tx.senadores, bancas: 45 },
+  { camara: "CAMARA DE DIPUTADOS", nombre: tx.diputados, bancas: 80 },
 ];
 
 /**
@@ -67,7 +70,7 @@ export function composicion(periodo) {
   return CAMARAS.map(({ camara, nombre, bancas }) => {
     const grupos = new Map();
     for (const f of enEjercicio.filter((x) => x.camara === camara && x.tipo !== VITALICIO)) {
-      const clave = f.partido ?? "Sin partido registrado";
+      const clave = f.partido ?? txc.sinPartidoRegistrado;
       if (!grupos.has(clave)) grupos.set(clave, []);
       grupos.get(clave).push(f);
     }
@@ -94,7 +97,7 @@ export function puntosDeVotacion(d) {
   const orden = new Map(d.porPartido.map((p, n) => [p.nombre, n]));
   return [...d.votos]
     .sort((a, b) => posicion.get(a.sentido) - posicion.get(b.sentido) || orden.get(a.partido) - orden.get(b.partido))
-    .map((x) => ({ titulo: `${x.nombre ?? "Sin dato"} · ${x.partido ?? "Sin dato"} · ${x.sentido}`, ficha: x.ficha, clase: claseDeCategoria(x.sentido), partido: x.partido, sentido: x.sentido }));
+    .map((x) => ({ titulo: `${x.nombre ?? txc.sinDato} · ${x.partido ?? txc.sinDato} · ${x.sentido}`, ficha: x.ficha, clase: claseDeCategoria(x.sentido), partido: x.partido, sentido: x.sentido }));
 }
 
 /**
@@ -125,7 +128,7 @@ export function votacionDestacada(periodo) {
     leyenda: d.totales.filter((t) => t.cantidad > 0).map((t) => ({ categoria: t.categoria, cantidad: t.cantidad, clase: claseDeCategoria(t.categoria) })),
     asientos: votos,
     partidos: d.porPartido.map((p) => ({
-      sigla: p.nombre ? siglaDe(p.nombre) : "Sin partido registrado",
+      sigla: p.nombre ? siglaDe(p.nombre) : txc.sinPartidoRegistrado,
       clase: clasePartido(p.nombre),
       nombre: legible(p.nombre),
       total: p.total,

@@ -14,6 +14,9 @@ import { periodos } from "../lib/datos.js";
 import { CANTIDAD_RANKING, masAusentes } from "../lib/rankings.js";
 import * as rutas from "../lib/rutas.js";
 import { votosDistintosAlPartido } from "../lib/votosDistintos.js";
+import { textos, fill, md, crudo } from "../lib/contenido.js";
+const tx = textos.rankings.pagina;
+const txc = textos.general.comunes;
 
 const periodo = periodos().find((p) => p.vigente).id;
 const rebeldes = votosDistintosAlPartido(periodo);
@@ -25,81 +28,52 @@ const tabla = rutas.votacionesNominales();
 ---
 
 <Base
-  titulo="Rankings"
-  descripcion={`Los ${CANTIDAD_RANKING} senadores y los ${CANTIDAD_RANKING} diputados del período legislativo ${periodo} que más votaron distinto a la mayoría de su partido y los que más ausencias tienen en votaciones nominales, cada uno con su cifra y su denominador.`}
+  titulo={tx.rankings}
+  descripcion={fill(tx.losSenadoresYLosDiputados, { cantidad: CANTIDAD_RANKING, periodo: periodo })}
 >
-  <h1>Rankings</h1>
+  <h1>{tx.rankings}</h1>
   <div class="lectura">
     <p>
-      Dos listas por cámara con los {CANTIDAD_RANKING} legisladores del período legislativo {periodo} de
-      porcentaje más alto en una cifra de sus votaciones nominales, de mayor a menor. Cada cifra lleva su
-      numerador y su denominador.
+      {fill(tx.dosListasPorCamaraCon, { cantidad: CANTIDAD_RANKING, periodo: periodo })}
     </p>
     <ul class="chico">
-      <li><a href={`#${anclas.rebeldes}`}>Más «rebeldes»</a>, votos distintos a la mayoría de su partido</li>
-      <li><a href={`#${anclas.ausentes}`}>Más «ausentes»</a>, ausencias en votaciones nominales</li>
+      <li set:html={md(tx.masRebeldesVotosDistintosA, { url1: crudo(`#${anclas.rebeldes}`) })} />
+      <li set:html={md(tx.masAusentesAusenciasEnVotaciones, { url1: crudo(`#${anclas.ausentes}`) })} />
     </ul>
-    <p class="chico texto-suave">
-      Las cámaras se muestran por separado porque el Senado publica muchas menos votaciones nominales que
-      Diputados. Partido es el que la API registra para el período, no necesariamente el de la fecha de
-      cada votación. Estar en una lista no es bueno ni malo, y los apodos van entre comillas porque no son
-      una calificación del sitio. La <a href={tabla}>tabla de votaciones nominales por legislador</a> tiene
-      estas cifras y otras para todos los legisladores.
-    </p>
+    <p class="chico texto-suave" set:html={md(tx.lasCamarasSeMuestranPor, { url1: crudo(tabla) })} />
   </div>
 
   <div class="columnas">
   <section id={anclas.rebeldes} aria-labelledby="titulo-rebeldes">
-    <h2 id="titulo-rebeldes">Más «rebeldes»</h2>
+    <h2 id="titulo-rebeldes">{tx.masRebeldes}</h2>
     <div class="lectura">
-      <p class="subtitulo">Legisladores que más veces votaron distinto a la mayoría de su partido.</p>
+      <p class="subtitulo">{tx.legisladoresQueMasVecesVotaron}</p>
       <p class="formula">
-        Votos distintos = votaciones en que su voto difiere de la mayoría de su partido ÷ votaciones
-        comparables × 100
+        {tx.votosDistintosVotacionesEnQue}
       </p>
       <ul class="chico">
-        <li>
-          <strong>Mayoría del partido.</strong> La categoría con más votos entre los votos emitidos de los
-          miembros de su partido en su cámara, en esa votación, contando también el suyo.
-        </li>
-        <li>
-          <strong>Votaciones comparables.</strong> Las votaciones en que emitió voto y su partido tuvo una
-          mayoría. No cuentan los empates en el primer lugar ni las votaciones en que fue el único de su
-          partido que emitió voto.
-        </li>
-        <li>
-          <strong>Mínimo.</strong> Entran a la lista quienes tienen al menos {rebeldes.minimo} votaciones
-          comparables, para que nadie la encabece con muy pocas votaciones. A igual porcentaje, primero
-          quien tiene más votaciones comparables.
-        </li>
+        <li set:html={md(tx.mayoriaDelPartidoLaCategoria, {  })} />
+        <li set:html={md(tx.votacionesComparablesLasVotacionesEn, {  })} />
+        <li set:html={md(tx.minimoEntranALaLista, { minimo: rebeldes.minimo })} />
       </ul>
-      <p class="chico texto-suave">
-        La ficha de cada legislador lista las votaciones en que votó distinto.{" "}
-        <a href={rutas.metodologia(rutas.anclasMetodologia.cuadroVotosDistintos)}>Cómo se arma esta lista</a>
-        {" · "}
-        <a href={rutas.votacionesNominalesOrdenadas("partido")}>Todos los legisladores, por votos distintos a su partido</a>
-        {" · "}
-        <a href={rutas.votacionesNominalesOrdenadas("bancada")}>Por votos distintos a su bancada</a>
-      </p>
+      <p class="chico texto-suave" set:html={md(tx.laFichaDeCadaLegislador, { url1: crudo(rutas.metodologia(rutas.anclasMetodologia.cuadroVotosDistintos)), url2: crudo(rutas.votacionesNominalesOrdenadas("partido")), url3: crudo(rutas.votacionesNominalesOrdenadas("bancada")) })} />
     </div>
     {
       rebeldes.camaras.map((c: any) => (
         <section data-camara-votos-distintos>
-          <h3>{c.camara ?? "Sin dato"}</h3>
-          <p class="chico texto-suave">{plural(c.votaciones, "votación nominal", "votaciones nominales")} en esta cámara.</p>
+          <h3>{c.camara ?? txc.sinDato}</h3>
+          <p class="chico texto-suave">{plural(c.votaciones, txc.votacionNominal, txc.votacionesNominales)} {tx.enEstaCamara}</p>
           <ListaRanking filas={c.filas} cifra="mayoriaPartido" />
           <div class="lectura chico notas">
             {c.sinComparables.length > 0 && (
               <>
                 <p>
-                  No están en la lista, porque no tienen ninguna votación comparable. En todas las votaciones en
-                  que votaron fueron los únicos de su partido en emitir voto en esta cámara, así que no hay una
-                  mayoría de su partido con la cual comparar.
+                  {tx.noEstanEnLaLista}
                 </p>
                 <ul>
                   {c.sinComparables.map((f: any) => (
                     <li data-sin-comparables={f.slug}>
-                      <a href={f.url}>{f.nombre}</a> ({f.mayoriaPartido.grupo}){!f.vigente && <span class="texto-suave">, ya no ejerce</span>}
+                      <a href={f.url}>{f.nombre}</a> ({f.mayoriaPartido.grupo}){!f.vigente && <span class="texto-suave">{tx.yaNoEjerce}</span>}
                     </li>
                   ))}
                 </ul>
@@ -107,13 +81,12 @@ const tabla = rutas.votacionesNominales();
             )}
             {c.bajoMinimo > 0 && (
               <p>
-                {plural(c.bajoMinimo, "legislador tiene", "legisladores tienen")} menos de {rebeldes.minimo} votaciones
-                comparables y no {c.bajoMinimo === 1 ? "entra" : "entran"} a la lista. Sus cifras están en la{" "}
-                <a href={rutas.votacionesNominalesOrdenadas("partido")}>tabla de votaciones nominales</a>.
+                {plural(c.bajoMinimo, tx.legisladorTiene, tx.legisladoresTienen)} {fill(tx.menosDeVotacionesComparablesY, { minimo: rebeldes.minimo })} {c.bajoMinimo === 1 ? "entra" : "entran"} {tx.aLaListaSusCifras} 
+                <a href={rutas.votacionesNominalesOrdenadas("partido")}>{tx.tablaDeVotacionesNominales}</a>.
               </p>
             )}
             {c.sinPartido > 0 && (
-              <p>{plural(c.sinPartido, "legislador no tiene", "legisladores no tienen")} partido registrado en la API.</p>
+              <p>{plural(c.sinPartido, tx.legisladorNoTiene, tx.legisladoresNoTienen)} {tx.partidoRegistradoEnLaApi}</p>
             )}
           </div>
         </section>
@@ -122,53 +95,31 @@ const tabla = rutas.votacionesNominales();
   </section>
 
   <section id={anclas.ausentes} aria-labelledby="titulo-ausentes">
-    <h2 id="titulo-ausentes">Más «ausentes»</h2>
+    <h2 id="titulo-ausentes">{tx.masAusentes}</h2>
     <div class="lectura">
-      <p class="subtitulo">Legisladores con más ausencias en votaciones nominales.</p>
+      <p class="subtitulo">{tx.legisladoresConMasAusenciasEn}</p>
       <p class="formula">
-        Ausencias = votaciones nominales en que figura como AUSENTE ÷ votaciones nominales en cuya lista
-        figura × 100
+        {tx.ausenciasVotacionesNominalesEnQue}
       </p>
       <ul class="chico">
-        <li>
-          <strong>Votaciones nominales.</strong> Todas las del período en cuya lista oficial figura, de
-          cualquier tipo de expediente. La lista de cada votación incluye solo a quienes ocupaban el cargo
-          ese día.
-        </li>
-        <li>
-          <strong>Mínimo.</strong> Entran a la lista quienes figuran en al menos {ausentes.minimo} votaciones
-          nominales, para que no la encabecen suplentes o reemplazos con pocas votaciones. A igual
-          porcentaje, primero quien figura en más votaciones.
-        </li>
-        <li>
-          <strong>Sin motivo.</strong> La fuente no dice por qué un legislador figura como AUSENTE. Una
-          licencia, una representación oficial o haber salido del recinto en el momento de votar cuentan
-          igual.
-        </li>
-        <li>
-          <strong>Votación y sesión.</strong> Figurar como AUSENTE en una votación no es lo mismo que no ir
-          a la sesión. Indica que no registró su voto en ese momento, aunque pudiera estar en la sala.
-        </li>
+        <li set:html={md(tx.votacionesNominalesTodasLasDel, {  })} />
+        <li set:html={md(tx.minimoEntranALaLista2, { minimo: ausentes.minimo })} />
+        <li set:html={md(tx.sinMotivoLaFuenteNo, {  })} />
+        <li set:html={md(tx.votacionYSesionFigurarComo, {  })} />
       </ul>
-      <p class="chico texto-suave">
-        La ficha de cada legislador lista las votaciones en que figura como AUSENTE.{" "}
-        <a href={rutas.metodologia(rutas.anclasMetodologia.cuadroAusencias)}>Cómo se arma esta lista</a>
-        {" · "}
-        <a href={rutas.votacionesNominalesOrdenadas("ausencias")}>Todos los legisladores, por ausencias en votaciones nominales</a>
-      </p>
+      <p class="chico texto-suave" set:html={md(tx.laFichaDeCadaLegislador2, { url1: crudo(rutas.metodologia(rutas.anclasMetodologia.cuadroAusencias)), url2: crudo(rutas.votacionesNominalesOrdenadas("ausencias")) })} />
     </div>
     {
       ausentes.camaras.map((c: any) => (
         <section data-camara-ausencias>
-          <h3>{c.camara ?? "Sin dato"}</h3>
-          <p class="chico texto-suave">{plural(c.votaciones, "votación nominal", "votaciones nominales")} en esta cámara.</p>
+          <h3>{c.camara ?? txc.sinDato}</h3>
+          <p class="chico texto-suave">{plural(c.votaciones, txc.votacionNominal, txc.votacionesNominales)} {tx.enEstaCamara}</p>
           <ListaRanking filas={c.filas} cifra="ausencias" />
           {c.bajoMinimo > 0 && (
             <div class="lectura chico notas">
               <p>
-                {plural(c.bajoMinimo, "legislador figura", "legisladores figuran")} en menos de {ausentes.minimo} votaciones
-                nominales y no {c.bajoMinimo === 1 ? "entra" : "entran"} a la lista. Sus cifras están en la{" "}
-                <a href={rutas.votacionesNominalesOrdenadas("ausencias")}>tabla de votaciones nominales</a>.
+                {plural(c.bajoMinimo, tx.legisladorFigura, tx.legisladoresFiguran)} {fill(tx.enMenosDeVotacionesNominales, { minimo: ausentes.minimo })} {c.bajoMinimo === 1 ? "entra" : "entran"} {tx.aLaListaSusCifras} 
+                <a href={rutas.votacionesNominalesOrdenadas("ausencias")}>{tx.tablaDeVotacionesNominales}</a>.
               </p>
             </div>
           )}

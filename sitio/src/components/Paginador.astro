@@ -6,6 +6,9 @@
 ---
 
 <script>
+  import interaccion from "../contenido/interaccion.json";
+  import { fill } from "../lib/rellenar.js";
+  const ti = interaccion.paginador;
   const POR_PAGINA = 25;
   /** Números a mostrar: el primero, el último y los vecinos de la página actual; null es «…». */
   const numeros = (actual: number, total: number) => {
@@ -21,7 +24,7 @@
     const porPagina = Number(lista.dataset.paginar) || POR_PAGINA;
     const nav = document.createElement("nav");
     nav.className = "paginas";
-    nav.setAttribute("aria-label", "Páginas de la lista");
+    nav.setAttribute("aria-label", ti.paginas);
     (lista.closest("table")?.parentElement?.matches("div") ? lista.closest("table")!.parentElement! : (lista.closest("table") ?? lista)).after(nav);
     let actual = 1;
 
@@ -48,12 +51,12 @@
         });
         nav.append(b);
       };
-      boton("←", actual - 1, "Página anterior", false, actual === 1);
+      boton("←", actual - 1, ti.anterior, false, actual === 1);
       for (const n of numeros(actual, total)) {
         if (n === null) nav.append(Object.assign(document.createElement("span"), { textContent: "…" }));
-        else boton(String(n), n, `Página ${n}`, n === actual);
+        else boton(String(n), n, fill(ti.pagina, { n }), n === actual);
       }
-      boton("→", actual + 1, "Página siguiente", false, actual === total);
+      boton("→", actual + 1, ti.siguiente, false, actual === total);
       observar();
       if (desplazar) (lista.closest("table") ?? lista).scrollIntoView({ block: "start" });
     };

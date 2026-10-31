@@ -9,57 +9,60 @@
 import { notas } from "./datos.js";
 import { indice, nombreDe, valor } from "./ficha.js";
 import * as rutas from "./rutas.js";
+import { textos, fill } from "./contenido.js";
+const tx = textos.metodologia.observaciones;
+const txc = textos.general.comunes;
 
 /** Tipos de nota en el orden en que se muestran, con su título y explicación. */
 const TIPOS = [
   [
     "menos_votos_que_miembros",
-    "Votaciones con menos votos individuales que miembros de la cámara",
-    "La lista de votos tiene menos nombres que miembros con voto de la cámara (45 en el Senado, 80 en Diputados). Puede haber varias causas. La fuente no indica la causa y este sitio no la interpreta.",
+    tx.votacionesConMenosVotosIndividuales,
+    tx.laListaDeVotosTiene,
   ],
   [
     "totales_no_coinciden",
-    "Votaciones cuyos totales publicados no coinciden con los votos individuales",
-    "Al contar los votos individuales por categoría, el resultado no coincide con el total que publica el Congreso para esa categoría. El sitio muestra el total oficial.",
+    tx.votacionesCuyosTotalesPublicadosNo,
+    tx.alContarLosVotosIndividuales,
   ],
   [
     "legislador_repetido_en_votacion",
-    "Legisladores que figuran más de una vez en la misma votación",
-    "La lista oficial de votos incluye al mismo legislador más de una vez.",
+    tx.legisladoresQueFiguranMasDe,
+    tx.laListaOficialDeVotos,
   ],
-  ["voto_sin_legislador", "Votos sin legislador", "Un voto individual no identifica al legislador que lo emitió."],
+  ["voto_sin_legislador", tx.votosSinLegislador, tx.unVotoIndividualNoIdentifica],
   [
     "legislador_solo_en_votaciones",
-    "Legisladores que solo aparecen en votaciones",
-    "Votan en el período pero no figuran en los listados de legisladores de la API. El sitio los incluye con los datos que trae el voto.",
+    tx.legisladoresQueSoloAparecenEn,
+    tx.votanEnElPeriodoPero,
   ],
   [
     "enlace_no_resuelto",
-    "Votaciones que no se pudieron enlazar con su ley",
-    "La votación es del mismo proyecto que la ley, pero su trámite no figura entre las tramitaciones publicadas. El sitio no adivina el enlace.",
+    tx.votacionesQueNoSePudieron,
+    tx.laVotacionEsDelMismo,
   ],
-  ["fecha_mal_formada", "Fechas no válidas", "La fecha publicada no es una fecha válida. Se muestra tal como viene."],
-  ["proyecto_sin_tramitaciones", "Proyectos sin tramitaciones", "La API no devuelve las tramitaciones del proyecto de la ley."],
+  ["fecha_mal_formada", tx.fechasNoValidas, tx.laFechaPublicadaNoEs],
+  ["proyecto_sin_tramitaciones", tx.proyectosSinTramitaciones, tx.laApiNoDevuelveLas],
   [
     "proyecto_sin_autores",
-    "Proyectos de ley sin autores publicados",
-    "El proyecto es de iniciativa parlamentaria y tiene votaciones en el período, pero la API no publica sus autores. La página de votaciones no muestra «Presentado por».",
+    tx.proyectosDeLeySinAutores,
+    tx.elProyectoEsDeIniciativa,
   ],
-  ["proyecto_sin_adjuntos", "Proyectos sin documentos adjuntos", "La API no devuelve los documentos adjuntos del proyecto de la ley, como el texto de la ley."],
+  ["proyecto_sin_adjuntos", tx.proyectosSinDocumentosAdjuntos, tx.laApiNoDevuelveLos],
   [
     "numero_ley_repetido_en_otro_periodo",
-    "Números de ley repetidos en otra legislatura",
-    "El número de una ley del período también figura en otra legislatura.",
+    tx.numerosDeLeyRepetidosEn,
+    tx.elNumeroDeUnaLey,
   ],
   [
     "numero_ley_ausente_en_historico",
-    "Números de ley que no figuran en el listado histórico",
-    "Un número de ley del período no figura en el listado histórico de leyes de la API.",
+    tx.numerosDeLeyQueNo,
+    tx.unNumeroDeLeyDel,
   ],
   [
     "ley_del_periodo_fuera_de_listado",
-    "Leyes del período que no figuran en su listado",
-    "Según el listado histórico, la ley se sancionó dentro del período, pero no figura en el listado del período.",
+    tx.leyesDelPeriodoQueNo,
+    tx.segunElListadoHistoricoLa,
   ],
 ];
 
@@ -75,16 +78,16 @@ const posicion = (tipo) => {
  */
 function registro({ entidad, id, periodoLegislativo }) {
   const i = indice(periodoLegislativo);
-  const sinRegistro = { titulo: `Registro ${id}`, sitio: null, fueraDelSitio: false, oficial: null };
+  const sinRegistro = { titulo: fill(tx.registro, { id: id }), sitio: null, fueraDelSitio: false, oficial: null };
   if (entidad === "votacion") {
-    const oficial = { url: rutas.votacionSilpy(id), texto: "Votación en SILpy" };
+    const oficial = { url: rutas.votacionSilpy(id), texto: txc.votacionEnSilpy };
     const v = i.votaciones.get(id);
-    if (!v) return { ...sinRegistro, titulo: `Votación ${id}`, oficial };
+    if (!v) return { ...sinRegistro, titulo: fill(tx.votacion, { id: id }), oficial };
     const t = v.tramitacion ?? {};
     const ley = i.leyes.get((v._propio?.idLeyes ?? [])[0]);
     return {
-      titulo: `Votación del ${valor(t.fechaTramite) ?? "(sin fecha)"} · ${valor(t.camaraTramite) ?? "(sin cámara)"}`,
-      sitio: ley ? { url: rutas.votacionEnLey(ley._propio.numeroLey, id), texto: `En la ficha de la Ley ${ley._propio.numeroLey}` } : null,
+      titulo: fill(tx.votacionDelFecha, { fecha: valor(t.fechaTramite) ?? tx.sinFecha, camara: valor(t.camaraTramite) ?? tx.sinCamara }),
+      sitio: ley ? { url: rutas.votacionEnLey(ley._propio.numeroLey, id), texto: fill(tx.enLaFichaDeLa, { numeroLey: ley._propio.numeroLey }) } : null,
       fueraDelSitio: !ley,
       oficial: { ...oficial, url: valor(v.appURL) ?? oficial.url },
     };
@@ -94,31 +97,31 @@ function registro({ entidad, id, periodoLegislativo }) {
     if (!r) return sinRegistro;
     const url = valor(r.appURL) ?? valor(r.proyecto?.appURL);
     return {
-      titulo: `Ley ${r._propio.numeroLey}`,
-      sitio: { url: rutas.ley(r._propio.numeroLey), texto: "Ficha de la ley" },
+      titulo: fill(tx.ley, { numeroLey: r._propio.numeroLey }),
+      sitio: { url: rutas.ley(r._propio.numeroLey), texto: tx.fichaDeLaLey },
       fueraDelSitio: false,
-      oficial: url ? { url, texto: "Ley en SILpy" } : null,
+      oficial: url ? { url, texto: tx.leyEnSilpy } : null,
     };
   }
   if (entidad === "proyecto") {
     // Los datos del proyecto se toman de sus votaciones.
     const p = [...i.votaciones.values()].find((v) => v.proyecto?.idProyecto === id)?.proyecto;
-    if (!p) return { ...sinRegistro, titulo: `Proyecto ${id}` };
+    if (!p) return { ...sinRegistro, titulo: fill(tx.proyecto, { id: id }) };
     return {
-      titulo: `Proyecto ${valor(p.expedienteCamara) ?? id}`,
+      titulo: fill(tx.proyecto, { id: valor(p.expedienteCamara) ?? id }),
       sitio: null,
       fueraDelSitio: false,
-      oficial: valor(p.appURL) ? { url: p.appURL, texto: "Expediente en SILpy" } : null,
+      oficial: valor(p.appURL) ? { url: p.appURL, texto: tx.expedienteEnSilpy } : null,
     };
   }
   if (entidad === "legislador") {
     const l = i.legisladores.get(id);
     if (!l) return sinRegistro;
     return {
-      titulo: nombreDe(l) ?? `Legislador ${id}`,
-      sitio: l._propio?.slug ? { url: rutas.legislador(l._propio.slug), texto: "Ficha del legislador" } : null,
+      titulo: nombreDe(l) ?? fill(tx.legislador, { id: id }),
+      sitio: l._propio?.slug ? { url: rutas.legislador(l._propio.slug), texto: tx.fichaDelLegislador } : null,
       fueraDelSitio: false,
-      oficial: valor(l.appURL) ? { url: l.appURL, texto: "Ficha en SILpy" } : null,
+      oficial: valor(l.appURL) ? { url: l.appURL, texto: tx.fichaEnSilpy } : null,
     };
   }
   return sinRegistro;

@@ -3,6 +3,8 @@
 // Observatorio y no oficial. Cada tema enlaza al catálogo filtrado por ese tema.
 import EtiquetasTema from "./EtiquetasTema.astro";
 import * as rutas from "../lib/rutas.js";
+import { textos } from "../lib/contenido.js";
+const tx = textos.leyes.temasLey;
 
 interface Props {
   clasificacion: { temas: { id: string; nombre: string; url: string }[]; pendiente: boolean };
@@ -11,9 +13,9 @@ const { clasificacion } = Astro.props;
 ---
 
 <p class="temas-ley chico">
-  <span class="texto-suave">Tema según el Observatorio</span>
+  <span class="texto-suave">{tx.temaSegunElObservatorio}</span>
   <EtiquetasTema clasificacion={clasificacion} enlaces />
-  <a class="texto-suave" href={rutas.metodologia(rutas.anclasMetodologia.temas)}>Cómo se clasifica</a>
+  <a class="texto-suave" href={rutas.metodologia(rutas.anclasMetodologia.temas)}>{tx.comoSeClasifica}</a>
 </p>
 
 <style>

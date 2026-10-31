@@ -2,14 +2,16 @@
 // OrdenComparativa) y en las pruebas. No califica: ordenar por una cifra solo cambia el orden de las
 // filas, de mayor a menor porcentaje, y los empates quedan en el orden por nombre.
 
+import interaccion from "../contenido/interaccion.json" with { type: "json" };
+const tx = interaccion.ordenComparativa;
 /** Órdenes posibles: valor en la dirección, texto del selector y campo de la cifra (null = por nombre). */
 export const ORDENES = [
-  { valor: "", etiqueta: "Nombre (por apellido)", campo: null },
-  { valor: "ausencias", etiqueta: "Ausencias en votaciones nominales (de mayor a menor %)", campo: "ausencias" },
-  { valor: "no-vota", etiqueta: "NO VOTA (de mayor a menor %)", campo: "noVota" },
-  { valor: "abstencion", etiqueta: "ABSTENCIÓN/BLANCO (de mayor a menor %)", campo: "abstencion" },
-  { valor: "bancada", etiqueta: "Votos distintos a la mayoría de su bancada (de mayor a menor %)", campo: "mayoriaBancada" },
-  { valor: "partido", etiqueta: "Votos distintos a la mayoría de su partido (de mayor a menor %)", campo: "mayoriaPartido" },
+  { valor: "", etiqueta: tx.nombrePorApellido, campo: null },
+  { valor: "ausencias", etiqueta: tx.ausenciasEnVotacionesNominalesDe, campo: "ausencias" },
+  { valor: "no-vota", etiqueta: tx.noVotaDeMayorA, campo: "noVota" },
+  { valor: "abstencion", etiqueta: tx.abstencionBlancoDeMayorA, campo: "abstencion" },
+  { valor: "bancada", etiqueta: tx.votosDistintosALaMayoria, campo: "mayoriaBancada" },
+  { valor: "partido", etiqueta: tx.votosDistintosALaMayoria2, campo: "mayoriaPartido" },
 ];
 
 /** Orden pedido en la dirección; uno desconocido vuelve al orden por nombre. */

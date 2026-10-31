@@ -4,6 +4,8 @@
 // bloque [data-grupo] elegido (y los contenedores [data-bloque] que lo incluyen) y refleja la
 // elección en la dirección. La lógica está en lib/grupoCoincidencia.js.
 import { parametroGrupoCoincidencia } from "../lib/rutas.js";
+import { textos } from "../lib/contenido.js";
+const tx = textos.coincidencia.selector;
 
 interface Props {
   secciones: { etiqueta: string; opciones: { valor: string; etiqueta: string }[] }[];
@@ -12,7 +14,7 @@ const { secciones } = Astro.props;
 ---
 
 <form class="selector-coincidencia" id="selector-coincidencia" hidden>
-  <label for="grupo-coincidencia">Partido o bancada</label>
+  <label for="grupo-coincidencia">{tx.partidoOBancada}</label>
   <select id="grupo-coincidencia" name={parametroGrupoCoincidencia}>
     {
       secciones.map((s) => (

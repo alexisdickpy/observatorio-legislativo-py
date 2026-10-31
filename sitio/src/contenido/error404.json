@@ -1,0 +1,11 @@
+{
+  "pagina": {
+    "paginaNoEncontrada": "Página no encontrada",
+    "laDireccionNoCorrespondeA": "La dirección no corresponde a ninguna página de este sitio.",
+    "estaDireccionNoCorrespondeA": "Esta dirección no corresponde a ninguna página del sitio. Puede que esté mal escrita o que la página haya cambiado de lugar.",
+    "irAlInicio": "[Ir al inicio]({url1})",
+    "verTodasLasLeyes": "[Ver todas las leyes]({url1})",
+    "verTodosLosLegisladores": "[Ver todos los legisladores]({url1})",
+    "buscarEnElSitio": "[Buscar en el sitio]({url1})"
+  }
+}

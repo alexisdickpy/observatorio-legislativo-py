@@ -6,6 +6,9 @@ import Base from "../../../layouts/Base.astro";
 import FiltroExpedientes from "../../../components/FiltroExpedientes.astro";
 import { conProyectosDeLey, ficha } from "../../../lib/legisladores.js";
 import * as rutas from "../../../lib/rutas.js";
+import { textos, fill, md, crudo } from "../../../lib/contenido.js";
+const tx = textos.legisladores.listaExpedientes;
+const txc = textos.general.comunes;
 
 export function getStaticPaths() {
   return conProyectosDeLey().map((persona) => ({ params: { slug: persona.slug }, props: { persona } }));
@@ -13,7 +16,7 @@ export function getStaticPaths() {
 
 const { persona } = Astro.props;
 const f = ficha(persona);
-const sinDato = "Sin dato";
+const sinDato = txc.sinDato;
 const nombre = f.nombre ?? sinDato;
 const bloques = f.bloques.filter((b: any) => b.expedientes.proyectosDeLey.total > 0);
 const varios = f.bloques.length > 1;
@@ -21,36 +24,31 @@ const total = bloques.reduce((s: number, b: any) => s + b.expedientes.proyectosD
 ---
 
 <Base
-  titulo={`Proyectos de ley de ${nombre}`}
-  descripcion={`${total} proyectos de ley de los que ${nombre} figura entre los autores, con su estado oficial y su expediente en SILpy.`}
+  titulo={fill(tx.proyectosDeLeyDe, { nombre: nombre })}
+  descripcion={fill(tx.proyectosDeLeyDeLos, { total: total, nombre: nombre })}
 >
-  <p class="chico"><a href={persona.url}>← Ficha de {nombre}</a></p>
-  <h1>Proyectos de ley de {nombre}</h1>
-  <p class="chico texto-suave lectura">
-    Proyectos de ley ingresados desde el inicio del período en que figura entre los autores, del más
-    reciente al más antiguo. La cantidad no mide la calidad ni el esfuerzo. Un proyecto con varios autores
-    cuenta para cada uno, y el estado es el de la última actualización.{" "}
-    <a href={rutas.metodologia(rutas.anclasMetodologia.expedientes)}>Más información</a>
-  </p>
+  <p class="chico" set:html={md(tx.fichaDe, { url1: crudo(persona.url), nombre: nombre })} />
+  <h1>{fill(tx.proyectosDeLeyDe, { nombre: nombre })}</h1>
+  <p class="chico texto-suave lectura" set:html={md(tx.proyectosDeLeyIngresadosDesde, { url1: crudo(rutas.metodologia(rutas.anclasMetodologia.expedientes)) })} />
   {
     bloques.map((b: any) => (
       <section data-expedientes>
-        {varios && <h2>Período legislativo {b.periodo}</h2>}
+        {varios && <h2>{fill(tx.periodoLegislativo, { periodo: b.periodo })}</h2>}
         {b.expedientes.proyectosDeLey.porEstado.length > 1 && (
           <FiltroExpedientes porEstado={b.expedientes.proyectosDeLey.porEstado} total={b.expedientes.proyectosDeLey.total} periodo={b.periodo} />
         )}
         <div class="historial-desplazable">
           <table class="lista-expedientes">
-            <caption class="solo-lectores">Proyectos de ley del período {b.periodo}</caption>
+            <caption class="solo-lectores">{fill(tx.proyectosDeLeyDelPeriodo, { periodo: b.periodo })}</caption>
             <thead>
               <tr>
-                <th scope="col">Ingreso</th>
-                <th scope="col">Proyecto</th>
-                <th scope="col">Estado</th>
+                <th scope="col">{tx.ingreso}</th>
+                <th scope="col">{tx.proyecto}</th>
+                <th scope="col">{txc.estado}</th>
               </tr>
             </thead>
             <tbody>
-              {b.expedientes.proyectosDeLey.lista.map((x: any) => <tr data-estado={x.filtro}><td>{x.fecha ?? sinDato}</td><td>{x.url ? <a href={x.url}>Expediente {x.expediente ?? sinDato}</a> : `Expediente ${x.expediente ?? sinDato}`}<span class="titulo">{x.titulo ?? sinDato}</span></td><td>{x.estado ?? sinDato}</td></tr>)}
+              {b.expedientes.proyectosDeLey.lista.map((x: any) => <tr data-estado={x.filtro}><td>{x.fecha ?? sinDato}</td><td>{x.url ? <a href={x.url}>{txc.expediente} {x.expediente ?? sinDato}</a> : fill(textos.general.comunes.expedienteNumero, { expediente: x.expediente ?? sinDato })}<span class="titulo">{x.titulo ?? sinDato}</span></td><td>{x.estado ?? sinDato}</td></tr>)}
             </tbody>
           </table>
         </div>

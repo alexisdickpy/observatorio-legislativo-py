@@ -11,6 +11,9 @@
 import contorno from "../mapa/departamentos.json" with { type: "json" };
 import { listado } from "./legisladores.js";
 import { normalizar, slug } from "./texto.js";
+import { textos, fill } from "./contenido.js";
+const tx = textos.legisladores.textosMapa;
+const txc = textos.general.comunes;
 
 export const CAMARA_DIPUTADOS = "CAMARA DE DIPUTADOS";
 const NACIONAL = "NACIONAL";
@@ -50,7 +53,7 @@ export const NIVELES = [
   { nivel: 5, desde: 9, hasta: Infinity },
 ];
 export const nivelDe = (cantidad) => NIVELES.find((n) => cantidad >= n.desde && cantidad <= n.hasta)?.nivel ?? 0;
-export const textoNivel = (n) => (n.hasta === Infinity ? `${n.desde} o más` : n.desde === n.hasta ? `${n.desde}` : `${n.desde} a ${n.hasta}`);
+export const textoNivel = (n) => (n.hasta === Infinity ? fill(tx.oMas, { desde: n.desde }) : n.desde === n.hasta ? `${n.desde}` : `${n.desde} a ${n.hasta}`);
 
 /**
  * Agrupa filas de diputados por zona del mapa. Devuelve un Map código → filas y, aparte, las filas
@@ -62,7 +65,7 @@ export function agruparPorDepartamento(filas) {
   for (const f of filas) {
     const codigo = zonaDe(f.departamento);
     const destino = codigo ? porZona : sinZona;
-    const clave = codigo ?? f.departamento ?? "Sin dato";
+    const clave = codigo ?? f.departamento ?? txc.sinDato;
     if (!destino.has(clave)) destino.set(clave, []);
     destino.get(clave).push(f);
   }

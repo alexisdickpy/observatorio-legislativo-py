@@ -11,6 +11,9 @@ interface Props {
 }
 import { clasePartido } from "../lib/partidos.js";
 import { legible } from "../lib/texto.js";
+import { textos, fill } from "../lib/contenido.js";
+const tx = textos.rankings.lista;
+const txc = textos.general.comunes;
 
 const { filas, cifra } = Astro.props;
 /** Atributo con el slug de cada legislador, para reconocer la lista en las pruebas. */
@@ -25,12 +28,12 @@ const atributo = cifra === "ausencias" ? "data-ausencias" : "data-votos-distinto
         {f.foto ? <img src={f.foto} alt="" width="48" height="48" loading="lazy" /> : <span class="sin-foto" aria-hidden="true" />}
         <span class="persona">
           <a href={f.url}>{f.nombre}</a>
-          {!f.vigente && <span class="chico texto-suave"> (ya no ejerce)</span>}
-          <span class="partido chico texto-suave"><span class={`pip ${clasePartido(f.mayoriaPartido.grupo)}`}></span> {legible(f.mayoriaPartido.grupo) ?? "Sin partido registrado"}</span>
+          {!f.vigente && <span class="chico texto-suave"> {tx.yaNoEjerce}</span>}
+          <span class="partido chico texto-suave"><span class={`pip ${clasePartido(f.mayoriaPartido.grupo)}`}></span> {legible(f.mayoriaPartido.grupo) ?? txc.sinPartidoRegistrado}</span>
         </span>
         <span class="cifra">
           <strong>{f[cifra].porcentajeTexto}</strong>
-          <span class="chico texto-suave">{f[cifra].fraccion} votaciones</span>
+          <span class="chico texto-suave">{fill(tx.votaciones, { fraccion: f[cifra].fraccion })}</span>
         </span>
       </li>
     ))

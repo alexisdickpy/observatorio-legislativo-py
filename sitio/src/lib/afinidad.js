@@ -11,6 +11,8 @@
 // - Coincidencia = preguntas en que la posición fue la misma que la respuesta ÷ preguntas comparadas.
 //   Con menos de MINIMO_COMPARADAS preguntas comparadas se muestran las cantidades sin porcentaje.
 
+import interaccion from "../contenido/interaccion.json" with { type: "json" };
+const tx = interaccion.respuestasTest;
 /** Letra de cada posición en las cadenas de datos: una letra por pregunta, en el orden de las preguntas. */
 export const POSICION = {
   favor: "F",
@@ -25,9 +27,9 @@ export const POSICION = {
 
 /** Respuestas posibles, en el orden de los botones. */
 export const RESPUESTAS = [
-  { valor: "favor", texto: "A favor" },
-  { valor: "contra", texto: "En contra" },
-  { valor: "sin", texto: "Sin posición" },
+  { valor: "favor", texto: tx.aFavor },
+  { valor: "contra", texto: tx.enContra },
+  { valor: "sin", texto: tx.sinPosicion },
 ];
 
 /** Preguntas comparadas por debajo de las cuales no se muestra el porcentaje. */

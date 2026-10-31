@@ -24,6 +24,8 @@ import { nombreConocido, partidoUnificado, siglaDe } from "./partidos.js";
 import * as rutas from "./rutas.js";
 import { PENDIENTE, TEXTO_PENDIENTE, temas, temasDeProyectos } from "./temas.js";
 import { slug } from "./texto.js";
+import { textos } from "./contenido.js";
+const txc = textos.general.comunes;
 
 /** Votaciones más ajustadas por cámara en la página de votaciones y en la portada. */
 export const CANTIDAD_AJUSTADAS = 10;
@@ -44,7 +46,7 @@ export function diferenciaSiNo(v) {
 
 const PARLAMENTARIA = "PARLAMENTARIA";
 /** Texto del grupo de los autores sin partido registrado. */
-const SIN_PARTIDO = "Sin partido registrado";
+const SIN_PARTIDO = txc.sinPartidoRegistrado;
 
 /**
  * Autores legisladores de un proyecto ({ partido, idLegislador }, partido = texto oficial), cada uno una

@@ -1,0 +1,19 @@
+{
+  "pagina": {
+    "preguntasSobreLeyesVotadasPor": "Preguntas sobre leyes votadas por el Congreso Nacional del Paraguay en el período {periodo}, para comparar tus respuestas con los votos de cada partido.",
+    "versionPreliminarLasPreguntasTodavia": "Versión preliminar. Las preguntas todavía están en revisión y pueden cambiar.",
+    "preguntasSobreLeyesVotadasPor2": "{preguntas} preguntas sobre leyes votadas por el Congreso en el período {periodo}. Al final ves cuánto coinciden tus respuestas con lo que votó cada partido. Nada se guarda ni se envía. [Cómo funciona]({url1})",
+    "elTestNecesitaJavascriptPara": "El test necesita JavaScript para calcular el resultado en tu navegador."
+  },
+  "test": {
+    "de": "de {total}",
+    "leyN": "Ley N° {numeroLey}",
+    "verElProyectoDeLey": "Ver el proyecto de ley",
+    "queHabriasVotado": "¿Qué habrías votado?",
+    "preguntaAnterior": "← Pregunta anterior",
+    "tuAfinidadConLosPartidos": "Tu afinidad con los partidos",
+    "coincidenciaConLaPosicionDe": "Coincidencia con la posición de la mayoría de cada partido en esas votaciones, sobre las preguntas que se pudieron comparar. Con menos de {minimo} no se muestra porcentaje. Coincidir no es bueno ni malo. [Cómo se calcula]({url1})",
+    "tusRespuestasYLasVotaciones": "Tus respuestas y las votaciones",
+    "volverAEmpezar": "Volver a empezar"
+  }
+}

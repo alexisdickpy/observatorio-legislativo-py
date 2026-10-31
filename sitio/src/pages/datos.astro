@@ -4,35 +4,27 @@ import { cita, actualizacion } from "../lib/catalogo.js";
 import { descargas } from "../lib/descargas.js";
 import * as rutas from "../lib/rutas.js";
 import { datosAbiertos } from "../lib/seo.js";
+import { textos, md, crudo } from "../lib/contenido.js";
+const tx = textos.datos.pagina;
+const txc = textos.general.comunes;
 
 const grupos = descargas();
 const fuente = cita();
 const fecha = actualizacion();
 const descripcion =
-  "Descarga de los datos del Congreso Nacional del Paraguay que usa este sitio, en CSV y JSON, con su diccionario de datos.";
+  tx.descargaDeLosDatosDel;
 ---
 
 <Base
-  titulo="Datos abiertos"
+  titulo={txc.datosAbiertos}
   descripcion={descripcion}
   datos={datosAbiertos(descripcion)}
 >
-  <h1>Datos abiertos</h1>
+  <h1>{txc.datosAbiertos}</h1>
   <div class="lectura">
-    <p>
-      Todos los datos que usa este sitio se pueden descargar y reutilizar libremente bajo la
-      licencia {fuente.licencia}, citando <strong>"{fuente.cita}"</strong> y la fecha de
-      actualización (<time datetime={fecha.iso}>{fecha.texto}</time>).
-    </p>
-    <p>
-      Los archivos de <em>valores oficiales</em> contienen los datos exactamente como los publica el
-      Congreso; lo que agrega este proyecto está en columnas cuyo nombre empieza con <code>_propio</code>.
-      El <a href={rutas.archivoDatos("diccionario.md")}>diccionario de datos</a> describe cada campo.
-    </p>
-    <p>
-      Las fotos de los legisladores son una copia de las que publica el Congreso (campo
-      <code>fotoURL</code>) y están en <code>/datos/fotos/&#123;período&#125;/&#123;idLegislador&#125;.jpg</code>.
-    </p>
+    <p set:html={md(tx.todosLosDatosQueUsa, { licencia: fuente.licencia, cita: fuente.cita, fecha: crudo(`<time datetime="${fecha.iso}">${fecha.texto}</time>`) })} />
+    <p set:html={md(tx.losArchivosDeValoresOficiales, { url1: crudo(rutas.archivoDatos("diccionario.md")) })} />
+    <p set:html={md(tx.lasFotosDeLosLegisladores, { rutaFotos: "/datos/fotos/{período}/{idLegislador}.jpg" })} />
   </div>
   {
     grupos.map((g) => (
@@ -41,9 +33,9 @@ const descripcion =
         <table class="descargas">
           <thead>
             <tr>
-              <th scope="col">Archivo</th>
-              <th scope="col">Contenido</th>
-              <th scope="col">Descargas</th>
+              <th scope="col">{tx.archivo}</th>
+              <th scope="col">{tx.contenido}</th>
+              <th scope="col">{tx.descargas}</th>
             </tr>
           </thead>
           <tbody>

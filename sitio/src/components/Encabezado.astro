@@ -1,6 +1,8 @@
 ---
 import { entradaActual, menuPrincipal } from "../lib/navegacion.js";
 import * as rutas from "../lib/rutas.js";
+import { textos } from "../lib/contenido.js";
+const tx = textos.general.encabezado;
 
 interface Props {
   nombreSitio: string;
@@ -13,7 +15,7 @@ const actual = entradaActual(enlaces, Astro.url.pathname);
 <header class="encabezado">
   <div class="contenedor fila">
     <a class="marca" href={rutas.inicio()}>{nombreSitio}</a>
-    <nav aria-label="Principal">
+    <nav aria-label={tx.principal}>
       <ul>
         {
           enlaces.map((e) => (
@@ -26,7 +28,7 @@ const actual = entradaActual(enlaces, Astro.url.pathname);
         }
       </ul>
     </nav>
-    <button type="button" class="modo" id="cambiar-modo" hidden>Modo claro</button>
+    <button type="button" class="modo" id="cambiar-modo" hidden>{tx.modoClaro}</button>
   </div>
 </header>
 
