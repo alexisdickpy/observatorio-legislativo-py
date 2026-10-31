@@ -540,6 +540,16 @@ test("cada enlace del historial lleva a una votación que existe en la ficha de 
   }
 });
 
+test("cada fila del historial enlaza a la página de su votación", () => {
+  for (const persona of legisladores()) {
+    const html = leer(persona.url);
+    for (const h of ficha(persona).bloques.flatMap((b) => b.votos.historial)) {
+      assert.ok(html.includes(`<a href="${h.pagina}"`), `${persona.url} no enlaza ${h.pagina}`);
+      assert.ok(existsSync(pagina(h.pagina)), `Falta ${h.pagina}`);
+    }
+  }
+});
+
 test("el listado incluye a todos los legisladores del período y las fichas de ley los enlazan", () => {
   const html = leer(rutas.legisladores());
   const { enEjercicio, noEjercen } = listado("2023-2028");
